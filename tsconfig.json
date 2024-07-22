@@ -1,0 +1,42 @@
+{
+  "include": ["src/**/*.ts"],
+  "exclude": ["build", "node_modules", "**/*.spec.ts"],
+
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022","dom"],
+    "experimentalDecorators": true,
+
+
+    "module": "nodenext",
+    "rootDir": "src",
+    "resolveJsonModule": true,
+
+
+    "allowJs": true,
+
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "removeComments": true,
+    "noEmit": true,
+
+
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
+  }
+}
