@@ -1,32 +1,38 @@
 {
-  "name": "melibre",
-  "version": "1.0.0",
-  "description": "Experimenting on ways to use mercadolibre API",
-  "main": "dist/index.js",
-  "type": "module",
-  "types": "dist/index.d.ts",
-  "keywords": [],
-  "scripts": {
-    "start": "npm run dev",
-    "build": "tsc -p .",
-    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" --esm --transpile-only src/index.ts",
-    "check": "tsc --noEmit"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Nabawe/melibre.git"
-  },
-  "author": "Nabawe",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Nabawe/melibre/issues"
-  },
-  "homepage": "https://github.com/Nabawe/melibre#readme",
-  "volta": {
-    "node": "20.11.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.14.11",
-    "typescript": "^5.5.3"
-  }
+    "name": "melibre",
+    "version": "1.0.0",
+    "description": "Experimenting on ways to use mercadolibre API",
+    "main": "dist/index.js",
+    "type": "module",
+    "types": "dist/index.d.ts",
+    "keywords": [],
+    "scripts": {
+        "start": "npm run dev",
+        "build": "tsc -p .",
+        "check": "tsc --noEmit",
+        "dev": "tsx watch --clear-screen=false src/index.ts",
+        "old_dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" --esm --transpile-only src/index.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Nabawe/melibre.git"
+    },
+    "author": "Nabawe",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Nabawe/melibre/issues"
+    },
+    "homepage": "https://github.com/Nabawe/melibre#readme",
+    "volta": {
+        "node": "20.11.1"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.14.11",
+        "typescript": "^5.5.3"
+    },
+    "dependencies": {
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2"
+    }
 }

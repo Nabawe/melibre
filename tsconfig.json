@@ -1,42 +1,36 @@
 {
-  "include": ["src/**/*.ts"],
-  "exclude": ["build", "node_modules", "**/*.spec.ts"],
+    "include": ["src/**/*.ts"],
+    "exclude": ["build", "node_modules", "**/*.spec.ts"],
 
-  "compilerOptions": {
-    "target": "es2022",
-    "lib": ["es2022","dom"],
-    "experimentalDecorators": true,
+    "compilerOptions": {
+        "target": "ES2022",
+        "lib": [
+            "ES2022",
+            "DOM"
+        ],
+        "rootDir": "src",
+        "outDir": "dist",
+        "module": "NodeNext",
+        "strict": true,
 
-
-    "module": "nodenext",
-    "rootDir": "src",
-    "resolveJsonModule": true,
-
-
-    "allowJs": true,
-
-
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "removeComments": true,
-    "noEmit": true,
-
-
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-
-
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-
-
-    "skipDefaultLibCheck": true,
-    "skipLibCheck": true
-  }
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "checkJs": true,
+        "declaration": true,
+        "declarationMap": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "noEmit": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "verbatimModuleSyntax": true,
+    }
 }
