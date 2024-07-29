@@ -1,19 +1,48 @@
-import * as CONSTS from './mod.js';
 import 'dotenv/config';
-import express from "express";
-import type { Express, Request, Response } from "express";
+import Express from "express";
+import { fileURLToPath } from 'node:url';
+import { engine as HbsEngine } from 'express-handlebars';
 
-const app: Express = express();
-const port = process.env.PORT || 3000;
+import type { Application as ExpressApp, Response } from "express";
 
-console.log( CONSTS.Obj );
+import Route_Products from './routes/products.route.js';
 
-console.log( "Hello World Again" );
+// const Server: ExpressApp = Express();
+interface ExpressAppMod extends ExpressApp {
+    activeListeners?: any[];
+};
+const Server: ExpressAppMod = Express();
+const PORT = process.env.PORT || 8080;
 
-app.get("/", (req: Request, res: Response) => {
-    res.send("Express + TypeScript Server");
-});
+// JSON output
+Server.use( Express.json() );
+Server.use( Express.urlencoded( { extended: true } ) );
+// Static Files
+Server.use( Express.static( fileURLToPath( new URL( './public', import.meta.url ) ) ) );
+// express-handlebars
+Server.engine( 'handlebars', HbsEngine() );
+Server.set( 'view engine', 'handlebars' );
+Server.set( 'views', fileURLToPath( new URL( './views', import.meta.url ) ) );
 
-app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+
+console.log( `##################################### ${ new Date }` );
+
+
+// Routes
+Server.use( '/', Route_Products );
+
+Server.get( '*', ( _, res: Response ) => {
+    res.status( 404 ).sendFile( fileURLToPath( new URL( './public/404.html', import.meta.url ) ) );
+} );
+
+// Last Touches and Opening the Server's Port
+const currentListener = Server.listen( PORT, () => {
+    console.log( `Server Up and Listening, Info: ${ JSON.stringify( currentListener.address(), null, 4 ) }` );
+} );
+
+Server.activeListeners ?
+    Server.activeListeners.push( currentListener )
+    : Server.activeListeners = [ currentListener ];
+
+currentListener.on( 'error', error => { console.log( `Server Error: ${error}` ); } );
+
