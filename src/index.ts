@@ -7,17 +7,20 @@ import type { Application as ExpressApp, Response } from "express";
 
 import Route_Products from './routes/products.route.js';
 
-// const Server: ExpressApp = Express();
 interface ExpressAppMod extends ExpressApp {
     activeListeners?: any[];
+    // type t_Listener = ExpressApp["listen"];
+    // activeListeners?: t_Listener[];
+    // then below when opening the port currentListener: t_listener
 };
 const Server: ExpressAppMod = Express();
 const PORT = process.env.PORT || 8080;
 
 // JSON output
 Server.use( Express.json() );
+// Forms output into req.body JSON
 Server.use( Express.urlencoded( { extended: true } ) );
-// Static Files
+// Static Website Files
 Server.use( Express.static( fileURLToPath( new URL( './public', import.meta.url ) ) ) );
 // express-handlebars
 Server.engine( 'handlebars', HbsEngine() );

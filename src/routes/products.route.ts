@@ -3,15 +3,17 @@ import { fileURLToPath } from 'node:url';
 import RAMBox from "../classes/RAMBox.mjs";
 import Verdicts from "../data/verdicts.js";
 
+import type { Request, Response } from "express";
+
 const MerchMan = new RAMBox( 'products.json', fileURLToPath( new URL( '../data/', import.meta.url ) ) );
 const Route_Products = Router();
 
 
-Route_Products.get( '/products', ( req, res ) => {
+Route_Products.get( '/products', ( _, res: Response ) => {
     res.render( 'Products_Table', { 'Products': MerchMan.i, 'title': 'Austral Interpretar : Products' } );
 } );
 
-Route_Products.post( '/products/del', ( req, res ) => {
+Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
     const match = MerchMan.m_del( req.body.id );
     if ( match instanceof Error ) {
         const v = Verdicts[match.cause];
