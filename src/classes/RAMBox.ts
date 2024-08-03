@@ -26,16 +26,21 @@ import type { URL } from 'node:url';
 
 const fsP = fs.promises;
 
-// ai I am missing the "template literal type".
+// ? As I understand I am missing the "template literal type".
 type IndexSignature = string | number | symbol;
 
-/* ai
-    the Item type should be flexible since this is a general class to manage any kind of products so is there a better way to do this than using:
-    [ key: IndexSignature ]: any;
+/* Claude.ai Suggested
+    interface BaseItem {
+    id: string;
+    dateCreated: number;
+    dateMod?: number;
+    }
 
-    Is there a way to dinamically extend it?
+    interface t_Item<T extends Record<string, any> = {}> extends BaseItem {
+        [K in keyof T]: T[K];
+    }
 */
-interface Item {
+interface t_Item {
     id: string;
     dateCreated: number;
     dateMod?: number;
@@ -50,11 +55,12 @@ interface DataChecksFlags {
 class RAMBox {
     /**
      * @param {String} fileName
-     * @param {String} filePath The path must end with a slash /
+     * @param {String} fileDir The path must end with a slash /
      * WIP Hacer q lo reciva usando la expresion URLToPath new URL
      */
     public filePath: string;
-    public i: Item[] = []; // ai The whole point for the method is to do check to initialize it, so this is wrong
+    /* ! The whole point for the #init method is to do checks and initialize the items array, so the following line is wrong */
+    public i: t_Item[] = [];
     constructor( public fileName: string, public fileDir: string ) {
         // this.fileName = fileName;
         // this.fileDir = fileDir;
@@ -72,13 +78,11 @@ class RAMBox {
      * Initializes the items storage in memory.
      * @returns Returns false if it initialized without errors.
      */
-    #init(): false | Error {
+    #init(): false | Error | void {
         try {
             this.i = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
             return false;
-        } catch( err ) {
-            // ai return error sais " Type 'void' is not assignable to type 'false | Error'.ts(2322) "
-            // ai err error sais " 'err' is of type 'unknown'.ts(18046) "
+        } catch( err: any ) {
             return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${err.message}`, { cause: 'CLASS__INIT' } ) );
         };
     };
@@ -86,13 +90,11 @@ class RAMBox {
     // WIP Add Other Checks
     /* WIP Add ways to specify the checks like with a hash 3b40v69 or binary string 010110 or flags object, so it can skip unnecesary checks for a given scenario */
     // * Both Parameters are optional
-    #dataChecks( flags: DataChecksFlags, data = this.i ): false | Error {
+    #dataChecks( flags: DataChecksFlags, data = this.i ): false | Error | void {
         // Add new default values to flags in F.
         let F: DataChecksFlags = { NO_DATA: true, ...flags };
         if ( F.NO_DATA && !data.length )
-            // ai return error sais " Type 'void' is not assignable to type 'false | Error'.ts(2322) "
-            // ai err error sais " Cannot find name 'err'.ts(2304) "
-            return console.error( new Error( `${ErrsMsgs.NO_DATA}:\n ${err.message}`, { cause: 'NO_DATA' } ) );
+            return console.error( new Error( `${ErrsMsgs.NO_DATA}`, { cause: 'NO_DATA' } ) );
         return false;
     };
 
@@ -100,11 +102,11 @@ class RAMBox {
      * Retrieves all the items from the file asynchronously.
      * @returns {Object}JSON formmated JavaScript object.
      */
-    async m_fileGetAll() {
+    async m_fileGetAll(): Promise<t_Item[] | Error> {
         try {
             const data = JSON.parse( await fsP.readFile( this.filePath, 'utf-8' ) );
             return data;
-        } catch( err ) {
+        } catch( err: any ) {
             return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${err.message}`, { cause: 'CAN_T_READ' } );
         };
     };
@@ -113,11 +115,11 @@ class RAMBox {
      * Retrieves all the items from the file synchronously.
      * @returns {Object}JSON formmated JavaScript object.
      */
-    m_fileGetAllSync() {
+    m_fileGetAllSync(): t_Item[] | Error {
         try {
             const data = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
             return data;
-        } catch( err ) {
+        } catch( err: any ) {
             return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${err.message}`, { cause: 'CAN_T_READ' } );
         };
     };
@@ -133,6 +135,7 @@ class RAMBox {
             };
         };
     */
+    // ai id type should be infered from t_Item.id ( typeof t_Item.id ? )
     // <3
     m_getById( id ) {
         return this.#dataChecks()
@@ -222,4 +225,5 @@ class RAMBox {
     };
 };
 
+export type { t_Item };
 export default RAMBox;
