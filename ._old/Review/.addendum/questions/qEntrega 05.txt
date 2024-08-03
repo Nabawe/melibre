@@ -1,0 +1,21 @@
++ Está la necesidad de trackear data en ItemListContainer?
++ Tu opinion en como usar .finally
+
+
++ Está la necesidad de trackear data en ItemListContainer?
+    Ya q la data solo seria re leida si se recarga el componente, y setiandolo asi estoy haciendo q se lea en mount y si llegase a cambiar; Pero, y esto puede indicar un error de mi entendimiento, no hay nada q este usando el setter de data del componente ItemListContainer, si quiciera q algo lo usase tendria q mandar una funcion desde ItemListContainer a otro componente como cuando vimos Eventos o Context o atravez de una prop. Estoy confundido?.
+
+    // "},  [ data ] );" vs "},  [ ] );"
+
+    useEffect( () => {
+        f_fetchPacks( 2000, packs )
+            .then( result => setData( result ) )
+            .catch( error => console.log( "Error: ", error ) );
+    },  [ data ] );
+
++
+
+
++ Tu opinion en como usar .finally
+    Lo q dice el titulo, para el useEffect de ItemListContainer
++

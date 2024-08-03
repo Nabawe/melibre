@@ -1,0 +1,35 @@
++ Pork App.js no es un .jsx? hay alguna razon? ya q nosotros hacemos los componentes en jsx para q HTML este integrado más naturalmente no?.
+
++ En App.js ver debajo de const env = {};
+
++ El usar Item como nombre de un componente me puede dar problemas? hay forma de ver palabras reservadas? yo intento prestarle atencion al itellisense q me va diciendo para ver si estoy sobre escribiendo algo pero en el caso de Items, item y etc no me quedo claro.
+
++ header/Navbar.jsx  ? Hay mejor forma de hacer esto? https://mui.com/customization/how-to-customize/
+
++ Re Entrega
+
+
++ Pork App.js no es un .jsx? hay alguna razon? ya q nosotros hacemos los componentes en jsx para q HTML este integrado más naturalmente no?.
+    Porque sigue con el estandar anterior, al igual que su documentacion sigue mostrnado los ejemplos con clases en lugar de funciones cuando ellos mismos recomiendan que cambies las clases por funciones, una vez mas algo decepcionante y triste que solo sea falta de actualizacion y cambios que se van dando pero asi es, aunque en realidad al final trabajar con .js y con .jsx es exactamente lo mismo, no cambia nada, en lo que mas llega a ayudar es en tu editor porque detecta mas especificamente que quieres crear y te ayuda con mejores recomendaciones, pero de fondo no es como que haya verdadero impacto en el cambio.
++
+
+
++ En App.js ver debajo de const env = {};
+    Esto del env si te soy honesto no lo uso en React, ya que para este tipo de cuestiones no suelo verle mucha utilidad, claro al verlo como un proyecto integrador pierden peso mis palabras y ciertamente puede tener sentido usarlas, pero la filosofia de como es creado react y como se busca que sea utilizado va por otro camino, todo debe ser independiente hasta la ultima instancia, por eso digo que ya llegados al punto de la integracion si pudiera tener sentido, pero hay otras maneras de integrar valores globales de manera mas optima y manejandolo dentro de cada estructura segun se requiera.
++
+
+
++ El usar Item como nombre de un componente me puede dar problemas? hay forma de ver palabras reservadas? yo intento prestarle atencion al itellisense q me va diciendo para ver si estoy sobre escribiendo algo pero en el caso de Items, item y etc no me quedo claro.
+    El nombre de los componentes no suele dar problemas, por ello es que se inician con Mayusculas y al estar digamos fuera de la estructura general del lenguaje no suele dar problemas, son pocas las limitantes, en cuanto a palabas reservadas, suele ser al contrario, mas bien React se adapta a las palabras reservadas de JS por ejemplo y pues como todo lo que podria incurrir en violacion es lo que manejas directamente en JS pues conociendo las limitaciones de este ya vas un paso por delante, y ya especificamente sobre llamar Item a un componente, no deberia darte ningun problema.
++
+
+
++ header/Navbar.jsx  ? Hay mejor forma de hacer esto? https://mui.com/customization/how-to-customize/
++
+
+
++ Re Entrega
+    Hablando de nombres de componentes, veo que los estas cambiando e incluso estas adaptando la estructura de componentes con respecto a lo indicado en los desafios, yo no tengo problema con esto, me adapto a lo que me mandes, pero dos observaciones, no se si el profesor tampoco tengo problema con que se hagan estos cambios, asi que aunque yo no lo contemple, no puedo prometer que no te genere conflicto despues, por otro lado ten siempre control de que nombres estas cmabiando o que estructuras, para que despues no te confundas con las consignas, dado que estas desde aqui hasta el final manejan siempre la misma estructura y los mismos nombres hasta la entrega final, por ultimo si veo que algun cambio que realices de verdad podria crearte conflictos intentare hacertelo notar pero no sera seguro que siempre lo note de primeras.
+
+    Fuera de todo eso tu entrega esta bastante bien vas por buen camino, es bueno que experimentes y todo lo que estas haciendo, asi se aprende de verdad, pero como ultima recomendacion y como apoyo extra, puedes hacer tu proyecto segun se dicta en las consignas, respecto a estructura y nombres y todo y al mismo tiempo experimentar en otro proyecto para que te evites problemas, se que quiza lo hagas asi para tener feedback sobre la marcha asi que aqui va lo que ofrezco como apoyo extra, puedes hacer los dos proyectos, y el que sea experimental y todo eso igual te lo puedo ir revisando por fuera e igual como venimos hasta ahora te contesto las preguntas que te vayan surgiendo y te apoyo en todo lo que pueda. Pero esto queda a decision tuya, por lo pronto tu entrega esta aprobada.
++

@@ -1,0 +1,139 @@
++ Es incorrecto q use <Stack /> en ItemList.jsx?
++ Buenas Practicas para Popper Elements
++ Randomizar Pic
++ Sobre pasar props usando spread operator
++ Uso de React Fragments
++ ItemDetailContainer.jsx
++ ItemListContainer.jsx
++ Item.jsx
++ ItemDetail.jsx
++ f_MUIColor.js
++ ItemDetailPopper.jsx
++ ItemCounter.jsx
+
+
++ Es incorrecto q use <Stack /> en ItemList.jsx?
++
+
+
++ Buenas Practicas para Popper Elements
+    Algo q me quito una buena cantidad de tiempo en esta entrega fue la creación de la card y como mostrarla, investigando sobre Popper, Popover, Portal, Modal q son conceptos q no vi en el primer curso de CoderHouse, si tenes algo para ayudarme a refinar mi entendimiento general te lo agradeceria.
+    También era para pedirte buenas practicas en especial en el tema de como manejar Portals ya q parece q usan un DOM separado pero no entiendo completamente las justificaciones.
++
+
+
++ Randomizar Pic
+    Me arme el siguiente Mock https://www.mockaroo.com/schemas/406482
+
+    Y en la linea q dice
+        https://picsum.photos/200/300/?####
+
+    Pero en relidad para garantizar q no salga el mismo pic tendria q usar una secuencia de números ya q si son random podria salir el mismo pic, era por si sabias como hacerlo o si tenia q usar un regex.
++
+
+
++ Sobre pasar props usando spread operator
+    AfterClass 5, creo q en la plataforma esta como "Clase complementaria de Repaso + Desafío" la marca como la 6 pero es incorrecta ya q la 5 habia sido cancelada.
+
+    31'43 - No estoy completamente seguro q es mejor, ya q pasando el objeto me parese más flexible y legible si son muchas pero esta bueno detallar por props lo q recibe un componente.
+
+    33'58 - Mejorandolo con destructuring
+        Pero al usar Objeto.Punto te ayuda a evitar sobre escribir.
+
+    34'22 - Notación (props)
+        No recuerdo q hayamos dado esta en el curso.
+        Solo le veo desventajas, estoy equivocado?.
+
+    Si me responde depende del caso por favor deme algun criterio.
++
+
+
++ Uso de React Fragments
+    <> </>
+    <div> </div>
+    Corrijame si estoy equivocado pero son solo para cuando tengo q retornar más de un componente, pero tanto en los snippets como en los afters y demas me parece q se lo agregan a todo... yo acabo de limpiar los q me parecian q sobraban pero en Item.jsx Visual me marca todo el return con una linea amarilla, negra y roja pero ninguna consola me da error alguno.
+    Si le agrego un tab de más se va la linea, si coloco format document vuelve.
++
+
+
++ ItemDetailContainer.jsx
+    Porque pasa el siguiente comportamiento si seteo el useEffect con :
+    // },  [ data ] );
+    /* Esto haria q el useEffect se dispare como undefined ya q la promesa se tiene q resolver para setear data, aunque si no entiendo mal tendria q ser [[]] ya q data inicia como un array vacio y por ende no undefined... */
+
+    Puse un console.log en la clausula .then para ver como se ejecutava y note lo anterior.
+    Al principio pense q el ClickAwayListener lo causaba pero ItemListContainer tenia el mismo problema.
+
+    Puede ClickAwayListener causarme renders de más?
++
+
+
++ ItemListContainer.jsx
+    setFetchWitness( true ); /* Esta Linea es necesaria? */
+
+    /* Hay forma de usar 1 sola variable y hacer algo tipo un case o if o else if o usar un array con las distintas condiciones ya q creo q deja mucho espacio a error esta forma */
+
+    /* Si la data no fue recibida y no hubo error como actual?
+    Mostrar data vieja? Mostrar Esqueleto?
+    Asumir q hubo error?*/
+
+    El tutor y el profesor usaban finally pero para mi solo se deberia continuar con la ejecución cuando el resultado del fetch es correcto. (  AfterClass 5 - 43'22 )
++
+
+
++ Item.jsx
+    {/* Problemas de alineación */}
+        No lograba alinear correctamente tuve q usar marging-top, padding y gap, alguna recomendación?
+
+    {/* Creo q el sx no afecta */}
+        Borro este sx?
++
+
+
++ ItemDetail.jsx
+    /* WIP Deberia ser justifyContent: 'space-between' */
+        Tuve q usar  rowGap: 7 para separar las partes.
+
+    {/* Creo q el sx no afecta */}
+        Aquí nuevamente no se si sobra la linea de estilo. No estoy seguro si cubre algun caso q q falte imaginarme.
++
+
+
++ f_MUIColor.js
+    .addendum\tests\smallHashExperiment
+
+    1)
+        Hay alguna forma de pasar esto:
+            import * as MUIColors from '@mui/material/colors';
+            const Shadow = { ...MUIColors };
+            delete Shadow[ 'common' ];
+        A algo como esto:
+            import { common, * as Shadow } from '@mui/material/colors';
+
+        O sea importar todo menos 'common'.
+
+    2)
+        const Shadow = { ...MUIColors };
+        let Colors = { ...Shadow };
+
+        Cuando hago este tipo de copias me inquieta si causa algun problema el tomar todos esos valores extra q tienen los objetos y segun lei en MDN esto genera 'Shallow Copies' no entiendo por completo el significado d esto pero si intento modificar la copia el original no se modifica ( probe con la consola ).
+        Supuestamente lo q genera 'Deep Copies' ( nuevamente no entiendo por completo q implica este termino ) es structuredClone(value) o usando JSON.parse( JSON.stringify( value ) ) pero el metodo de JSON puede causar problemas con valores especiales.
+
+        Es entender si estoy procediendo correctamente o como debería hacer.
++
+
+
++ ItemDetailPopper.jsx
+    Los estados y handlers los tuve que armar manualmente ya q no me di cuenta q en otro ejemplo de MUI estaban más parecidos a lo q necesitaba, quería saber si esta correctamente diceñado el componente, tiene sentido pasar itm como lo pase?; Por mas q talvez lo termine sacando...
++
+
+
++ ItemCounter.jsx
+    /* Porque necesito agregar min? */
+
+    /* ! Esto no se debería cumplir vez alguna ya q esta isOutOfStock */
+
+    Me han sugerido poner la logica del contenedor fuera de este componente, Creando ItemCounterCointainer? o directamente en quien lo llame o como se recomienda?
+
+    Ademas el checkeo de stock por ahi se corra por otro lado.
++

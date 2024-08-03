@@ -1,0 +1,135 @@
++ Me combiene usar %PUBLIC_URL% o ./ para rutear cosas?
++ Tengo q hacer algo para Dark Mode? O como lo desabilito?
++ Para las instrucciones meta al estilo keywords se usa un componente invisible?
++ Public no nos combiene colocar estructuras tipo /css, /html, etc o puede romper algo?
++ Nos serviria crear un componente Header? al estilo q mostro q usemos uno Main y Footer? (Esto fue en el AfterClass cuando hablo sobre Componentes Hijos).
+
++ Elegi la "App Bar with responsive menu" de MUI pero en el curso de Desarrollo Web nos recomendaban q apuntemos a "Mobile First" y aquí lo estoy haciendo inverso, como debería abordar esta cuestión?
+
++ Al usar "npm uninstall" como me sercioro q se borraron todas las dependencias de un paquete? packetes huerfanos se dice? como se checkea si 2 paquetes tienen una misma dependencia q solo se borre dicha dependencia si ninguno los usa?.
+
++ Forma correcta de Incorporar Imagenes, Logos, SVGs, en especial como recomienda q modifique la estructura propuesta por ReactJS y q relacion hay con manifest.json (se autocompleta con algun comando?).
+
++ Re Entrega
++ Correcta forma de usar App.css y aplicar estilos de otras formas.
+
+
++ Me combiene usar %PUBLIC_URL% o ./ para rutear cosas?
+    La mejor manera de rutear en react es justamente con Router, que se vera algunas clases mas adelante, ya que mas que links para cambiar pagina se usa el renderizado ya que en realidad nunca cambiamos de pagina.
+            FF - Por mas q lo vi cuando dimos SPA en JS me queda aun la duda si realmente usar ese tipo de manipulaciones es lo correcto, no debería ser mejor cambiar el protocolo ya q para eso fue definido HTML (hyperlink). Pero aparte si tengo q escribir la ruta uso PUBLIC_URL como lo recomienda el comentario de React o ./ o / ya q he visto en muchas paginas q no usan relativo sino absoluta ( especificando / pero a mi no me funciono cuando subo al server).
+                    Tutor - En esta creo que no conteste la pregunta y me desvié, confusión mía, para mi siempre es mejor con la notación ./ o ../ según corresponda,  dado que al construir con build queda mejor para que siga las rutas y construya, en cuanto a lo que comentas de HTML y los hipervínculos, tienes razón pero es que en React como en realidad no cambias de página, sino que cambiar el renderizado solamente entonces no tiene sentido utilizar links, al menos no dentro de tu sitio, es por esto que React por si solo no suele ser muy amigable con el SEO.
++
+
+
++ Tengo q hacer algo para Dark Mode? O como lo desabilito?
+    No tienes que implementar nada con Dark Mode, si no lo seteas tal cual entonces no tienes problema alguno.
++
+
+
++ Para las instrucciones meta al estilo keywords se usa un componente invisible?
+    Todo lo que tiene que ver con SEO en React es mas complejo pero los meta la manera más sencilla es meterlos en index.html como siempre se ha aplicado.
+            FF - Vamos a ver algo en el curso?
+                    Tutor - lamentablemente no, esto no entra en el curso.
++
+
+
++ Public no nos combiene colocar estructuras tipo /css, /html, etc o puede romper algo?
+    En la carpeta public es mejor meter lo mínimo, ya que esto si queda más expuesto, no es que rompas algo en si pero es mejor manejar tus archivos dentro de src ordenándolos según como necesites, de cualquier manera al hacer Build terminara juntándolo todo, parecido a lo que hablábamos del All si recuerdas, creo que fuiste tu quien me pregunto de eso en la primer clase.
+            FF - Si es q yo le pregunte no tengo noción con esas palabras, yo coloque los favicon en public porque era donde los tenia react y ahora q lo pienso siempre los veo tirados en root. Entonces si no estoy entendiendo mal pienso a public como si fuera la carpeta raiz pelada y algo "sagrado" a no tocar y armo todo con src? pero entonces si tengo q routear algo como hago? ya q quedarian tipo ./src o ../src o /src y no podria usar la variable PUBLIC_URL creo q me estoy confundiendo en algun principio. Las imagenes de los logos en cambio las puse en SRC y las use con import por lo q decia la documentacion de React pero me quedaban con una ruta medio "trucha" "../img/logo-small-menu.png" y cuando veo el mecanismo de MUI para agregar secciones a la nav var parece preparar el camino para algo más.
+                    Tutor - respecto a esto la carpeta public si se puede utilizar, aunque no es muy comun ni recomendable si no se sabe lo que se hace, digamos que es una carpeta estática de donde se pueden venir y tomar cosas directamente, por eso es que se utiliza para cosas como los favicon y cosas así sencillas y digamos como su nombre lo indica publicas, todo lo demás pues i en src y lo de las rutas pues hay opciones para acortarlas, son paquetes que instalar para ello, si quieres te investigo alguno para tu proyecto, en cuanto a lo que hace MUI no estoy muy seguro no lo habia utilizado y apenas he visto algo ahora con los proyectos, pero lo analizare y para la próxima te comento mas al respecto.
++
+
+
++ Nos serviria crear un componente Header? al estilo q mostro q usemos uno Main y Footer? (Esto fue en el AfterClass cuando hablo sobre Componentes Hijos).
+    El componente Header solo utilizalo si tendrá un fin, no es bueno poner componentes solo por poner componentes, aumenta la carga de trabajo, si lo que buscas es hacer semántica tu web puedes solo en tu NavBar meter todo dentro de una etiqueta header y tendrás ese resultado sin cargar un componente extra.
+            FF - Esta respuesta me prende la luz haciendome pensar más en lo q resulte cuando aprenda build a solo pensar todo en componentes, la pregunta es donde esta la linea pero me encanto esta respuesta.
+                    Tutor - Si es increíble, ahora para estar desarrollando vemos todo como componentes, pero todas las herramientas que trae por detrás react al instalarse, como babel, webpack etc. Hacen un trabajo extraordinario, para al final devolvernos solo HTML, CSS y JS.
++
+
+
++ Elegi la "App Bar with responsive menu" de MUI pero en el curso de Desarrollo Web nos recomendaban q apuntemos a "Mobile First" y aquí lo estoy haciendo inverso, como debería abordar esta cuestión?
+    En cuanto a lo de la App Bar que elegiste, no habría mucho problema ya que al desarrollarla ya tienen cubierto el modelo de mobile quiza no del todo mobile first pero no debería romperte el flujo, el problema de utilizar librerias y cosas de terceros es justamente eso no siempre va acorde con el modelo de trabajo que tenemos, pero es una buena muestra de que en realidad a menos que trabajemos solos, nunca tendremos total control sobre el flujo de trabajo, pero no tendrías problema en continuar trabajando mobile first si así lo decides, no deberías buscar maneras de abordarlo, solo ir adaptando.
+            FF - Pero no tendría q cambiar como estan armados todos los componentes en si? ya q la misma Responsive Appbar esta primero codeada para Desktop.
+                    Tutor - Si claro tiene sentido, pero en primera es ver que el principio de Mobile First tiene dos maneras de verse, la global, que iría por donde tu lo mencionas y digamos la mmm se me fue la palabra correcta, pero ya que estamos en React digamos compuesta, esta nos da un poco mas de libertad por así llamarlo ya que al crear por componentes puedes ir teniendo el Mobile First por cada parte e incluso hay componentes que solo son creados para Desktop y otros solo para Mobile y condicionalmente según sea el dispositivo, renderiza uno u otro, ya es una manera mas segmentada de ver el Mobile First, estamos en el punto en que hay que ir dejando de pensar en monolitos y pensar mas en fracciones de código, ya vemos componentes, módulos, todo cada vez mas enfocado en fraccionar y mientras mas avances mas será de esta manera. Por eso hacia tanto incapie en que de ahora en delante hay que ir cambiando el chip.
++
+
+
++ Al usar "npm uninstall" como me sercioro q se borraron todas las dependencias de un paquete? packetes huerfanos se dice? como se checkea si 2 paquetes tienen una misma dependencia q solo se borre dicha dependencia si ninguno los usa?.
+    Pues en el caso de todos los módulos es difícil realizar ese seguimiento dado que son demasiadas las cosas que instala y son complejas a veces las dependencias que utiliza cada paquete y como se interrelacionan, muchas veces como dices mas de un paquete las necesita, o requieren diferentes versiones, solo queda cerciorarse de que lo elimino de package.json si quieres que quede lo mas limpio posible, quia podrías eliminar la carpeta modules y correr npm install para que reinstale todo pero sin lo que desinstalaste, fuera de eso solo confiar.
+            FF - Esta respuesta me decepciono un poco, yo buscaba algo tipo
+                https://wiki.gentoo.org/wiki/Knowledge_Base:Remove_orphaned_packages
+
+                https://stackoverflow.com/questions/21417014/npm-command-to-uninstall-or-prune-unused-packages-in-node-js
+                https://medium.com/stackfame/how-to-npm-unistall-unused-packages-in-node-js-ea80afb6d1a7
+                npx depcheck
+                npm prune <pkg> — production
+
+                Arriba deje 3 links, el primero seria lo q si conosco y he usado muchisimas veces y entiendo los otros 2 rescato estos 2 comandos pero no estoy seguro de la usabilidad y de allí la pregunta. Ya q creo q aun borrando y reinstalando uno puede terminar poniendo basura, por eso el balance entre q metodo y q metodo usar y porque, creo q si instalo obviamente todo va a andar y eso es lo importante pero tambien podria armar argumentos para el otro caso (estabilidad? portabilidad?) y para algo se crearon esas herramientas. Espero no ser muy vueltero pero en el caso de emerge me ha salvado muchisimo aunque no debería comparar un sistema operativo a un projecto.
+                        Tutor - Si efectivamente hay comandos e incluso herramientas externas que ayudan un poco para esto, pero al menos hasta ahora yo no he visto ninguna que me gestione correctamente esto, algunos como dice borran paquetes huérfanos o sin uso, que eso de por si ya es fácil hacerlo uno mismo, otros borran los no listados, pero a veces hay algunos no listados que igual son necesarios, lo digo porque ya me paso, que los elimino y tuve que reinstalar algún modulo para repararlo, entonces si es mucho problema a veces, yo intento mantener cierta limpieza solo hasta cierto punto, de cualquier manera por cuestiones de espacio suelo estar desinstalando e instalando modules, y cada que hay cambios pues ya se ven reflejados, además de tener en cuenta que la mayoría de todos estos serán mientras están en desarrollo una vez para el deploy casi nada de esto se mantiene tal cual, pero ya me dejaste la duda, el próximo fin de semana que estaré mas libre investigare mas a fondo al respecto y si encuentro algo te estaré avisando.
++
+
+
++ Q solo la primera letra de cada sección este en mayuscula.
+    Lamentablemente solo contamos con toUpperCase y toLowerCase, si lo que quieres es capitalizar, pues no queda mas que crear tu propia función para ello, hay maneras relativamente sencillas de hacerla.
+            FF - Creo q lo voy a poder hacer cuando entienda mas como funciona el codigo de MUI o aplicando CSS (q existen selectores para primera letra o estilos q capitalizan) la pregunta venia más por la mano de q no entiendo con detalle como pasa todo.
+                    Tutor - Si hay maneras variadas de lograrlo, yo cuando lo he hecho monto una función que justamente primero hace que todo vaya a lowerCase y después cambia la primer letra a Mayúscula, me es mas cómodo que ir viendo donde poner código ya sea JS o CSS, solo llamo mi función que se lo que hará y listo, pero pues por el lado de entender como pasa todo solo hay una manera de interiorizarlo de verdad, hacerlo por tu cuenta, por ejemplo yo soy fanático de hacer todo pollyfils, no se si hayas escuchado de ellos, pero es hacer algo que ya existe una función hacerlo por tu cuenta con puro JS, por ejemplo tomar el método reverse y desarrollarlo tu, esto me ha ayudado demasiado a entender como funciona todo por detrás y eso me lleva a que todo lo demás sea sencillo, conociendo el flujo del código avanzar muchísimo la verdad.
++
+
+
++ Forma correcta de Incorporar Imagenes, Logos, SVGs, en especial como recomienda q modifique la estructura propuesta por ReactJS y q relacion hay con manifest.json (se autocompleta con algun comando?).
+        Tu pregunta extra en la entrega: la forma correcta de incorporar logos y todo eso, creo que lo estas haciendo bien, yo suelo crear una carpeta assets y aquí una para este tipo de archivos, y desde aquí importar todo pero si no manejaras demasiados assets pues quiza así solo la carpeta img basta, en cuanto al manifest pues este es para indicar que debe cargar y como, puedes pasar de el, es mas enfocado a PWA y un poco a lo que mencionabas de mobile first ya que puedes mostrar los diferentes logos que podrías cargar o colores, la verdad no es tan complicado pero si extenso y escapa a este curso, en cuanto a lo de la estructura propuesta por React, pues que te digo, ya tambien depende demasiado, pero yo suelo eliminar casi todo antes de comenzar a trabajar y limpio los archivos que si mantendré para trabajar, en realidad lo que mas me interesa de lo que hace create-react-app esta mas por detrás que en la estructura que nos muestra de frente.
++
+
+
+
++ Re Entrega
+    En cuanto a tu entrega va bastante bien, las observaciones que les hice a tus compañeros tu ya las tienes cubiertas y ya adelantaste el useState asi que vas avanzando perfecto, la observación del header ya la deje en una de las preguntas contestadas. Increíble que ya utilices aquí el map, es algo que recomiendo mucho sobre todo como practica para lo que vendrá, tambien podrías intentar mas que cargar directamente algo con el map, renderizar un componente, esto tendrá mas sentido mas adelante cuando comiences a cargar tus productos. Tu entrega pasa a estar aprobada y espero haber respondido bien a todas tus preguntas, si alguna no quedo clara con confianza puedes contactarme e intentamos que quede mas claro. vas increíble, sigue así.
+            FF - No uso useState ni map por merito propio, sino q copie y pegue el codigo de MUI y lo fui editando y haciendo experimentos, estuve mucho tiempo leyendo sobre Links, Icons, IconButton, Button, SVGs y demas pero no logre aun consolidad como correctamente poner el logo y q el logo sea link a index. Entiendo más o menos lo q hacen las cosas pero aun no en detalle y las fui editando levemente porque me di cuenta q eran necesarías, en el after paseamos un poco por la estructura de React pero creo q si hay algo q necesitaria es q nos ayuden a familiarizarnos más con eso, ya q muchas de mis preguntas y las dudas d los compañeros parecen estar basadas en no saber DONDE hacer QUE.
+                    Tutor - Si jaja después note que eran de MUI pero me encanta eso de que investigues, profundices y experimentes, eres de todos los alumnos que tengo el que de verdad se preocupa por todo esto, me recuerdas mucho a mi cuando comencé y créeme llegaras lejos, lo de que tu logo sea link a index, ya llegaremos a eso se hará con Router, ya que como te comentaba, aquí no cambiamos de pagina, siempre estamos en la misma pagina, solo cambia lo que muestra, claro que podemos tener cambios en el link, pero digamos que son artificiales, ya veras eso mas adelante o te lo explico después cuando lo veamos para no confundirte desde antes, pero si concuerdo en que hace falta mucho sobre estructura y como se interrelaciona todo, algunas cosas si se cubren mas adelante, otras lamentablemente nos toca investigarlas y aprendelas, lamentablemente un bootcamp es así, te dan una ligera guía para que tengas noción de que y por donde abordarlo y estas por tu cuenta, pero esta bien, así te acostumbras a lo que será toda la vida laboral.
++
+
+
++ Correcta forma de usar App.css y aplicar estilos de otras formas.
+    Pasando con tu pregunta dentro del código la verdad no se que tanto css planeas utilizar, normalmente si hay personas que meten todo en app.css puesto que al final todo el css se unifica y casi todo el código css que trae React por defecto podrías eliminarlo así tendrías un archivo ya listo para trabajar, yo soy mas de crear css por componente, aunque a veces si es muy poco si es contraproducente ya que solo terminas con muchos mas archivos, en el caso de solo sobrescribir pues quiza no convenga crear un archivo solo para eso, aquí solo queda recordar, que mas que buenas practicas generales a veces es mejor adaptar, los proyectos siempre serán diferentes entre si y es difícil estandarizar todo, hay que ir formando buen sentido comun para adaptarse a esos cambios y crear acorde a ello.
+
+    Por ultimo de las filosofías que mencionas, pues siempre optare por intentar las formas modulares, ayudan a reutilización y a crecer y adaptar proyectos, pero no siempre aplica, así que volvemos a lo mismo, depende de muchos factores decidir cuando utilizar uno u otro e incluso a veces a medio camino puedes llegar a cambiar, esto es mucha practica e ir creando ese sentido comun que nos guia para todo ello.
+            FF - Esto es algo q me puse a intentar definir en JavaScript y q lo modifico según lo q estubimos hablando y viendo en ReactJS a ver si me puede ayudar a afilarlo más:
+                (styl por stylus-lang q despues armaria el css correspondiente)
+
+                · init.styl
+                    Pensado a Nivel Projecto.
+                    Aquí basicamente se armarían unos hash q buscan homogenizar:
+                        ref
+                            referencias q sirven para alinear, estandarizar tamaños u otras cosas a lo largo de todo el projecto.
+                        colors
+                            variables con los colores descritos al estilo main, ascent y demas, asi no importa donde se usen estan definidos por su funcion
+
+                · App.css
+                    Pensado a Nivel Projecto.
+                    Para cosas q tenga q espesificar porque un paquete o libreria me lo pide. Tendría q ver como importar init.styl ya q no me gustan mucho las variables de CSS por ahí lo paso todo a stylus y luego compilo pero el punto es unir para q tome las referencías.
+
+                · main.styl
+                    Pensado a Nivel Projecto.
+                    Importa init.styl
+                    Para separar el codigo mio q afecta al projecto en general y linkearlo debajo de App.css así de ser necesario sobreescribe.
+
+                · NombreModulo.styl
+                    Nivel Modulo.
+                    Importa init.styl
+                    Definir todo lo q no sea dinamico aquí.
+
+                · En el modulo en sí (aun no se bien como definir esto)
+                    Nivel Modulo.
+                    Ver como tomar lo q esta en init.styl.
+                    Para estilos dinamicos o q son afectados por el codigo en tiempo real.
+                    Evitar usar inline o sx.
+
+                        Tutor - Respecto a esto wow increíble como lo analizaste, si tienes muy buena noción, pero pues uhm como decirlo, si quieres entender mas sobre React con los estilos analízalo mas desde lo que es el dom tree porque así como hay para las etiquetas HTML tambien hay para los css y como bien mencionas el de app.css es el global, aunque mas que global es el inicio del árbol, después de ahí va cargando  los otros en el orden del árbol y si hay algo que deba sobrescribir lo hará y si no solo seguirá su camino, de esta manera al terminar de procesar termina con un solo archivo css en donde englobo todo pero siguiendo esa estructura.
+
+
+            Esto ultimo es una nota personal sobre lo q aun estoy definiendo, en parte tiene q ver el como dividir o pensar un hash llamado theme
+                styl divide in main ( la pag dónde está el planner), init(se import en las distintas partes para homogenizar, ref, colors), BSFPlanner(la variable theme solo usarla para cosas q se repitan para el resto estária el archivo css generado por este styl, apare de cosas específicas como btn.border poner en la raíz de theme cosas genéricas como border, etc)
+
+            Preguntar sobre assets y cual es el industry standard
+                    Tutor - si con un industry standard de assets te refieres a como organizar todo dentro, la verdad es que no hay nada completamente definido, si varia demasiado, pero al mismo tiempo cada vez es menos relevante, se que suena extremo y quiza hasta tonto pero deja te comento porque, los assets cargados realmente en tu sitio cada vez son menos, cada vez es mas comun que todo esto se traiga desde un sitio externo, entonces ahora mas que nunca no tiene sentido estandarizar algo que esta quedando fuera, lo que si llegues a tener ahí para organizarlo dependerá de la cantidad de cosas que tengas y que tan variado sea su tipo, como comentaba al ser cada vez menos quiza ya no valga la pena tanta anidación de carpetas como solía hacerse antes, solo con que tu tengas un cierto control y orden basta.
++

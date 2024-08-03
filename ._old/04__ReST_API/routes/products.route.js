@@ -1,21 +1,18 @@
 import { Router } from "express";
 import { fileURLToPath } from 'node:url';
-import RAMBox from "../classes/RAMBox.js";
+import RAMBox from "../classes/RAMBox.mjs";
 import Verdicts from "../data/verdicts.js";
-
-import type { Request, Response } from "express";
-import type { t_Verdicts } from "../data/verdicts.js";
 
 const MerchMan = new RAMBox( 'products.json', fileURLToPath( new URL( '../data/', import.meta.url ) ) );
 const Route_Products = Router();
 
 
-Route_Products.get( '/products', ( _, res: Response ) => {
-    res.render( 'Products_Table', { 'Products': MerchMan.i, 'title': 'Austral Interpretar : Products' } );
+Route_Products.get( '/products', ( req, res ) => {
+    res.status( 200 ).json( MerchMan.i );
 } );
 
-Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
-    const match = MerchMan.m_del( req.body.id );
+Route_Products.get( '/products/:id', ( req, res ) => {
+    const match = MerchMan.m_getById( req.params.id );
     if ( match instanceof Error ) {
         const v = Verdicts[match.cause];
         return res.status( v.status )[v.type]( v.outcome );
@@ -23,28 +20,32 @@ Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
     res.status( 200 ).json( match );
 } );
 
-Route_Products.post( '/products/add', ( req, res ) => {
-    const match = MerchMan.m_new( req.body );
+Route_Products.post( '/products', ( req, res ) => {
+    const id = MerchMan.m_new( req.body );
+    if ( id instanceof Error ) {
+        const v = Verdicts[id.cause];
+        return res.status( v.status )[v.type]( v.outcome );
+    };
+    res.status( 200 ).json( { id } );
+} );
+
+Route_Products.delete( '/products/:id', ( req, res ) => {
+    const match = MerchMan.m_del( req.params.id );
     if ( match instanceof Error ) {
         const v = Verdicts[match.cause];
         return res.status( v.status )[v.type]( v.outcome );
     };
-    res.render( 'Products_Table', { 'Products': MerchMan.i, 'title': 'Austral Interpretar : Products' } );
+    res.status( 200 ).json( match );
 } );
 
-/* * No permite actualizar el id de forma manual, de necesitarlo borrar el producto y re agregarlo, así garantiza el uso correcto de UUID */
-// ! Pork no puedo poner put aquí y q el form lo indique
-Route_Products.post( '/products/update', ( req, res ) => {
-    const match = MerchMan.m_set( req.body.id, req.body );
+// * No permite actualizar el id de forma manual
+Route_Products.put( '/products/:id', ( req, res ) => {
+    const match = MerchMan.m_set( req.params.id, req.body );
     if ( match instanceof Error ) {
         const v = Verdicts[match.cause];
         return res.status( v.status )[v.type]( v.outcome );
     };
-    res.render( 'Products_Table', { 'Products': MerchMan.i, 'title': 'Austral Interpretar : Products' } );
-} );
-
-Route_Products.get( '/', ( req, res ) => {
-    res.render( 'Products_InputForm', { 'title': 'Austral Interpretar : Inicio' } );
+    res.status( 200 ).json( match );
 } );
 
 // WIP Pensar q sería mejor retornar

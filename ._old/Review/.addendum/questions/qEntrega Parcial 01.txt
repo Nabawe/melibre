@@ -1,0 +1,131 @@
++ Necesidad de JSON Parse?
++ Doc Strings
++ useNavigate
++ Sobre declarar DONDE const, vars, etc
++ Cuando otros componentes se disfrazan de Link
++ mui-image import error
+
+
+- Pasar las rutas a relativas, anidadas y defaults (index)
+    Hacer esto y arreglar el tema q al seleccionar item detail se borra el filtro de category
+
+
+va a funcionar mas o menos como lo plantie y usaria el fetchItem solo cuando se coloca el id manualmente en la URL
+
+
+!! la razon de no pasar el item completo a ItemList es para no pasar info no usada, como desc_long
+    Pero con este nivel de info tal vez es peor generar 2 fetch si se puede bajar una cantidad acotada de items por pagina para q realizar multiples fetchs. O sea 20 resultados. O bajar el triple de resultados a mostrar, 20 pasados, 20 precentes y 20 para next. Ademas supuestamente solo se pasan referencias.
+        Hacerlo asi para la entrega esta y modificarlo para la final
+
+! Conciderar sacar poper e itemdetail y armar componente ItemPage
+    esto me confundio pensando en algo q se muestra en mouseover con mas detalle y algo q muestra una pagina para un solo item
+
+Al mostrar un solo item q el popper sea mas grande y proporcioan y se ajuste al centro de la pantalla.
+
+Conciderar si al mostrar un solo item tambien se ajusta la url a la categoria correspondiente.
+    /url/:catId/:itemId
+    VS
+    /url/:itemId
+        Este ultimo tambien se aplicaria si un solo item tiene multiples categorias, aunque las categorias deberian intentar ser una relacion unica y las tags multiples
+
+Ver como utilizar los Links de MUI y emprolijar en Navbar.jsx y finalmente combertir el logo en un link.
+
+Colocar Item Details en las cards
+
+Make
+    ErrorLoadingPacks.jsx
+    Contact.jsx
+
+
+ItemCounter.jsx
+    Mover la logica a ItemCounterContainer u otro componente padre.
+
+
+Leer sobre setTimeout
+
+
+Decir q no borraste comentarios por las preguntas.
+Comentar sobre la decicion de usar Popper y cuando usar el Find
+
+Escribir en los principios sobre esto:
+    usar import Image from 'mui-image' para las imagenes de los items, testear q sea como deceo.
+        Parece haber al menos 7 casos:
+            Box component='img'
+            Avatar
+            CardMedia
+            mui-image
+            Icon
+            img tag
+            icons and svg icons
+
+- ‘/’ navega a <ItemListContainer />
+- ‘/category/:id’  <ItemListContainer />
+- ‘/item/:id’ navega a <ItemDetailContainer />
+- Item.js debe navegar a /item/:id
+- brand navega a ‘/’
+- categoría del navbar navegar a /category/:categoryId ( hacer q sea clickeando en cualquier parte q tenga una cat )
+
+- Para finalizar integra los parámetros de tus async-mocks para reaccionar a :itemId y :categoryId ¡utilizando efectos y los hooks de parámetros que vimos en clase!
+- Si te encuentras en una categoría deberías poder detectar la navegación a otra categoría y volver a cargar los productos que correspondan a dicha categoría
+
+
++ Necesidad de JSON Parse?
+    Desde las entregas anteriores cuando accedo al archivo Packs_500.json en f_fetchPacks no necesito usar JSON Parse antes de utilizarlo, si hago un console.log( data ); dentro de el resultado positivo me devuelve Array, debería usar JSON Parse igual?, o solo si en mi data va a haber valores especiales como Objetos? Criterios aparte del tipo de datos?
+    Puede ser q cuando hago el import en el modulo se realize alguna conversión? de ser así q riesgos hay?
+
+    Si lo intento usar me tira el siguiente error :
+        "VM1675:1 Uncaught SyntaxError: Unexpected token o in JSON at position 1
+        at JSON.parse (<anonymous>)
+        at f_fetchPacks.js:14:1"
++
+
+
++ Doc Strings
+    Como debería marcar correctamente los argumentos Opcionales? Y el Return?
+    ejemplo en f_fetchItem VS Code me marca un ? en los opcionales pero no es muy claro y no me muestra el tipo de dato del return.
+    Una buena guia para docstrings? tipo una cheat sheet y o alguna extención recomendada? aunque si tengo el cursor sobre el nombre de la funcion y typeo /** VS Code me auto completa bastante. Raro q no haya alguna keybind para no depender del Mouse.
++
+
+
++ useNavigate
+    En la doc de React DOM declaran usando let navigate, porque no usar const?.
+
+    Usado en Item.jsx e ItemDetail.jsx
+
+    Q seria mejor hacer uso del hook o usar el MUILink con component Link (react DOM) como hice en Navbar.jsx?
+
+    No se q es más pesado, agil o correcto.
+
+    Al usar el hook me permite usar Typography tranquilamente, pero supuestamente MUILink esta basado en Typography y hacer asi seria mas 'semanticamente correcto' (usando link) aunque en realidad esta siendo usado como un boton de filtro... usar boton disfrazado de typography?
++
+
+
++ Sobre declarar DONDE const, vars, etc
+    Cuales son exactamente todas las diferencias entre declarar una variable o funcion:
+    1 - directamente debajo del import
+    2 - dentro de la funcion principal del componente
+    3 - en el return o render
+
+    Tengo mis nociones pero quiciera saberlo con mayor exactitud, sino un link a la doc apropiada. En especial la diferencia entre 1 y 2
++
+
+
++ Cuando otros componentes se disfrazan de Link
+    Tube q leer largosobre esto y aun no tengo una conclusión satisfactoría, si no entiendo mal lo más correcto es usar algun componente q este realmente definido como Link y a este stilizarlo para q se parezca a lo q quiero q se paresca y agregarle la funcionalidad usando la prop component y o un intermediario y la prop component.
+    Esto mayoriatariamente parece ser por temas de Accesibilidad y CEO, pero me pasa q en realidad yo quiero q la base sea el otro componente y q este tome la funcionalidad de los Links ya q no es solo como se ve sino como se siente ( hover, efectos, etc ).
+
+    Cual seria la forma correcta de proceder?
++
+
+
++ mui-image import error
+    Item.jsx
+    VS Code me tira:
+        "Could not find a declaration file for module 'mui-image'. 'node_modules/mui-image/lib/index.js' implicitly has an 'any' type.
+        Try `npm i --save-dev @types/mui-image` if it exists or add a new declaration (.d.ts) file containing `declare module 'mui-image';`ts(7016)"
+
+    No tengo idea como solucionarlo.
+    No estoy seguro de la eficacia y posibilidad de q me llene de packetes del comando q me sugiere usar.
+    No se si se podria solucionar modificando public/manifest.json.
+    No se si creando la capeta /types/mui-image (en el root del projecto) con index.d.ts se aplica a esto, ya q no se si en realidad es algo de TypeScript.
++

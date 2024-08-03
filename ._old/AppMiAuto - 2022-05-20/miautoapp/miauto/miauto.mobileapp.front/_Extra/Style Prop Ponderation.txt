@@ -1,0 +1,16 @@
+write any extra in an style prop at a newline
+    la ventaja de las utility props es q deberian filtrar el uso de algun style o prop q podria romper todo, o sea lo q NO esta definido por la lib NO lo entiende y por ende NO lo aplica y por eso NO rompe, o sea el peligro de usar style para no mezclar y acegurar q vallan al final es q se podría poner CUALQUIER COSA y problemas causados por cosas q ios o android no puedan entender
+
+
+
+valores no especificados por la lib, fuerzan a usar clasical props?
+    algo muy importante q descrubri q no se donde anotarlo para no olvidarnos es q SI USAS UNA PROP de native-base entonces tenes q usar alguno de los valores PREdefinidos por la libreria sino te combiene usar las props definidas por react native EJEMPLO
+usar width en vez de w si vas a especificarlo como 100%
+
+
+
+
+Definir 3 niveles separados al menos por un enter, espacio o etc
+    - Intrinsico del Componente ( Ejemplo el contador de un Badge )
+    - Estilos definidos por la Lib
+    - Estilos definidos por nosotros dentro de la prop style

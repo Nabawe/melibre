@@ -1,0 +1,33 @@
++ Components
++ Events
++ Functions
++ Routes
+
+
+    CoderHouse                          Yo
+
+
++ Components
+    CartWidged                          CartWidged
+    Item                                Item
+    ItemCount                           ItemCounter
+    ItemDetail                          ItemDetail
+    ItemDetailContainer                 ItemDetailContainer
+    ItemList                            ItemList
+    ItemListContainer                   ItemListContainer
+    NavBar                              Navbar
++
+
+
++ Events
++
+
+
++ Functions
+    getItem                             f_fetchItem
+    onAdd                               onAdd
++
+
+
++ Routes
++

@@ -1,0 +1,47 @@
+[
+    {
+        "adress": "Siemprevivo 932",
+        "coords": "I'm Pressed 1",
+        "cover": "https://picsum.photos/700/?324",
+        "cover_alt": "Foto del Servicio",
+        "desc_short": "Urgencias asd qwe zxc",
+        "rating": 7,
+        "title": "Paparazifirulipapi"
+    },
+    {
+        "adress": "Rickrolling 79",
+        "coords": "I'm Pressed 2",
+        "cover": "https://picsum.photos/700/?374",
+        "cover_alt": "Foto del Servicio",
+        "desc_short": "Servicio de Entretenimiento3333333333333333333333333333333333333",
+        "rating": 6,
+        "title": "Ratablanca",
+    },
+    {
+        "adress": "Cavo Cañaveral 2183",
+        "coords": "I'm Pressed 3",
+        "cover": "https://picsum.photos/700/?394",
+        "cover_alt": "Foto del Servicio",
+        "desc_short": "Siniestro asd asd asd",
+        "rating": 3,
+        "title": "Aleluya"
+    },
+    {
+        "adress": "300 E Street",
+        "coords": "I'm Pressed 4",
+        "cover": "https://picsum.photos/700/?914",
+        "cover_alt": "Foto del Servicio",
+        "desc_short": "National Aeronautics and Space Administration",
+        "rating": 10,
+        "title": "NASA"
+    },
+    {
+        "adress": "Geneva, Switzerland",
+        "coords": "I'm Pressed 5",
+        "cover": "https://picsum.photos/700/?214",
+        "cover_alt": "Foto del Servicio",
+        "desc_short": "Large Hadron Collider",
+        "rating": 10,
+        "title": "CERN"
+    }
+]

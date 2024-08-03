@@ -1,0 +1,59 @@
+{
+	"files": [
+		{
+			"path": "src/index.ts",
+			"bookmarks": [
+				{
+					"line": 28,
+					"column": 34,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/routes/shops.route.ts",
+			"bookmarks": [
+				{
+					"line": 4,
+					"column": 57,
+					"label": ""
+				},
+				{
+					"line": 15,
+					"column": 84,
+					"label": ""
+				},
+				{
+					"line": 57,
+					"column": 23,
+					"label": ""
+				},
+				{
+					"line": 63,
+					"column": 23,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/routes/products.route.ts",
+			"bookmarks": [
+				{
+					"line": 4,
+					"column": 58,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/models/RAMBox.ts",
+			"bookmarks": [
+				{
+					"line": 85,
+					"column": 100,
+					"label": ""
+				}
+			]
+		}
+	]
+}

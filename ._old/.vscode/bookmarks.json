@@ -1,0 +1,219 @@
+{
+	"files": [
+		{
+			"path": "zz__Common/classes/items_managers/JSONBox.mjs",
+			"bookmarks": [
+				{
+					"line": 54,
+					"column": 43,
+					"label": ""
+				},
+				{
+					"line": 82,
+					"column": 12,
+					"label": ""
+				},
+				{
+					"line": 104,
+					"column": 26,
+					"label": ""
+				},
+				{
+					"line": 110,
+					"column": 23,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "03__Express/Questions-03.txt",
+			"bookmarks": [
+				{
+					"line": 28,
+					"column": 13,
+					"label": ""
+				},
+				{
+					"line": 64,
+					"column": 73,
+					"label": ""
+				},
+				{
+					"line": 77,
+					"column": 22,
+					"label": ""
+				},
+				{
+					"line": 125,
+					"column": 23,
+					"label": ""
+				},
+				{
+					"line": 141,
+					"column": 7,
+					"label": ""
+				},
+				{
+					"line": 150,
+					"column": 50,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "04__ReST_API/routes/single.js",
+			"bookmarks": [
+				{
+					"line": 7,
+					"column": 30,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "04__ReST_API/classes/RAMBox.mjs",
+			"bookmarks": [
+				{
+					"line": 3,
+					"column": 28,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "04__ReST_API/routes/products.route.js",
+			"bookmarks": [
+				{
+					"line": 60,
+					"column": 36,
+					"label": ""
+				},
+				{
+					"line": 69,
+					"column": 18,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "04__ReST_API/Questions-04.txt",
+			"bookmarks": [
+				{
+					"line": 191,
+					"column": 27,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "05__Templates_Engines/routes/products.route.js",
+			"bookmarks": [
+				{
+					"line": 11,
+					"column": 35,
+					"label": ""
+				},
+				{
+					"line": 33,
+					"column": 42,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "05__Templates_Engines/public/404.html",
+			"bookmarks": [
+				{
+					"line": 17,
+					"column": 18,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "05__Templates_Engines/classes/RAMBox.mjs",
+			"bookmarks": [
+				{
+					"line": 151,
+					"column": 75,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "06__Websocket/06-TypeScript.ts",
+			"bookmarks": [
+				{
+					"line": 76,
+					"column": 14,
+					"label": ""
+				},
+				{
+					"line": 107,
+					"column": 32,
+					"label": ""
+				},
+				{
+					"line": 232,
+					"column": 42,
+					"label": ""
+				},
+				{
+					"line": 282,
+					"column": 96,
+					"label": ""
+				},
+				{
+					"line": 346,
+					"column": 23,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "../Class - 11 - Websockets - 01/Class - 11 - Websockets - 01.txt",
+			"bookmarks": [
+				{
+					"line": 16,
+					"column": 67,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "06__Websocket/06-TypeScript-Setup.txt",
+			"bookmarks": [
+				{
+					"line": 263,
+					"column": 52,
+					"label": ""
+				},
+				{
+					"line": 337,
+					"column": 0,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "06__Websocket/06-TypeScript-Lang.ts",
+			"bookmarks": [
+				{
+					"line": 62,
+					"column": 26,
+					"label": ""
+				},
+				{
+					"line": 78,
+					"column": 45,
+					"label": ""
+				},
+				{
+					"line": 308,
+					"column": 88,
+					"label": ""
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,74 @@
+Cases:
+
+0 - Simple:
+
+i = Interger, s = String, x or h = Hash, a = Array, f = Function, w = witness, etc
+--------------------------------------------------------------------------------------------------------------------------------------
+1 - Compound:
+
+Each Variable Name is made up of ordered parts witch I will call Levels.
+Each "_" indicates the begining of a Level.
+
+The default Levels are:
+
+
+<Owner>_<Program>_<Module>_<Function or NameSpace>_<Variable>
+
+
+Levels Rule:
+	- The Name string can not ommit any Levels; the whole path must figure.
+
+
+Any Level Name may be expanded into the following subLevels:
+
+
+<Use>__<Type>__<Level Name>__<subClassification1>__<subClassification2>.....
+
+
+subLevels Rules:
+	- Any subLevel may be ommited though Level Name; with out it there is no Level to be expanded.
+	- subLevels and Levels must use diferent separators: _ was the Level sep and __ the subLevel sep.
+
+
+
+Demostration:
+
+FreeFog.Q.Function.Move__Frame
+Owner_Program_Module_FunctionName__FunctionNameSubCassification
+
+There could be many "Move" functions so a subLevel classification was used to complete the name (__Frame), at the same time there could be subClassifications of the subClassifications such as:
+
+FreeFog.Q.Function.Move__Frame__Default
+FreeFog.Q.Function.Move__Frame__Many
+
+
+When sucesive subClassifications of subClassifications occur one may concider to use a accumulative systhem. By defining the Grade of subClassification with a string of repeated "_":
+	"__" Grade 1, "___" Grade 2, "____" Grade 3, ...
+But the case is quite rare and the use of accumulation generaly leads to unecesary complications.
+
+
+Uses List:
+
+K=Constant, T=Temporal, Y or C=Counter, F=Flag, A=Array, H or X=Hash, r=Range, ...
+
+Types List:
+
+I=Interger, S=String, B=Boolean, O=Objet, R=Real, U=UntypedValue, f=Function, ...
+
+Note:
+The Array refers to linear arrays, no necesarely indexed by numbers, they could be indexed by a set or progression.
+
+
+Example:
+
+FreeFog_Searcher_SetUp_MainFunction__K__S__DefaultErrorMessage__Warning
+
+Owner_Program_Module_Function__Use__Type__Name__subClassification
+
+
+Tip:
+Some times might be difficult to decide whether to use a Level or subLevel, in most of the occasions this happens when one can't decide if the new part is a Level or a subLevel and forgets that to apply this naming rule one must first DEFINE the general structure containing the posible Levels for a sertain purpous.
+Sometimes the way one names global fuctions, modules it is not convinient to for example Handlers structures or internal variables inside a mainframe.
+Using The default Levels structure:
+<Owner>_<Program>_<Module>_<Function or NameSpace>_<Variable>
+if the new part does not fit in any Level then is a subLevel and must use the subLevel sep.

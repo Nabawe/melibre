@@ -1,0 +1,21 @@
++ hacer un alias para hacer git commit y npm version patch
++ Error Handling
++ Debugging
+
+
++ hacer un alias para hacer git commit y npm version patch
+    para hacer todo en un comando.
+    Ver como se puede especificar el ~ o * o ^ desde el comando install en npm (esto es sobre las dependencias marcadas en package.json de una app q uno este creando)
++
+
+
++ Error Handling
+    - Q nos muestre ejemplos de como mantener la ejecución del programa en un catch y notificar al usuario.
+    - alternativas a throw y como usarlo correctamente
++
+
+
++ Debugging
+    - Q nos muestren sobre el debugger de VS Code como extra?
+    - mocha
++

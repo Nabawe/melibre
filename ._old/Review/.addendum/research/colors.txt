@@ -1,0 +1,9 @@
+White
+    White           FFFFFF
+
+Orange
+    Flame           E8522B
+    Orange Soda     F24B32      Extra
+
+Blue
+    Prussian Blue   02355A

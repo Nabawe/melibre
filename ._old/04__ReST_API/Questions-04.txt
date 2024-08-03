@@ -1,0 +1,264 @@
++ Cada End Point Debería Terminar en return ?
++ Qué significa archivos estáticos?
++ Como reemplazar __dirname
++ Express.static vs Server.get( '/'...
++ Arquitectura de un Proyecto
++ NO_DATA y status codes
++ Destructuring with Arrays Indexes
++ Forma Correcta de Guardar los JSON de Errores
++ Porque necesito el required en los inputs?
++ Como determinar si un objeto es un Error
++ Q formas tiene una pág. cliente de enviarle data a un servidor?
++ Formato /data/products.js
++ Encabezado RAMBox.mjs
++ RAMBox.mjs #init
++ return new Error vs throw
++ return new Error y métodos privados
++ Consigna
++ Encabezado Entrega
++ ReTutor
+
+
++ Cada End Point Debería Terminar en return ?
+    Cuando pongo:
+        '  res.status( 200 ).send( phrase[pos] ); '
+
+    No debería poner:
+        ' return  res.status( 200 ).send( phrase[pos] ); '
+
+    ?
+
+    Esta pregunta me importa bastante por ejemplo se ve en .../routes/products.route.js pero también me viene la duda si es algo q debería poner en todos los res. q no sean finales.
++
+
+
++ Qué significa archivos estáticos?
+    Entiendo q son el CSS, HTML y demás pero q son exactamente? q propiedades tienen q tener O NO tener para q Express los pueda usar para levantar un servidor Web? Q serían dinámicos?
++
+
+
++ Como reemplazar __dirname
+    Si no entiendo mal ya no se usa más, cual sería la forma correcta de suplantarlo? Yo me base en este articulo:
+        https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
+
+    Realmente creo q lo hice mal, q tendría q usar algo tipo Path.dirname o alguna otra forma, probé distintas cosas pero termine usando algo parecido a lo q muestran al principio.
+
+    O por casualidad ahora NodeJS lo hace solo?
+
+    Server.get( '/', ( req, res ) => {
+        res.sendFile( fileURLToPath( new URL( './public/index.html', import.meta.url ) ) );
+    } );
+
+    Todo el siguiente choclo no se si combiene ponerlo en una variable para q no se ejecute cada vez, el problema es q si lo hago no se si pierde la gracia ya q supuestamente es para q se adapte:
+    const path_index = fileURLToPath( new URL( './public/index.html', import.meta.url ) );
+    Server.get( '/', ( req, res ) => {
+        res.sendFile( path_index );
+    } );
++
+
+
++ Express.static vs Server.get( '/'...
+    \04__ReST_API\.tests\08_Tests\Desafio__02\index.mjs
+
+    Cuando coloco:
+        Server.use( Express.static( fileURLToPath( new URL( './public', import.meta.url ) ) ) );
+
+    Si luego pongo cualquier cosa en el endpoint:
+        Server.get( '/', ( req, res ) => {
+            res.sendFile( fileURLToPath( new URL( './public/index.html', import.meta.url ) ) );
+        } );
+
+    No parece afectar o cumple alguna función el Server.get? Ya q si no entendi mal la documentación el setear Express.static ya setea ese endpoint.
+
+    https://expressjs.com/en/4x/api.html#express.static
+        index
+            Sends the specified directory index file. Set to false to disable directory indexing.
+            Defaults: “index.html”
++
+
+
++ Multer Storage Direction
+    No se si la estoy especificando bien o si tengo q usar algo al estilo de:
+
+    fileURLToPath( new URL( './uploads', import.meta.url ) )
+
+    const Storage = Multer.diskStorage( {
+    destination: ( req, file, cb ) => {
+        cb( null, './uploads' );
+    },
+
+    Lo use en mis tests : .../04__ReST_API/.tests
+
+    Aparte esto q puse en mis notas es correcto? Creo q me estoy confundiendo con lo de como se le pasa al engine de Storage.
+        http://expressjs.com/en/resources/middleware/multer.html
+
+        !!! Cuando se lo pasa por dest parece ser una string y cuando es storage se le manda la configuración del engine elegido.
+            Si no entiendo mal si se usa storage y no existe el directorio donde guardar los archivos tira error y no lo crea, pero si se le pasa por dest si lo hace.
++
+
+
++ Arquitectura de un Proyecto
+    Recomendación de donde ver esto, sobre el orden y organización.
+    Aparte si bien me imagino q por lo general esto esta en una base de datos, donde guardaría el json con los productos? y he visto el uso de la carpeta assets pero me suena q es más para imágenes y esas cosas.
++
+
+
++ NO_DATA y status codes
+    Cuál sería el codigo de error correcto?
+    El tipo de res.send correcto? json?
+    En realidad no sería un error del Servidor? ( 500 )?
+    Los otros códigos de status los use bien? se ven en /data/verdicts.js
+
+    res.status( 412 ).send( new Error( ERR__NO_DATA ) );
+        La línea anterior solo me deja {} en la pantalla del browser.
++
+
+
++ Destructuring with Arrays Indexes
+    Como puedo hacer esto mejor, basándome en :
+
+        https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+            Assigning to new variable names
+                const o = {p: 42, q: true};
+                const {p: foo, q: bar} = o;
+
+                console.log(foo); // 42
+                console.log(bar); // true
+
+        No sería realmente una nueva variable
+
+    ( {
+        title: Products[index].title,
+        price: Products[index].price,
+        thumbnail: Products[index].thumbnail
+    } = req.body );
+
+    Esto esta en su versión final en /classes/RAMBox.mjs método m_set
++
+
+
++ Forma Correcta de Guardar los JSON de Errores
+    Usar JSON y convertir cada vez vs importar como un objeto con objetos?, creo q la 2 opción es más pesada y supuestamente solo tendría q frenarse cuando falla, q sería lo correcto?.
+
+    Al correr la línea :
+        import ErrorsMsgs from '../data/errors.msg.json' assert { type: "json" };
+
+    No termina volviéndose un objeto de objetos? ( prove con console log ), entonces pork no definirlo directamente en un archivo .js normal como:
+        const ErrorsMsgs = { key: { error: 'Message' } };
+        export default ErrorsMsgs;
+
+    Use .json por intuición... pensando q si eran strings pesaba menos en la memoria.
+
+    Aparte si no entendi mal importar con require es un proceso sincrónico e import asincrónico, puede causar algun problema como lo use? estoy diciendo cualquier cosa?
++
+
+
++ Porque necesito el required en los inputs?
+    Si no coloco required en los inputs no me manda la info. Hay alguna forma distinta ya q es absurdo q necesite required en todos. O hay algo q este haciendo mal o en mi entorno podría estar el problema?
++
+
+
++ Como determinar si un objeto es un Error
+    Encontre estos 2 metodos, cada uno con sus contras quería saber q me recomendabas o si habia alguna forma mejor:
+
+        import ErrsMsgs from '../data/messages/errors.msg.json' assert { type: "json" };
+
+        function ErrorTest() {
+            return  new Error( ErrsMsgs['CAN_T_READ'], { cause: 'CAN_T_READ' } );
+        };
+        console.log( ErrorTest() instanceof Error );
+        console.log( Object.prototype.toString( ErrorTest() ) );
+
+    instanceof puede tener problemas si hay distintos entornos globales.
+    toString puede ser afectado por las decisiones de otras personas.
+
+    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof
+    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
++
+
+
++ Q formas tiene una pág. cliente de enviarle data a un servidor?
+    En el desafío habia cosas q se tenían q mandar con postman para probarlas, yo agregue 2 métodos para cuando se modifica el archivo pero no estaba seguro si estaba 'rompiendo' el protocolo REST.
+
+    Q formas hay, o cuales son las q se consideran más correctas, me imagino q JavaScript deberia poder enviar POST, GET, PUT y demás, mientras q un formulario HTML solo puede POST y GET.
+
+    AJAX? Encadenar y testear si se paso un body, query determinado usando forms?
+
+    Ej: /routes/products.js
+        Route_Products.post( '/products/save', ( req, res ) => {
++
+
+
++ Formato /data/products.js
+    No sería más eficiente si usáramos un Objeto con Objetos dentro con la key siendo el id en string?. Pienso q achicaría codigo y la busqueda de los Ids sería al menos 100 veces más rápida.
+    Si fuera por las ventajas de los metodos de arrays se pueden usar Object.keys para extraer solo las keys del Objeto.
+
+    Ejemplo:
+        {
+            '4h35634w6': {
+                price,
+                thumbnail
+            },
+            '34gh5343hb': {
+                price,
+                thumbnail
+            }
+        }
+
+    Tiene algo q ver con bases de datos o manipulación de archivos q usemos los arrays?
++
+
+
++ Encabezado RAMBox.mjs
+    Agradecería si lee los comentarios q están al inicio de la /class/RAMBox.mjs y me da una opinión; Mas q nada me pone un poco triste no poder manipular bien las funciones async ya q sino lo hubiera codeado algo más próximo a lo q planteé allí.
++
+
+
++ RAMBox.mjs #init
+    Este método q inicializa la una instancia de la class me dio varios problemas pero en especial me gustaría si me puede responder ¿Cómo correctamente validad q el archivo JSON se importo bien?.
+
+    Al estar en un try catch si el archivo tiene algun carácter no valido o si esta vació para JSON.parse se pasa el error pero el problema no termina solo allí, ya q por ejemplo un archivo con un número solo dentro es un archivo JSON valido, así como {}, etc. , el número de checks sería bastante largo y tampoco estoy seguro como lo podría hacer.
+
+    También supuestamente los métodos de fs confirman si el archivo existe o no, com hago para aprovechar eso? o sea si no existe crearlo y a los directorios especificados en la dirección?
+
+    Aparte se q existen imports dinámicos pero no tengo idea como se usan o si sería correcto usarlos aquí.
++
+
+
++ return new Error vs throw
+    Esta es otra pregunta importante q quedo acarreada de las entregas anteriores y todabia no me cierra del todo:
+
+    El problema q veo es q si uso throw no paralizo todo? o parcialmente al servidor? lo q busco es tirar el error para poder resolverlo en un catch o método o q el usuario pueda lidiar con el.
+
+    Y aparte los estoy usando bien? ya q no se si los estoy 'convirtiendo' en una especie de Objeto q contiene cosas pero q o esta funcionado como un error propiamente programado.
++
+
+
++ return new Error y métodos privados
+    En los métodos privados de RAMBox tuve q cambiar un poco como tiraba error el programa, ya q cuando pongo return new Error si no hay algo q reciba esa info se quedan en la nada, es correcto usar console.error o como debería hacer?.
++
+
+
++ Consigna
+    La gran mayoría de los cambios y cosas q me pasaron en está entrega tienen q ver con :
+        " Implementar la API en una clase separada, utilizando un array como soporte de persistencia en memoria. "
+
+    Espero haber entendido bien, más q nada use una class y una route pero me pregunto si queria q saque los endpoints de la rute en si y como sería.
++
+
+
++ Encabezado Entrega
+    Como le comente la tenía lista antes y no la pude entregar, a causa de eso y como me sentía inconforme la termine haciéndola 3 veces, mas q nada para adaptar como se comunicaban el servidor y la clase Contenedor ( q yo le di los nombres RAMBox y JSONBox según como operaban ). Esto se puede ver en commits viejos, q esta funcional o casi funcional pero completamente distinto codeada.
+    Este ultimo commit fue a esta hora mas q nada revisando las preguntas de esta entrega; Me queda aun recopilar las preguntas de las entregas 02 y 03 para re-enviárselas.
+
+    Como siempre por favor revise el archivo de preguntas: Questions-04.txt.
+
+    Gracias y 'buen día'.
++
+
+
++ ReTutor
+    Hola Franco, como va? La verdad me quedé impresionado con la implementación, felicidades! muy buen trabajo. Como puntos a favor es el orden y prolijidad del código, la distribución de la responsabilidad, todo anda genial. Como puntos en contra es que es difícil de entender, aún no logro descubrir la magia de mandar otro parámetro en el objeto Error y que lo tome como atributo cuando en la documentación dice que Error solo recibe un solo parámetro.. o el uso de las propiedades Chespirito y Mary Poppins en dataChecks :s
+
+    Y sobre la diferencia de retornar un objeto Error y un throw es que con un return estás diciendo que está todo bien, mientras con un throw obligas a que se lance el error y deje el flujo normal de ejecución, y ese error viaja hasta que alguien lo atrape. Podes usar un return pero para mí es ir en contra del manejo de errores, en todos los programas se lanza y atrapa excepciones.
++

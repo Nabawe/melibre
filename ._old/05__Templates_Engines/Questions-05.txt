@@ -1,0 +1,216 @@
++ Consigna
+
++ Mensaje al terminar el server
++ Lambda
++ Handlebars Docs
++ Handlebars-ClientSide
++ Handlebars-ServerSide
++ res.render()
++ Navbar y Cambiar el titulo
++ Direcciones Absolutas
++ HTML Form
++ Como utilizar más layouts
++ Es posible enviar más de una res o solo una por Endpoint
+
++ Encabezado Entrega
++ Chat CoderHouse
+
++ ReTutor
+
+
++ Consigna
+    Cuando dice no ReST se refiere a q no se exponga la API?.
+
+    Y "formato tabla dinámica" estimo q era q se carguen de un objeto y no tipo una pivot table q se puede filtrar, modificar tamaño o ordenar a-z, z-a.
++
+
+
++ Mensaje al terminar el server
+    Así como solemos poner un mensaje al iniciar el server, como haría para disparar algo al terminarlo? Ctrl C lo termina de forma bruta o le manda la señal de q se cierre? Cualquiera sea el caso como podría estar consiente de eso?
+
+        Tutor - Mensaje al terminar el server: No hay forma de controlar un CTRL C pero si errores internos más allá del evento error https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html
++
+
+
++ Lambda
+    Q es la letra Lambda uppercase Λ, lowercase λ q veo en algunos lados?
+
+        Tutor - No sé donde lo viste, el que mencionas de uppercase se usa en expresiones regulares como un carácter especial.
++
+
+
++ Handlebars Docs
+    No entendi por completo ni su usabilidad:
+        HTML Escaping
+        Partials
+
+    En especial cual seria su uso, ejemplo lo de Partials lo manejaría desde JavaScript antes q Handlebars, q ventaja tendría usar un Partial? Cache?
++
+
+
++ Handlebars-ClientSide
+    Quería ver como puedo colocar lo q se conceptualiza como "Views" en archivos separados pero cuando lo estoy usando como cliente, en lo q arme como /05__Templates_Engines/.tests/Handlebars-ClientSide/public/scripts/main.js y lo asigna a la variable content.
+
+    La pregunta en si seria ¿Cómo puedo desde el lado de un script q se ejecuta en el cliente importar archivos q no sean JavaScript o JSON o sea para q me entienda .handlebars?
+
+    Se ve en el choclo de comentarios arriba de todo en main.js lo q intente por más q con lo poco q se me doy cuenta q no tenia sentido. Pero como pregunta me parecía q tenia valor ya q creo q es algo q me podría cruzar con otras cosas.
++
+
+
++ Handlebars-ServerSide
+    05__Templates_Engines/.tests/Handlebars-ServerSide/
+
+        index.mjs
+            import DatosPersonales from './data/DatosPersonales.json' assert { type: "json" };
+            import Products from './data/products.json' assert { type: "json" };
+                1) ¿Cuál sería la forma correcta de cargar la data de cada página?, ya q mandarla con un import desde el inicio del server parece una animalada, import dinámico? pero no arruinaría el cache de handlebars?
+                    En la entrega la info la levanta la class.
+
+        2) Server.get( '/products', ( req, res ) => {
+            res.render('Products', { 'Product': Products } );
+        } );
+            Leyendo la doc vi q tenia q pasárselo como objeto con una key para q Handlebars sepa q es q, pero siento q hice algo mal, podría revisar en 05__Templates_Engines/.tests/Handlebars-ServerSide/views/Products.handlebars
+
+    Como habilito el Template Caching?
+        https://github.com/express-handlebars/express-handlebars#template-caching
+
+        Segun en link de anterior solo tengo q:
+            app.enable('view cache');
+            process.env.NODE_ENV === "production"
+
+        Lo q no entiendo bien es como setear esa variable de entorno, q cosas implica y si me estoy olvidando de algo más q sea obvio para alguien q sepa del tema. Si tuviera q adivinar lo pondría en index.mjs debajo de : const PORT = 8080 pero se me ocurre q tal vez va en otro lado o q el servidor tenga algun otro archivo dedicado a eso.
++
+
+
++ res.render()
+    res.render()         Render a view template.
+
+    Esto pasa en el servidor y ya envía la pagina? o el proceso de render se refiere a pasarlo por el engine de Templates para q produzca un html coherente a enviar?
+
+        Tutor - res.render: Exacto, pasa por el engine definido para mandar el html.
++
+
+
++ Navbar y Cambiar el titulo
+    No estaba seguro si era correcto colocar en la layout otra variable q no sea body, ya q si lo hago no se si esto hace q lo q pasa debajo como el cache q falle. Hice como sugería el siguiente link:
+        https://stackoverflow.com/questions/56212809/change-page-title-in-nodejs
+
+        <title>{{title}}</title>
+
+    Y en cuanto a la Navbar no sabía si lo correcto era ponerla repetida en cada una de las Views.
++
+
+
++ Direcciones Absolutas
+    1) en /public/404.html puse:
+        <!-- De no usar el path absoluto la página no aplica el CSS en sub directorios -->
+        <link href="/css/main.css" type="text/css" rel="stylesheet">
+
+    Me paso en casi todas las direcciones q tuviera q especificar q de no usar un URL absoluta el recurso no era encontrado, no sabía si lo estoy aplicando bien o si tuviera q hacerlo de otra forma o pasarlo como una variable y q Handlebars la cambié.
+
+    El ejemplo de arriba con la 404 es aun más especial q las otras ocurrencias ya q el 404 puede pasar en cualquier subnivel. /cualquier-cosa/o3i426 ; /mas/cual/quiera , etc.
+
+    ! 2) Otra cosa importante q me paso fue q:
+        http://localhost:8080/ no es lo mismo q http://localhost:8080/index.html
+
+        Al configurar la ruta raíz use:
+            Route_Products.get( '/', ( req, res ) => {
+
+        Pero de alguna forma no tendría q apuntar a index.html o algo así? el tema q cuando estamos armando server side por lo general tenemos un index.mjs y no un index.html. Q tendría q hacer para q este bien para un cliente? o simplemente duplico la ruta o le mando un next usando:
+            Route_Products.get( '/index.html', ( req, res ) => {
+
+        Pero lo q intente usando eso y variaciones me fallo.
+
+            Tutor - http://localhost:8080/ no es lo mismo q http://localhost:8080/index.html: Está bien el comportamiento porque en tu carpeta public no definiste un index.html. Tu endpoint de entrada es / no index.html así que si el usuario entra a index.html esta bien que de 404 ya que está definido. Si necesitás que tanto / y /index.html muestren el mismo html, tenés que definir ambas rutas y en una de ellas redirigir a la otra con res.redirect
++
+
+
++ HTML Form
+    necesito agregar esto en el form? enctype="multipart/form-data"
++
+
+
++ Como utilizar más layouts
+    Por las dudas hablo del concepto de Layouts y no de Views.
+    No me queda claro como utilizar más layouts, vi el ejemplo avanzado de express-handlebars.
+    Ya q lo q esta en este ejercicio pareciera q solo aplica a single page.
++
+
+
++ Es posible enviar más de una res o solo una por Endpoint
+    Algo al estilo de:
+        Route_Products.get( '/products', ( req, res ) => {
+            res.status( 200 ).json( MerchMan.i );
+            res.render('Products_List', { 'Products': MerchMan.i } );
+        } );
+
+    Me imagino q estará mal y q tendría q separar lo q es para servidores || APIs en /api pero queria saber si era posible ya q con un next tampoco pude y si podría haber un caso donde se aplique.
+
+        Tutor - Solo se envía una única respuesta.
++
+
+
++ Encabezado Entrega
+    Bueno terminé teniendo q investigar mucho más de lo q esperaba si no entendi mal las intenciones de la gente:
+        EJs = Backend
+        PUG = Frontend
+
+    Handlebars y EJs son los más populares en la parte de Backend pero yo creo q usaría Marko o Squirelly, es más la entrega la empecé a hacer en Marko pero despues me acorde q pedía Handlebars.
+    Lo q se le critica a Handlebars es q es lento y pesado a comparación de los otros paquetes. Use Handlebars en vez de EJs porque casi todas las nuevas librerías parecen usar una "Mustache Syntax".
+
+    En la entrega estoy mezclando json y render como respuestas y una de las preguntas tiene q ver con eso.
+
+    En una de las entregas anteriores también pregunte por lo del PUT en formularios esta vez coloque la solución q se me ocurrio, espero sea correcta pero en la pregunta esa de la entrega 04 marco otras.
+
+    Info Extra:
+        https://markojs.com/
+        https://squirrelly.js.org/
+        https://openbase.com/categories/js/best-nodejs-html-templating-engine-libraries
+        https://www.inkoop.io/blog/3-fast-template-engines-for-express-js-squirrelly-marko-swig/
++
+
+
++ Chat CoderHouse
+    Hola voy contestando por partes:
+
+    "Si Tenes temas personales que te producen ese estado" - Tutor : por ahi suena patético o cualquier cosa pero en esta entrega creo q el 60% del tiempo se fue en depresión y un problema medico menor q al final por suerte no fue nada. Sigo devil pero mañana espero estar todo el día en mi casa y quiero rezar q voy a poder adelantar.
+    ( Otros problemas, disco, migrar repo, docs handlebars, docs express )
+
+    Cuando especificar las rutas con URL y porque - FF
+        No entiendo tu pregunta, trata de ser específico de en qué caso de uso te referís. - Tutor
+            Disculpe si no di contexto pero creo q fui especifico aparentemente ahora en NodeJS, SI NO ENTENDÍ MAL, se especifican URLs o file URLs en vez de Paths en los comandos, y me parece q es más q nada cuando NodeJS tiene q buscar algo de un medio de almacenamiento o recurso interno del servidor pero no me queda claro cuando son realmente necesarias y cuando es mejor utilizar las direcciones tipo /data/productos.js, lo de las files URLs si no entendí mal ayuda a cuando el servidor esta instalado en Linux, Windows, etc. así no importan q barra usas ( / \ ) y otros pequeños detalles q cambian según la plataforma.
+            Tiene q ver con lo de ___dirname.
+
+    Asincronismo, hacer RAMBox cómo lo dice el encabezado, frenando la clase y no al server. - FF
+        El método init que está en el constructor está bien que sea sincrónico, además que no afecta los endpoints del servidor porque se instancia antes de que se levante. El método m_new, m_del, m_set deben ser async y una vez que actualiza el atributo i escribir en el archivo asincrónicamente, una vez que se escribe devolves una respuesta en esos métodos. - Tutor
+            La gracia de RAMBox es manipular todo en RAM creo q si necesitara funciones Async para los metodos q no estan prefijos con file (m_new, m_del, etc.) perdería la gracia de su esencia y si justamente la parte de grabado en el archivo quisiera q fuera asincrónica y por eso detalle mi visión en el encabezado de RAMBox .
+
+    Como trabajar con ReactJS, ya q con lo q vimos lo tendría q usar después de un build, como hacíamos con los static files, pero no sé si es la forma, resulta raro q no haya un “modo dev”. - FF
+        Ya sea usando cualquier librería o framework de Frontend, nuestros endpoints se consumen via HTTP. Desde react tendrías que pegarle a la URL del Backend para obtener o modificar los productos. - Tutor
+            Justo lo charlamos hoy :) - FF
+
+    Ya estube viendo sobre TypeScript y Websockets, y ya tengo cosas para decir...
+
+    Si puede por favor mire los archivos de preguntas de las entregas 04 y 05 ya q me crucé con varias de las cosas nuevamente aquí.
+
+
+    Al menos mírelos, ni se gaste en contestar todo pero lo q me diga lo registro y lo tomo en cuenta.
+
+
+    No este pero el próximo fin de semana voy a intentar nuevamente compilarle las preguntas y pasárselas al profesor, ya q se ofreció en la clase anterior, tal vez no sabe lo q le espera xD.
+
+    Esta vez creo q me quedo mucho más desprolija como dije antes pensaba hacerla en Marko o Squirrelly.
+
+    Gracias y cuando pueda habilíteme 05__Templates_Engines.
++
+
+
++ ReTutor
+    ¡Gracias por la entrega! Queda aprobado.Hola Franco, como va? Estuve probando y viendo el entregable, y cumple con lo pedido. Pude agregar un producto, ver los productos en el listado de productos y poder ir de una página a otra, todo funciona bien. Así que queda aprobado.
+
+    Como comentario me resultó un poco raro agregar productos y no tenerlos en el file, y verlo por separado en otro botón que hace el guardado. No está para nada mal pero es una perspectiva diferente, al menos desde el curso se desea introducir que el contenedor de archivos se comporte como una base de datos, entonces las acciones desde un cliente web se vea reflejado en el contenedor utilizado (memoria, archivo, database, etc.)
+
+    Sobre el manejo de errores, ya que el desafío apunta a no usar rest, los errores podes mostrarlos en una vista nueva o en la misma vista donde se hace la carga pasándole un objeto error, y si en la vista error tiene un valor lo mostrás.
+
+    Las consultas que tienen que ver con el cliente capaz te pueda ayudar más el profesor, yo puedo guiarte más con el backend. Saludos
++

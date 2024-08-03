@@ -1,0 +1,106 @@
++ Es necesario agregar un key en el caso de tener 2 Navbar?
++ Todos los componentes requieren la linea import React from 'react'; ?
++ Borro index.css e index.js? Para q sirven?
++ Como definir background color para toda la App usando lo definido en style.js?
++ App.js No se si utilize bien <CssBaseline />, por eso comente los resets en App.css
++ ItemCounter.jsx la forma correcta de hacer esto seria editando un Componente Typography?
++ ItemCounter.jsx no ejecutar onAdd si no hay stock
++ Re Entrega Parte 1
++ Re Entrega Parte 2
+
+
++ Es necesario agregar un key en el caso de tener 2 Navbar?
+    Esta pregunta tiene sentido para el estado de la Entrega 3; en el AfterClass correspondiente pregunte si era necesario agregar un key en el caso de tener 2 Navbar, la Tutora me respondio q si ya q cada componente debe ser único en React pero yo habia agregado varios <Item /> y la consola no mostro error alguno. Cual es el criterio? O solo aplica a cosas generadas en la marcha como cuando hacemos con Map?.
+        Comprendo perfectamente esta confusión, como bien dices no marca error y no es necesario, la key como bien indicas es para cuando utilizas medios recursivos en los que no sabes cuantos elementos llegaras a agregar y requiere una manera de identificarlos.
++
+
+
++ Todos los componentes requieren la linea import React from 'react'; ?
+    Me di cuenta revisando esto y ItemListContainer no lo tenia en la entrega anterior. Tambien en Navbar tenia :
+        import * as React from 'react';
+
+        en vez de
+
+        import React from 'react';
+
+    Modifique esto pero si lo saco no da error. Como siempre cual es el criterio? Ya q uno intuiria q para q sea un componente de react obviamente necesita esa linea... pero tal vez es mal uso abusarla.
+        No, no todos los componentes requieres esta línea, con que este en el componente raíz basta, dado que como te he comentado antes, todo el código al final de fusiona en uno solo, así que con una importación basta para todos los componentes, la razón del porque muchas veces se sigue utilizando son dos principalmente, autocompletados que lo siguen poniendo puesto que antes si era necesario (me incluyo aquí porque no he actualizado mis snippets personalizados jaja) y la segunda razón es que en ocasiones los IDE no autocompletan correctamente si no lo importas en el archivo en que estas trabajando, pero al final, lo pongas solo en la raíz o lo pongas en cada componente, cuando se construye el código final no hace ninguna diferencia en absoluto, ni de peso ni de rendimiento ni de nada, así que úsalo como gustes. Lo que su no recomiendo es el import * ya que este si que causa cambios en peso y rendimiento puesto que importa absolutamente todo lo que esta en react, lo utilices o no, creo que ya habia algo que analizaba si estabas utilizando módulos o no pero de entrada tanto en react como en cualquier otra librería no es recomendable utilizar el * a menos que de hecho sepas que si utilizaras todo lo que contiene.
+                FF - Y el criterio para los hooks ? como :
+                    import { useState } from 'react';
+                    const [anchorElNav, setAnchorElNav] = useState( null );
+
+                    O
+
+                    import React from 'react';
+                    const [anchorElNav, setAnchorElNav] = React.useState( null );
+
+                Si solo dejo los imports en App.js me da errores, probe usando " React. " pero no lo encuentra, como si las variables React o useState no estubieran accessibles.
+                Por ahora voy a solo importar los hooks donde los use pero sigo un poco confuso, entiendo q esta el paso "build" q junta todo pero no siento suficiente certeza si estoy usando import React from 'react'; bien.
++
+
+
++ Borro index.css e index.js? Para q sirven?
+    Index.css si puedes borrarlo, solo asegúrate de eliminar su importación en index.js para que no te marque errores, por otro lado index.js no lo borres, es el punto de entrada de tu código, react siempre buscara este archivo para construir tu proyecto, en cuanto a para que sirven bueno index,js ya lo mencione, es el punto de entrada y si es importante que se conserve, en cuando a index.css es la raíz de tus estilos, es útil para poner lo que se utilizara durante todo el proyecto, como variables, normalizaciones, background, cosas así, entonces si quieres eliminarlo no hay problema pero si crees que puede serte útil pues aprovéchalo.
+            FF - Disculpe pero aquí me esta confundiendo, por lo q vimos en el curso App.js y App.css son nuestro punto de partida, por lo q veo me parece q los archivos index son la estructura minima que se necesita usar para "montar" React, o sea es como parte del codigo q "crea" React, estoy usando comillas porque no encuentro mejor forma de expresarlo, si tiene algo más correcto me serviria saberlo ( se q uso "punto de entrada" ). A lo q voy q me parece q no puedo tocar index.js, y como dice todo apunta a q puedo borrar index.css.
++
+
+
++ Como definir background color para toda la App usando lo definido en style.js?
+    Esta es una pregunta q me hago a mi mismo pero la dejo aqui ya q no tuve tiempo de resolverla: ¿Como hago para q App.css o App.js o index.html tomen los valores de src/style/style.js? Definir <body> en App.js estara mal? (Ya q React trabajaba en la root div, y crear algo q suplante a la root div dentro de App.js tambien parece mala practica) El objetivo es definir background color para toda la App usando lo definido en style.js.
+
+        myElement.style.setProperty('--element-height', height + 'px')
+
+            Esto es medio forzado y en realidad el flujo queda al revez forzandome a crear algo en js para q cargue los valores...
+
+    Pues no termino de entender muy bien todo lo que preguntas aquí, pero vamos a ver si logro esclarecer aunque sea un poco. Normalmente los archivos como App.js App.css index.html o similares suelen conectarse con archivos digamos de su misma jerarquía, es parte de la idea de react, que se vaya conectando todo según avanza el árbol del DOM. Definir body no es que estuviera mal, pero no suele ser necesario, el body igual se crea implícitamente, si quieres agregarle estilos o algo bien puedes servirte como te dije en la respuesta anterior, de index.css que si no mal recuerdo de hecho ya contiene estilos para el body, entonces aquí solo pones el código css que gustes y lo aplicara. Igual puedes conectarlo con style.js si así lo decides, pero a modo personal yo siempre prefiero agregar esto directamente, ya que tampoco es como que sea demasiado trabajo y menos aun con las variables. Pero ya es a gusto y decisión.
+            FF - Estoy buscando poder definir variables y logica para los estilos y q esto se use en toda la app, usando como representación de un caso:
+                Como puedo definir background-color para toda la app desde una variable q la puedan acceder todos los componentes?
+            Hasta ahora si ve importo src/style/style.js en todos los componentes q quiero q sigan "la norma" el problema q tengo con este metodo es para "El componente base" o mejor dicho el "verdadero fondo de la pagina" si lo aplico a App.js es suficiente? Mi duda viene por la existencia del archivo index.html y index.css.
+            Si usase variables de CSS en realidad primero tendria q definirlas en JavaScript y aplicarlas usando DOM y esto me parece bastente contra producente o hay algo q no me estoy dando cuenta?.
+            Sino crear un pequeño script de iniciacion q modifique index.html o cual sea el archivo "raiz puro" usando los datos de src/style/style.js? Pero este script por como lo estoy pensando terminaria en /public para q se comunique con algo q esta en src... no solo no me doy cuenta con claridad como hacerlo sino q sospecho q es "Anti React".
+            Otro caso sería cuando es necesario conciderar alguna distancia o alineación, aunque todabia no tuve ese problema, de tenerlo buscaría hacer algo parecido con lo q hice con los colores pero para medidas importantes.
++
+
+
++ App.js No se si utilize bien <CssBaseline />, por eso comente los resets en App.css
+    Si parece estar bien implementado
++
+
+
++ ItemCounter.jsx la forma correcta de hacer esto seria editando un Componente Typography?
+    Para que quede como uno Button? o es valido:
+
+        <Button>{ y }</Button>
+
+        Es perfectamente valido utilizar el tag button
++
+
+
++ ItemCounter.jsx no ejecutar onAdd si no hay stock
+    La descripcion del desafio pedia q no se LLAME la callback, pero esta es llamada a travez de un onClick. Yo coloque así:
+
+    const onAdd = () => {
+        if ( y )
+            alert( y + msg.onAdd );
+    };
+
+    Ya q al modificar "y" ya se checkea el estado del stock y siempre empiesa con un valor inicial pasado por prop, podria cambiarlo a y || stock pero en realidad si quiero seguir completamente lo q dice el desafio debería crear otra funcion q es diparada por el boton Comprar q primero checkea el stock y luego ahi llama el onAdd, me parecia q no tenia sentido así q lo puse de ese modo.
+        Si estas en lo cierto, pero igual no te preocupes demasiado por ello, la verdad es que la funcionalidad de este botón cambiara mas adelante, por ahora no es de importancia, solo ve lo que te dije de que debe estar en el componente padre.
++
+
+
++ Re Entrega Parte 1
+    Buen día, vamos primero con lo relacionado directamente a la entrega. La entrega esta correcta solo un par de observaciones, la primera es importante, tiene que ver con tu useState llamándolo y recuerda siempre que tus nombres tanto de variable, funciones, en fin de todo, deben ser lo mas expresivas posible, que indiquen que son, que hacen, etc. Esto como parte de las buenas practicas, así que podrías intentar cambiarlo a quantity o algo así. Lo segundo es que la función onAdd debería ser declarada en el padre y pasada por props, esto tendrá sentido cuando ya lo montes en donde quedara definitivo que es en Item y desde ahi deberás mandar datos para agregar al carrito. Fuera de eso todo parece estar correcto.
+            FF - Concuerdo con todo lo q dice, lo del nombre de la variable no fue al azar pero lo voy a cambiar ( uso c, y para contadores como uso i j para for i ), count, counter, quantity, etc.
+            Me cegue un poco con como esta descripta la consigna, pero me trae la duda no me combendria hacer como en los otros casos q dividimos en Container y Render, crear un ItemCounterContainer dodne pongo las funciones e ItemCounter donde esta solo el codigo de lo q muestro? Por ahora lo pienso por el lado de no repetir codigo pero por otro lado no se si es "Anti React" ya q si voy a partir todos mis modulos en 2 no se si estoy desordenado.
+            No me queda completamente claro el porque del onAdd en el padre.
++
+
+
++ Re Entrega Parte 2
+    Por ultimo, me parece increíble que quieras experimentar con tantas cosas, no tengo problema con ello, pero una cosa importante en el desarrollo es saber cuando si y cuando no utilizar cada herramienta, siempre debes regirte por un principio, mantenerlo simple, si no lo mantienes y algo parece que no lo hace simple entonces casi seguro que estas implementando cosas innecesarias y casi seguro que estas complicando el sistema sin sentido, como dije es bueno que experimentes, pero digamos que se puede experimentar en cualquier momento, pero lo que si cuesta mas desarrollar y que de verdad te da visibilidad es esto justamente, mantener simple el código. Y si tenemos en cuenta que este proyecto esta pensado para que termine en tu portafolio, creo que seria buena idea que siguieras este principio, ya que cuando nos buscan no entran a un código a ver que tantas cosas estas utilizando, entran a ver que tan bien sabes implementar lo que conoces, así que como siempre esta a tu consideración, yo solo comento lo que creo que te servirá mas.
+            FF - No... en esta entrega al menos no vino por querer experimentar sino q es como le mencione antes, estoy medio en la oscuridad de donde va q y como usarlo, creo q necesitaria entender bien la estructura de React, si bien esto no apunta a hacer estilos, no son solo los estilos, sino mensajes, location, variables comunes, etc, etc, y voy a seguir cambiando todo un poco porque aun veo todo mi codigo muy endeble y desordenado.
+            Creo q lo unico q realmente experimente fue usar un <Pagination /> como el contador y n me gustaba como quedaba en especial por no poder modificar las dimenciones bien ya q aun no entiendo como manipular MUI correctamente la pagina clave q tengo q terminar de asimilar creo q es : https://mui.com/material-ui/customization/how-to-customize/
+            Tambien esperimente con los containers de MUI y me quedaban mal ( alineados y con sombras nada q ver ).
+            Y la mayoria de los cambios venian por como le comente antes q no me podia concentrar y entonces me ponia a emprolijar las cosas como "pre calentamiento" lo q voy a hacer de eso es modificar q los mensajes en vez d ser variables se pasen por funciones para poder usar interpolación q me va a permitir q los mensajes tengan variables.
++

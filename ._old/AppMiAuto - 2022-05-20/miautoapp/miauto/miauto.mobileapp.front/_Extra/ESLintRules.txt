@@ -1,0 +1,95 @@
+https://eslint.org/docs/latest/rules/eqeqeq
+https://eslint.org/docs/latest/rules/grouped-accessor-pairs
+https://eslint.org/docs/latest/rules/init-declarations
+https://eslint.org/docs/latest/rules/no-alert
+https://eslint.org/docs/latest/rules/no-div-regex
+https://eslint.org/docs/latest/rules/no-else-return
+https://eslint.org/docs/latest/rules/no-empty
+https://eslint.org/docs/latest/rules/no-extra-semi
+https://eslint.org/docs/latest/rules/no-extra-boolean-cast
+
+
+Estamos usando todas las "extends": "eslint:recommended"
+
+
+Possible Problems
+    https://eslint.org/docs/latest/rules/array-callback-return              + Exp
+
+    https://eslint.org/docs/latest/rules/no-constant-binary-expression      true
+
+    https://eslint.org/docs/latest/rules/no-duplicate-imports               true
+
+    https://eslint.org/docs/latest/rules/no-duplicate-imports               ["error", { "includeExports": true }]
+
+    https://eslint.org/docs/latest/rules/no-new-native-nonconstructor       true BUT should not be used in ES3/5 environments.
+
+    https://eslint.org/docs/latest/rules/no-promise-executor-return         true
+
+    https://eslint.org/docs/latest/rules/no-self-compare                    true
+
+    https://eslint.org/docs/latest/rules/no-template-curly-in-string        true BUT should not be used in ES3/5 environments.
+
+    https://eslint.org/docs/latest/rules/no-unmodified-loop-condition       true
+
+    https://eslint.org/docs/latest/rules/no-unreachable-loop                true
+
+    https://eslint.org/docs/latest/rules/no-unused-private-class-members    true
+
+    https://eslint.org/docs/latest/rules/no-use-before-define               false or default
+
+    https://eslint.org/docs/latest/rules/require-atomic-updates             true & allowProperties: true, but not fully understood
+Possible Problems
+
+
+Suggestions
+    https://eslint.org/docs/latest/rules/max-lines                              max 400, "skipBlankLines": true, "skipComments": true
+Suggestions
+
+
+
+
+
+https://eslint.org/docs/latest/rules/#layout--formatting
+    in page search for spac ( space, spacing )
+
+https://eslint.org/docs/latest/rules/arrow-spacing              { "before": true, "after": true }
+
+https://eslint.org/docs/latest/rules/block-spacing                      always
+
+https://eslint.org/docs/latest/rules/comma-dangle                       always
+
+https://eslint.org/docs/latest/rules/no-irregular-whitespace            ?
+
+https://eslint.org/docs/latest/rules/no-loss-of-precision               ?
+
+https://eslint.org/docs/latest/rules/spaced-comment                     always
+
+https://eslint.org/docs/latest/rules/array-bracket-spacing              always
+
+https://eslint.org/docs/latest/rules/comma-style                        ?
+
+https://eslint.org/docs/latest/rules/computed-property-spacing          always
+
+https://eslint.org/docs/latest/rules/eol-last                           always
+
+https://eslint.org/docs/latest/rules/func-call-spacing                  ?
+
+https://eslint.org/docs/latest/rules/function-call-argument-newline     ?
+
+https://eslint.org/docs/latest/rules/function-paren-newline             ?
+
+https://eslint.org/docs/latest/rules/generator-star-spacing             ?
+
+https://eslint.org/docs/latest/rules/implicit-arrow-linebreak           ?
+
+https://eslint.org/docs/latest/rules/indent                             Check .editorconfig too
+
+https://eslint.org/docs/latest/rules/jsx-quotes                         ? prefer-single
+
+https://eslint.org/docs/latest/rules/key-spacing                        ?
+
+https://eslint.org/docs/latest/rules/array-bracket-newline              ? Low
+
+https://eslint.org/docs/latest/rules/array-element-newline              ? Low
+
+https://eslint.org/docs/latest/rules/keyword-spacing                    ? YES YES

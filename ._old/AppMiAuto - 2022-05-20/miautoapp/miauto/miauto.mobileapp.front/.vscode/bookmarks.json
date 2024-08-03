@@ -1,0 +1,49 @@
+{
+	"files": [
+		{
+			"path": "src/Components/HCard.tsx",
+			"bookmarks": [
+				{
+					"line": 13,
+					"column": 1,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/Navigation/Navigator.tsx",
+			"bookmarks": [
+				{
+					"line": 28,
+					"column": 25,
+					"label": ""
+				},
+				{
+					"line": 40,
+					"column": 43,
+					"label": ""
+				},
+				{
+					"line": 67,
+					"column": 64,
+					"label": ""
+				},
+				{
+					"line": 79,
+					"column": 60,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "App.tsx",
+			"bookmarks": [
+				{
+					"line": 11,
+					"column": 41,
+					"label": ""
+				}
+			]
+		}
+	]
+}
