@@ -78,6 +78,7 @@ class RAMBox {
      * Initializes the items storage in memory.
      * @returns Returns false if it initialized without errors.
      */
+    // ! this function will NEVER return void, always false or a specific Error w a cause
     #init(): false | Error | void {
         try {
             this.i = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
@@ -90,7 +91,8 @@ class RAMBox {
     // WIP Add Other Checks
     /* WIP Add ways to specify the checks like with a hash 3b40v69 or binary string 010110 or flags object, so it can skip unnecesary checks for a given scenario */
     // * Both Parameters are optional
-    #dataChecks( flags: DataChecksFlags, data = this.i ): false | Error | void {
+    // ! this function will NEVER return void, always false or a specific Error w a cause
+    #dataChecks( flags: DataChecksFlags = {}, data = this.i ): false | Error | void {
         // Add new default values to flags in F.
         let F: DataChecksFlags = { NO_DATA: true, ...flags };
         if ( F.NO_DATA && !data.length )
@@ -135,16 +137,27 @@ class RAMBox {
             };
         };
     */
-    // ai id type should be infered from t_Item.id ( typeof t_Item.id ? )
     // <3
-    m_getById( id ) {
-        return this.#dataChecks()
-        || ( this.i.find( obj => id === obj.id )
+    m_getById( id: t_Item["id"] ): t_Item | Error {
+        return (
+            this.#dataChecks()
+            || ( this.i.find( obj => id === obj.id )
             || new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } ) )
-        ;
+        );
     };
 
-    m_new( { title, price, thumbnail } ) {
+    /* ! If this class was supposed to manage any kind of Items then this function should be fed when spawning the class. As well as the type of its arguments, posibly extending t_Item */
+    m_new(
+        {
+            title,
+            price,
+            thumbnail
+        }: {
+            title: string;
+            price: number;
+            thumbnail: string;
+        }
+    ) {
         const verdict = this.#dataChecks( { NO_DATA: false } );
         if ( verdict )
             return verdict;
