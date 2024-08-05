@@ -92,9 +92,15 @@ class RAMBox {
     /* WIP Add ways to specify the checks like with a hash 3b40v69 or binary string 010110 or flags object, so it can skip unnecesary checks for a given scenario */
     // * Both Parameters are optional
     // ! this function will NEVER return void, always false or a specific Error w a cause
-    #dataChecks( flags: DataChecksFlags = {}, data = this.i ): false | Error | void {
+    #dataChecks( flags?: DataChecksFlags | undefined, data = this.i ): false | Error | void {
         // Add new default values to flags in F.
-        let F: DataChecksFlags = { NO_DATA: true, ...flags };
+        /*
+            let F: DataChecksFlags = { NO_DATA: true, ...flags };
+            This line should fail when flags is undefined or an empty object since both are not iterables
+        */
+        let F: DataChecksFlags = { NO_DATA: true };
+        if ( flags )
+            F = { ...F,  ...flags };
         if ( F.NO_DATA && !data.length )
             return console.error( new Error( `${ErrsMsgs.NO_DATA}`, { cause: 'NO_DATA' } ) );
         return false;
