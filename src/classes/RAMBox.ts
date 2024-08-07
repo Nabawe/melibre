@@ -152,7 +152,7 @@ class RAMBox {
         );
     };
 
-    /* ! If this class was supposed to manage any kind of Items then this function should be fed when spawning the class. As well as the type of its arguments, posibly extending t_Item */
+    /* ! If this class was supposed to manage any kind of Items then this function should be fed the extra properties of the items when spawning the class. As well as the type of its arguments, posibly extending t_Item */
     m_new(
         {
             title,
