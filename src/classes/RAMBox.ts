@@ -22,12 +22,11 @@
 import ErrsMsgs from '../data/messages/errors.msg.json' assert { type: "json" };
 import fs from 'node:fs';
 import { nanoid as f_makeUUID } from 'nanoid';
+
 import type { URL } from 'node:url';
+import type { t_ExtraProperties } from "../data/products_types.js";
 
 const fsP = fs.promises;
-
-// ? As I understand I am missing the "template literal type".
-type IndexSignature = string | number | symbol;
 
 /* Claude.ai Suggested
     interface BaseItem {
@@ -40,11 +39,17 @@ type IndexSignature = string | number | symbol;
         [K in keyof T]: T[K];
     }
 */
-interface t_Item {
+
+// ? As I understand I am missing the "template literal type".
+type t_IndexKeySignature = string | number | symbol;
+
+type t_Index = { [ key: t_IndexKeySignature ]: any };
+
+interface t_Item extends t_ExtraProperties {
     id: string;
     dateCreated: number;
     dateMod?: number;
-    [ key: IndexSignature ]: any;
+    // [ key: t_IndexKeySignature ]: any;
 };
 interface DataChecksFlags {
     [key: Uppercase<string>]: boolean;
@@ -54,27 +59,27 @@ interface DataChecksFlags {
 /** Creates a simple interface wich helps manipulate a basic array of items stored in a JSON file. A JSON file's internal items manager. This variation of JSONBox makes its instances work on a RAM cached array and they only commit it to JSON file on command. */
 class RAMBox {
     /**
-     * @param {String} fileName
-     * @param {String} fileDir The path must end with a slash /
+     * @param {string} fileName
+     * @param {object} ExtraProperties
+     * @param {string} fileDir The path must end with a slash /
      * WIP Hacer q lo reciva usando la expresion URLToPath new URL
      */
     public filePath: string;
-    /* ! The whole point for the #init method is to do checks and initialize the items array, so the following line is wrong; it should NOT be initialized as an empty object */
-    public i: t_Item[] = [];
-    constructor( public fileName: string, public fileDir: string ) {
+    // "!" as TS "non-null assertion operator" not sure if it is the correct usage.
+    public i!: t_Item[];
+    constructor( public fileName: string, public ExtraProperties: string[], public fileDir: string ) {
         // this.fileName = fileName;
         // this.fileDir = fileDir;
         this.filePath = `${fileDir}${fileName}`;
         this.#init();
     };
 
-
     // WIP Hacer q esto tambien sea ASYNC
     /* WIP hacer q cree el archivo si no existe o q eso pase al apretar save (commit to file)? (Por ahora si pasara eso habria un error al pasar el arg o se dispararia el catch); también tendría q crear los directorios */
         /* * Ver cual es el resutlado del error para q el catch lo haga, o sea si JSON.parse o readFile dan error ver q se le pasa al catch por err y ejecutar solución */
     /* WIP MISSING PARAMETHERS
         as Objects
-            - Items Extra Properties for the m_new method and its interface type definition ( [ key: IndexSignature ]: any line should be removed ).
+            - Items Extra Properties might need an object carrying functions that set how to compare and operate those new properties, for now it will use simple comparison.
             - #dataChecks, DataChecksFlags
             ! Complete the ErrsMsgs errors to adapt to new values given to dataChecks.
             - The Init method might probably need the form of the base item.
@@ -83,6 +88,7 @@ class RAMBox {
     */
     /* ! Esto puede tambien fallar si la totalidad del archivo es uno de los tipos minimos de JSON ejemplo si solo tuviera null dentro. No se si es suficiente el checkear el lenght */
     /* ! Aqui return new Error no tiene sentido ya q no hay nadie q lo capture al error y lo muestre */
+    /* ! No tiene sentido q sea un JSON, agrega un parse q no existiria si fuera directamente un objeto exportado de un file.ts . */
     /**
      * Initializes the items storage in memory.
      * @returns Returns false if it initialized without errors.
@@ -149,6 +155,8 @@ class RAMBox {
             || new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } ) )
         );
     };
+
+    // TO-DO DO A METHOD to search by any property, the way to evaluate each property might be needed
 
     /* ! If this class was supposed to manage any kind of Items then this function should be fed the extra properties of the items when spawning the class. As well as the type of its arguments, posibly extending t_Item */
     m_new(
