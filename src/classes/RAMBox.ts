@@ -59,7 +59,7 @@ class RAMBox {
      * WIP Hacer q lo reciva usando la expresion URLToPath new URL
      */
     public filePath: string;
-    /* ! The whole point for the #init method is to do checks and initialize the items array, so the following line is wrong */
+    /* ! The whole point for the #init method is to do checks and initialize the items array, so the following line is wrong; it should NOT be initialized as an empty object */
     public i: t_Item[] = [];
     constructor( public fileName: string, public fileDir: string ) {
         // this.fileName = fileName;
@@ -72,6 +72,15 @@ class RAMBox {
     // WIP Hacer q esto tambien sea ASYNC
     /* WIP hacer q cree el archivo si no existe o q eso pase al apretar save (commit to file)? (Por ahora si pasara eso habria un error al pasar el arg o se dispararia el catch); también tendría q crear los directorios */
         /* * Ver cual es el resutlado del error para q el catch lo haga, o sea si JSON.parse o readFile dan error ver q se le pasa al catch por err y ejecutar solución */
+    /* WIP MISSING PARAMETHERS
+        as Objects
+            - Items Extra Properties for the m_new method and its interface type definition ( [ key: IndexSignature ]: any line should be removed ).
+            - #dataChecks, DataChecksFlags
+            ! Complete the ErrsMsgs errors to adapt to new values given to dataChecks.
+            - The Init method might probably need the form of the base item.
+
+        ! All this remarks make one think that the Class Should be re-written for each use case.
+    */
     /* ! Esto puede tambien fallar si la totalidad del archivo es uno de los tipos minimos de JSON ejemplo si solo tuviera null dentro. No se si es suficiente el checkear el lenght */
     /* ! Aqui return new Error no tiene sentido ya q no hay nadie q lo capture al error y lo muestre */
     /**
@@ -132,17 +141,6 @@ class RAMBox {
         };
     };
 
-    /*
-        m_getById( id ) {
-            const verdict = this.#dataChecks();
-            if ( !verdict ) {
-                const match = this.i.find( obj => id === obj.id );
-                return match || 'PRODUCT__NOT_FOUND';
-            } else {
-                return verdict;
-            };
-        };
-    */
     // <3
     m_getById( id: t_Item["id"] ): t_Item | Error {
         return (
