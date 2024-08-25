@@ -1,84 +1,12 @@
 import { nanoid as f_makeUUID } from 'nanoid';
 
-
-/*
-    const Props = {
-        id: 0,
-        age: 0,
-        // name: "",
-    };
-
-    const Subject1 = {
-        id: 123,
-        age: 4,
-        name: "Asad d Dasad",
-    };
-
-    function extraction( { ...props } ) {
-        // I'm doing nothing with the destructuring here
-        console.log( props );
-    };
-
-    extraction( Subject1 );
-*/
-
-
-/*
-    const Props = {
-        id: 0,
-        age: 0,
-        // name: "",
-    };
-
-    const Subject1 = {
-        id: 123,
-        age: 4,
-        name: "Asad d Dasad",
-    };
-
-    function extraction( props: {} ) {
-        // const arry: any[] = [].push( props ); // ? Why this fails
-        const arry: any[] = [];
-        arry.push( props );
-        console.log( arry[0] );
-    };
-
-    extraction( Subject1 );
-*/
-
-
-/*
-    const Props = {
-        id: 0,
-        age: 0,
-        // name: "",
-    };
-
-    const Subject1 = {
-        id: 123,
-        age: 4,
-        name: "Asad d Dasad",
-    };
-
-    function Maker( props ) {
-        return function( props ) {
-            ( { ...props } = props );
-            // * the arguments object or whatever it is called could replace the prev line and move the destructuring to the parameters declaration
-            console.log( props );
-        };
-    };
-
-    const extraction = Maker( Props );
-    extraction( Subject1 );
-*/
-
-
-    // ! PENSAR DE CERO COMO HACERLO como seria agregar propierdades, como es todo el proceso desde q se recive el objeto, es necesario hacer destructuring? no se le puede agregar lo nuevo a objeto referenciado por el parametro y luego hacer el push al array?
+// ! PENSAR DE CERO COMO HACERLO como seria agregar propierdades, como es todo el proceso desde q se recive el objeto, es necesario hacer destructuring? no se le puede agregar lo nuevo a objeto referenciado por el parametro y luego hacer el push al array?
     // ! COMO ACOTAR lo q no se quiere del objeto q se recive es el problema
     /*
         function extraction( newItem ) {
-            newItem[ newProp[ 0 ] ] = newVale[ 0 ];
-            // ... make it a loop for each newProp and Value?
+            for i
+                newItem[ newProp[ i ] ] = newValue[ i ];
+                // ... make it a loop for each newProp and Value?
             // ! Sigue estando el problema de si sobran cosas del new item q viene de req.body
         };
     */
