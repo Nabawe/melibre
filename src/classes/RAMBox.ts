@@ -65,12 +65,14 @@ class RAMBox {
      * WIP Hacer q lo reciva usando la expresion URLToPath new URL
      */
     public filePath: string;
+    #props: string[];
     // "!" as TS "non-null assertion operator" not sure if it is the correct usage.
     public i!: t_Item[];
     constructor( public fileName: string, public ExtraProperties: string[], public fileDir: string ) {
         // this.fileName = fileName;
         // this.fileDir = fileDir;
         this.filePath = `${fileDir}${fileName}`;
+        this.#props = [ "id", "dateCreated", ...ExtraProperties ];
         this.#init();
     };
 
@@ -159,17 +161,17 @@ class RAMBox {
     // TO-DO DO A METHOD to search by any property, the way to evaluate each property might be needed
 
     /* ! If this class was supposed to manage any kind of Items then this function should be fed the extra properties of the items when spawning the class. As well as the type of its arguments, posibly extending t_Item */
-    m_new(
-        {
-            title,
-            price,
-            thumbnail
-        }: {
-            title: string;
-            price: number;
-            thumbnail: string;
-        }
-    ) {
+    m_new( [ ...this.#props ] ) {
+        // ! no es de type t_Item ya q aqui no es un objeto sino cada prop destructurada
+        // for ( const prop of item ) {
+
+        // };
+
+        // ? Como hacer un destructuring en los parametros usando la array this.#props
+            // ? Funcionara initializando las vars antes? pero no seria destructuring
+            // Seria algo de la forma de [ ...this.#props ] o { ...this.#props }
+        // ! No olvidarse de revisar #props en el contructor
+
         const verdict = this.#dataChecks( { NO_DATA: false } );
         if ( verdict )
             return verdict;

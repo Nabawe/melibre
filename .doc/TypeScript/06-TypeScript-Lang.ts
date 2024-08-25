@@ -77,6 +77,9 @@
 /* + Primitive Types */ /*
     ! All Primitive Types are LOWERCASE, object is not the same as Object.
     ? Trying to make a list of the non-reduseable Types which are not the same as the Basic Types, but I do believe I need to research, clarify and rethink them.
+    // * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#primitive_values
+    // * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_overview
+    // * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types#literals
 
     JavaScript:
         bigint, boolean, null, number, object, string, symbol, undefined
