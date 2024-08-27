@@ -307,6 +307,8 @@
 
     // Defining Function, Callbacks and Methods Signatures
     // WIP add about ( arg: Type ) => ReturnType from No BS TS, make use interface, type in examples
+    // WIP I believe there is a way to specify some part of the functions types using generics
+    // ? Is it possible to use ( arg: Type ) function ReturnType or something similar instead of the arrow notation for function Typing?
 /* + Functions */
 
 

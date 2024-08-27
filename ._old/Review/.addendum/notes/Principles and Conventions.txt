@@ -20,7 +20,7 @@
     o_Object
     c_Class
     e_HTMLElement           Need to define if only proper DOM elements or strings to insert as HTML.
-    Array?                  Array or a_Array need to define, casi seguro q lo correcto es camelCase.
+    Array?                  Array or a_Array need to define, casi seguro q lo correcto es camelCase pero revisando codigo viejo veo q uso PascalCase como en los Objetos. ! Definir.
     Modulos                 .mjs or .module.js or similar. Pero para el nombre en si del modulo?
     cb                      Callback
 
