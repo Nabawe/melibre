@@ -188,6 +188,7 @@ const Accumulator: Object[] = [];
 
 
     console.info( Accumulator );
+    /* * the evidence that it works is in that the ids are different and the dateCreated dynamic, by that I mean that f_UUIDGen is a pointer and not a function that was ran once returning a single id. Furthermore one can see that Container is actually accessed */
 
 
 /* + TO-DO
