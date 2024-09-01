@@ -25,6 +25,7 @@ import { nanoid as f_makeUUID } from 'nanoid';
 
 import type { URL } from 'node:url';
 import type { t_ExtraProperties } from "../data/products_types.js";
+/* ! This seams like a unnesesary extra hassle, why really care to define them? Since the verification should happen in the routes or somewhere else */
 
 const fsP = fs.promises;
 
@@ -160,30 +161,20 @@ class RAMBox {
 
     // TO-DO DO A METHOD to search by any property, the way to evaluate each property might be needed
 
-    /* ! If this class was supposed to manage any kind of Items then this function should be fed the extra properties of the items when spawning the class. As well as the type of its arguments, posibly extending t_Item */
-    m_new( [ ...this.#props ] ) {
-        // ! no es de type t_Item ya q aqui no es un objeto sino cada prop destructurada
-        // for ( const prop of item ) {
-
-        // };
-
-        // ? Como hacer un destructuring en los parametros usando la array this.#props
-            // ? Funcionara initializando las vars antes? pero no seria destructuring
-            // Seria algo de la forma de [ ...this.#props ] o { ...this.#props }
-        // ! No olvidarse de revisar #props en el contructor
-
+    m_new( newItem: t_Item ) {
         const verdict = this.#dataChecks( { NO_DATA: false } );
         if ( verdict )
             return verdict;
 
         this.i.push( {
+            ...newItem,
             id: f_makeUUID(),
             dateCreated: Date.now(),
-            title, price, thumbnail
         } );
         return this.i;
     };
 
+    // ! No olvidarse de revisar #props en el contructor
     // Se podria usar delete[index] y luego al grabar o reindexar remover los undefined
     m_del( id ) {
         const verdict = this.#dataChecks();
