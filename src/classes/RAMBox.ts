@@ -42,18 +42,18 @@ const fsP = fs.promises;
 */
 
 // ? As I understand I am missing the "template literal type".
-type t_IndexKeySignature = string | number | symbol;
+type t_IndexKey = string | number | symbol;
 
-type t_Index = { [ key: t_IndexKeySignature ]: any };
+type t_Index = { [ key: t_IndexKey ]: any };
 
 interface t_Item extends t_ExtraProperties {
     id: string;
     dateCreated: number;
     dateMod?: number;
-    // [ key: t_IndexKeySignature ]: any;
+    // [ key: t_IndexKey ]: any;
 };
 interface DataChecksFlags {
-    [key: Uppercase<string>]: boolean;
+    [ key: Uppercase<string> ]: boolean;
 };
 
 /* TO-DO Add this quirk to DocString No permite actualizar el id de forma manual, de necesitarlo borrar el producto y re agregarlo, así garantiza el uso correcto de UUID */
@@ -69,11 +69,15 @@ class RAMBox {
     #props: string[];
     // "!" as TS "non-null assertion operator" not sure if it is the correct usage.
     public i!: t_Item[];
-    constructor( public fileName: string, public ExtraProperties: string[], public fileDir: string ) {
+    constructor(
+        public fileName: string,
+        public ExtraProperties: string[],
+        public fileDir: string
+    ) {
         // this.fileName = fileName;
         // this.fileDir = fileDir;
         this.filePath = `${fileDir}${fileName}`;
-        this.#props = [ "id", "dateCreated", ...ExtraProperties ];
+        this.#props = [ "id", "dateCreated", "dateMod?",...ExtraProperties ];
         this.#init();
     };
 
@@ -100,6 +104,7 @@ class RAMBox {
     #init(): false | Error | void {
         try {
             this.i = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
+            console.log( "TEST", this.#props );
             return false;
         } catch( err: any ) {
             return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${err.message}`, { cause: 'CLASS__INIT' } ) );
@@ -162,21 +167,23 @@ class RAMBox {
     // TO-DO DO A METHOD to search by any property, the way to evaluate each property might be needed
 
     m_new( newItem: t_Item ) {
+        // ! HERE BEFORE SENDING req.body there should be somekind of check that confirm the integrity of the data from the front
+            // O sea q o products route checkea o datachecks
+            // !!! PERO si datachecks lo tiene q hacer entonces se le tendria q pasar para adaptarse a cada caso!!
+            // * dataChecks seria solo para cosas como existencia de datos, verificar q haya donde guardarlos y otras generales pero en routes iria el revisar la integridad q el front le paso
         const verdict = this.#dataChecks( { NO_DATA: false } );
         if ( verdict )
             return verdict;
 
-        this.i.push( {
+        return this.i.push( {
             ...newItem,
             id: f_makeUUID(),
             dateCreated: Date.now(),
         } );
-        return this.i;
     };
 
-    // ! No olvidarse de revisar #props en el contructor
     // Se podria usar delete[index] y luego al grabar o reindexar remover los undefined
-    m_del( id ) {
+    m_del( id: t_IndexKey ) {
         const verdict = this.#dataChecks();
         if ( verdict )
             return verdict;
@@ -188,7 +195,8 @@ class RAMBox {
         return this.i.splice( index, 1 );
     };
 
-    m_set( id, data ){
+    // ! m_set is subject to the same checking problems as m_new
+    m_set( id: t_IndexKey, data: t_Item ){
         const verdict = this.#dataChecks();
         if ( verdict )
             return verdict;
@@ -196,7 +204,7 @@ class RAMBox {
         const index = this.i.findIndex( obj => id === obj.id );
         if ( index === -1 )
             return new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } );
-            /* The idea was if the ID didn't not exist it would creates a new item, but that kind of behaviour may lead to create entries by mistake when mistyping an Id. */
+            /* The idea was if the ID did not exist it would create a new item, but that kind of behaviour may lead to create entries by mistake when mistyping an Id. */
             // return this.m_new( data ); // ! Se corre dataChecks 2 veces así
 
         const Target = this.i[index];
