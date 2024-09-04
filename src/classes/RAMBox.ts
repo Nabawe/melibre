@@ -104,7 +104,6 @@ class RAMBox {
     #init(): false | Error | void {
         try {
             this.i = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
-            console.log( "TEST", this.#props );
             return false;
         } catch( err: any ) {
             return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${err.message}`, { cause: 'CLASS__INIT' } ) );
@@ -207,17 +206,11 @@ class RAMBox {
             /* The idea was if the ID did not exist it would create a new item, but that kind of behaviour may lead to create entries by mistake when mistyping an Id. */
             // return this.m_new( data ); // ! Se corre dataChecks 2 veces así
 
+        /* Previously done with assignement destructuring commit : c9f6562307abd0252ef0ef953cb609250d833b4b */
+        this.i[index] = { ...data };
+        /* this.i[index] = data; This should also work but the chosen method was to make a real copy ( deep vs shallow copies ) */
+
         const Target = this.i[index];
-        /* Como this.i[index] ya esta declarado tengo q colocar el destructuring entre (), ya q al no usar const o let {} se tomaría como un bloque de codigo, por eso los parentesis */
-        ( {
-            title: Target.title,
-            price: Target.price,
-            thumbnail: Target.thumbnail
-        } = data );
-        // const { title, price, thumbnail } = data;
-        // Target.title = title;
-        // Target.price  = price;
-        // Target.thumbnail = thumbnail;
         Target.dateMod = Date.now();
 
         return Target;
@@ -226,7 +219,7 @@ class RAMBox {
     /*
         ! No crea un archivo nuevo si no existe, de tener q crearlo tambien tendria q poder crear toda la ruta, o sea los dirs
 
-        ! Tendria q usar append es una animalada hacerlo de esta forma, esta en las preguntas Questons-02.txt.
+        ! Tendria q usar append y es una animalada hacerlo de esa forma, esta en las preguntas Questons-02.txt.
 
         ? confirmar q el metodo append de FS no cargue todo el archivo para modificarlo
     */
@@ -234,18 +227,18 @@ class RAMBox {
         try {
             fs.writeFileSync( this.filePath, JSON.stringify( this.i, null, 4 ), 'utf-8' );
             return false;
-        } catch( err ) {
+        } catch( err: any ) {
             return new Error( `${ErrsMsgs.CAN_T_SAVE}:\n ${err.message}`, { cause: 'CAN_T_SAVE' } );
         };
     };
 
-    // Pensar ¿Tiene algun sentido q solo borre el archivo del disco pero deje sin tocar la RAM?
+    // Pensar ¿Tendria algun sentido q solo borre el archivo del disco pero deje sin tocar la RAM?
     m_fileReset() {
         try {
             fs.writeFileSync( this.filePath, '[]', 'utf-8' );
             this.i = [];
             return false;
-        } catch( err ) {
+        } catch( err: any ) {
             return new Error( `${ErrsMsgs.CAN_T_RESET}:\n ${err.message}`, { cause: 'CAN_T_RESET' } );
         };
     };
