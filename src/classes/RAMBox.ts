@@ -24,8 +24,7 @@ import fs from 'node:fs';
 import { nanoid as f_makeUUID } from 'nanoid';
 
 import type { URL } from 'node:url';
-import type { t_ExtraProperties } from "../data/products_types.js";
-/* ! This seams like a unnesesary extra hassle, why really care to define them? Since the verification should happen in the routes or somewhere else */
+
 
 const fsP = fs.promises;
 
@@ -46,11 +45,11 @@ type t_IndexKey = string | number | symbol;
 
 type t_Index = { [ key: t_IndexKey ]: any };
 
-interface t_Item extends t_ExtraProperties {
+interface t_Item {
     id: string;
     dateCreated: number;
     dateMod?: number;
-    // [ key: t_IndexKey ]: any;
+    [ key: t_IndexKey ]: any;
 };
 interface DataChecksFlags {
     [ key: Uppercase<string> ]: boolean;
@@ -66,7 +65,6 @@ class RAMBox {
      * WIP Hacer q lo reciva usando la expresion URLToPath new URL
      */
     public filePath: string;
-    #props: string[];
     // "!" as TS "non-null assertion operator" not sure if it is the correct usage.
     public i!: t_Item[];
     constructor(
@@ -77,7 +75,6 @@ class RAMBox {
         // this.fileName = fileName;
         // this.fileDir = fileDir;
         this.filePath = `${fileDir}${fileName}`;
-        this.#props = [ "id", "dateCreated", "dateMod?",...ExtraProperties ];
         this.#init();
     };
 
