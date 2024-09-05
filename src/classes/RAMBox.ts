@@ -24,7 +24,12 @@ import fs from 'node:fs';
 import { nanoid as f_makeUUID } from 'nanoid';
 
 import type { URL } from 'node:url';
-/* Removed products_types.ts and related expressions; Commit : 9a3036e06f21ff9982bb6ea952aa79976149f341 */
+/*
+    Removed products_types.ts and related expressions;
+    Commits :
+        9a3036e06f21ff9982bb6ea952aa79976149f341
+        87b282b5950a6789b7574d7fddb7f4ed4b9e9ed4
+*/
 
 const fsP = fs.promises;
 
@@ -60,7 +65,6 @@ interface DataChecksFlags {
 class RAMBox {
     /**
      * @param {string} fileName
-     * @param {object} ExtraProperties
      * @param {string} fileDir The path must end with a slash /
      * WIP Hacer q lo reciva usando la expresion URLToPath new URL
      */
@@ -69,7 +73,6 @@ class RAMBox {
     public i!: t_Item[];
     constructor(
         public fileName: string,
-        public ExtraProperties: string[],
         public fileDir: string
     ) {
         // this.fileName = fileName;
