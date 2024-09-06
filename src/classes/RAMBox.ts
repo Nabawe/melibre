@@ -34,23 +34,9 @@ import type { URL } from 'node:url';
 
 const fsP = fs.promises;
 
-/* Claude.ai Suggested
-    interface BaseItem {
-    id: string;
-    dateCreated: number;
-    dateMod?: number;
-    }
-
-    interface t_Item<T extends Record<string, any> = {}> extends BaseItem {
-        [K in keyof T]: T[K];
-    }
-*/
-
 // ? As I understand I am missing the "template literal type".
 type t_IndexKey = string | number | symbol;
-
-type t_Index = { [ key: t_IndexKey ]: any };
-
+// type t_Index = { [ key: t_IndexKey ]: any }; // Commented out since it was unused
 interface t_Item {
     id: string;
     dateCreated: number;
