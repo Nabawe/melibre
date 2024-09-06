@@ -1,3 +1,14 @@
+/*
+  + Defaults
+  + Header
+  + p-nav
+  + Main
+  + 404
+  + Media Querries
+  + Misc
+*/
+
+
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Noto+Sans&family=Hina+Mincho&display=swap");
 /*
@@ -13,7 +24,7 @@
 }
 
 
-/* +Defaults */
+/* + Defaults */
 :root {
   font-family: "Open Sans", Arial, Helvetica, sans-serif;
 }
@@ -39,17 +50,17 @@ body ul {
 body ul li {
   margin-top: 0.5rem;
 }
-/* +Defaults */
+/* + Defaults */
 
 
-/* +Header */
+/* + Header */
 header {
   width: 95%;
 }
-/* +Header */
+/* + Header */
 
 
-/* +p-nav */
+/* + p-nav */
 #p-nav {
   display: grid;
   gap: 0px 13px;
@@ -110,10 +121,10 @@ header {
 #p-nav .btn-4 {
   grid-area: btn-4;
 }
-/* +p-nav */
+/* + p-nav */
 
 
-/* +Main */
+/* + Main */
 main {
   width: 90%;
   margin-top: 50px;
@@ -136,20 +147,20 @@ main section {
   padding: 5px;
   margin: 10px 0px;
 }
-/* +Main */
+/* + Main */
 
 
-/* +404 */
+/* + 404 */
 .e404--logo {
   font-size: 28rem;
   color: #EEE8A9;
   text-shadow: 2px 2px 2px #444;
   font-family: "Monoton", cursive;
 }
-/* +404 */
+/* + 404 */
 
 
-/* +Media Querries */
+/* + Media Querries */
 @media only screen and (min-width: 1024px) {
   header {
     width: 90%;
@@ -183,9 +194,10 @@ main section {
     margin: 0px 0px;
   }
 }
-/* +Media Querries */
+/* + Media Querries */
 
 
+/* + Misc */
 button {
   width: fit-content;
   height: fit-content;
@@ -227,3 +239,4 @@ form fieldset {
 .g-WIP {
   visibility: hidden;
 }
+/* + Misc */

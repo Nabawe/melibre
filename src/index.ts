@@ -39,6 +39,7 @@ Server.get( '*', ( _, res: Response ) => {
 } );
 
 // Last Touches and Opening the Server's Port
+// ? No adress is being shown, is it a Unix thing?
 const currentListener = Server.listen( PORT, () => {
     console.log( `Server Up and Listening, Info: ${ JSON.stringify( currentListener.address(), null, 4 ) }` );
 } );

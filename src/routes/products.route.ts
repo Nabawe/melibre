@@ -41,6 +41,7 @@ Route_Products.post( '/products/add', ( req, res ) => {
 // ! Pork no puedo poner put aquí y q el form lo indique
 // ! Posee los mismos problemas sobre el checkeo d lo q viene del front q /products/add
 Route_Products.post( '/products/update', ( req, res ) => {
+    /* remove required from Title, Price, Thumbnail in Products_InputForm.handlebars, only ID should be required, the datachecks should prevent problems like an empty field saving an empty datum */
     const match = MerchMan.m_set( req.body.id, req.body );
     if ( match instanceof Error ) {
         const v = Verdicts[match.cause];
