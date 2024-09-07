@@ -30,6 +30,8 @@ Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
         return res.status ?
         in theory a route does not return anything or into anything or does this halt the server?
         Understand Route_Products and .post
+        ? Or is there another way to use return, another way to cut the excecution, throw was concidered a bad practise? and it should not stop the server for an error
+        * again it seams to be key to understand what happens to the excecution when " return res.status( v.status )[v.type]( v.outcome ); " returns the error
     */
 } );
 
