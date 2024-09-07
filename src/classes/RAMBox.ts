@@ -15,7 +15,7 @@
 
     + Operaciones Sincronicas a Asincronicas:
         // * Lo q se tiene q lograr es q haya capas de cache en RAM y tmp files para garantizar q no se pierda información y q solo se graben los datos de forma paralela cuando se pueda efectuar la totalidad de la operación.
-        // * O sea definir q hace cada capa, como y cuando. ( Volatile, Small Tmp File, Big Storage ).
+        // * O sea definir q hace cada capa, como y cuando. ( Volatile, Small Tmp File, Big Storage ) ( Timed Saves? ).
         // * Prestar mucha atención q es resuelto automaticamente por las herramientas q ya existen, ej: por ahi alguna base de datos ya tiene algun tipo de cache.
 
         Quiero q m_fileSave, m_fileReset y #init sean async:
@@ -54,13 +54,15 @@ import ErrsMsgs from '../data/messages/errors.msg.json' assert { type: "json" };
 import fs from 'node:fs';
 import { nanoid as f_makeUUID } from 'nanoid';
 
-import type { URL } from 'node:url';
+// import type { URL } from 'node:url';
 /*
-    Removed products_types.ts and related expressions;
+    + Removed products_types.ts and related expressions;
     Commits :
         9a3036e06f21ff9982bb6ea952aa79976149f341
         87b282b5950a6789b7574d7fddb7f4ed4b9e9ed4
         ba269c83597207a2fc71e29ab4f5cc8b494d8fa1
+
+    + Commit before restructuring commets: d4752d48a62a5281cad85baab7e8ab46b90abe13
 */
 
 const fsP = fs.promises;

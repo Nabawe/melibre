@@ -22,6 +22,8 @@ Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
         return res.status( v.status )[v.type]( v.outcome );
     };
     res.status( 200 ).json( match );
+
+    // ( return RAMBoxRun  || res.status )
 } );
 
 Route_Products.post( '/products/add', ( req, res ) => {
