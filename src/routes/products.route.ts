@@ -23,7 +23,14 @@ Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
     };
     res.status( 200 ).json( match );
 
-    // ( return RAMBoxRun  || res.status )
+    // ( return f_RAMBoxRun || res.status )
+    // return ( f_RAMBoxRun || res.status )
+    /*
+        ? What happens when if you try
+        return res.status ?
+        in theory a route does not return anything or into anything or does this halt the server?
+        Understand Route_Products and .post
+    */
 } );
 
 Route_Products.post( '/products/add', ( req, res ) => {
