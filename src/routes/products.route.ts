@@ -32,6 +32,8 @@ Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
         Understand Route_Products and .post
         ? Or is there another way to use return, another way to cut the excecution, throw was concidered a bad practise? and it should not stop the server for an error
         * again it seams to be key to understand what happens to the excecution when " return res.status( v.status )[v.type]( v.outcome ); " returns the error
+        ? use some sophistry with a temporal function or a special nesting of code blocks {} ? Wouldn't all that be just like an if?
+        ? What exactly do {} on JavaScript or TypeScript when used as operators? Flow Control or just scope?
     */
 } );
 
