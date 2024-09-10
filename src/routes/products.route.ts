@@ -1,11 +1,11 @@
 import { Router } from "express";
+import type { Request, Response } from "express";
 import { fileURLToPath } from 'node:url';
 import RAMBox from "../classes/RAMBox.js";
 
-import type { Request, Response } from "express";
 import type { t_Verdicts } from "../data/verdicts.js";
-
 import Verdicts from "../data/verdicts.js";
+
 
 const MerchMan = new RAMBox( 'products.json', fileURLToPath( new URL( '../data/', import.meta.url ) ) );
 const Route_Products = Router();

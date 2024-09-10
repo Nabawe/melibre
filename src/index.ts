@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import Express from "express";
+import type { Application as ExpressApp, Response } from "express";
 import { fileURLToPath } from 'node:url';
 import { engine as HbsEngine } from 'express-handlebars';
 
-import type { Application as ExpressApp, Response } from "express";
-
 import Route_Products from './routes/products.route.js';
+
 
 interface ExpressAppMod extends ExpressApp {
     activeListeners?: any[];
@@ -13,8 +13,11 @@ interface ExpressAppMod extends ExpressApp {
     // activeListeners?: t_Listener[];
     // then below when opening the port currentListener: t_listener
 };
+
+
 const Server: ExpressAppMod = Express();
 const PORT = process.env.PORT || 8080;
+
 
 // JSON output
 Server.use( Express.json() );

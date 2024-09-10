@@ -11,6 +11,7 @@
     + Operaciones Sincronicas a Asincronicas
     + #init
     + #dataChecks
+    +   catch( err: any )
 
 
     + Operaciones Sincronicas a Asincronicas:
@@ -46,6 +47,25 @@
         - Cuanto sentido tiene tener la posibilidad de agregar flags, no esta hecho a la medida? Y sino no tendria q ser uno de los parametros q initializa la clase?
             // * O sea lo de agregar nuevas flags tendria q pasar a nivel development y no runtime por ende no tiene sentido complicarlo. Y pensar q los checkeos tienen q ser algo fundamental q se aplique a situaciones generales y no a un tipo especifico de Items.
     +
+
+    +   catch( err: any )
+        Many methods have the following code :
+            "
+                } catch( err: any ) {
+                return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${err.message}`, { cause: 'CAN_T_READ' } );
+                };
+            "
+        That could be type fixed by :
+            "
+                } catch( err: unknown ) {
+                    if ( err instanceof Error ) {
+                        return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${err.message}`, { cause: 'CAN_T_READ' } );
+                    };
+                };
+            "
+
+        But the "type fixed" way just puts layers on a return that must happen if it enters into the catch.
+    +
 */
 /* TO-DO
     + DO A METHOD to search by any property, the way to evaluate each property might be needed or use simple comparisons, search like exact and lazy, fuzy.
@@ -65,7 +85,6 @@ import { nanoid as f_makeUUID } from 'nanoid';
     + Commit before restructuring commets: d4752d48a62a5281cad85baab7e8ab46b90abe13
 */
 
-const fsP = fs.promises;
 
 // ? As I understand I am missing the "template literal type".
 type t_IndexKey = string | number | symbol;
@@ -79,6 +98,8 @@ interface t_Item {
 interface DataChecksFlags {
     [ key: Uppercase<string> ]: boolean;
 };
+
+const fsP = fs.promises;
 
 
 /** Creates a simple interface wich helps manipulate a basic array of items stored in a JSON file. A JSON file's internal items manager. This variation of JSONBox makes its instances work on a RAM cached array and they only commit it to JSON file on command. */
@@ -111,8 +132,8 @@ class RAMBox {
         try {
             this.i = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
             return false;
-        } catch( err: any ) {
-            return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${err.message}`, { cause: 'CLASS__INIT' } ) );
+        } catch( err: unknown ) {
+            return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${( err as Error ).message}`, { cause: 'CLASS__INIT' } ) );
         };
     };
 
@@ -142,8 +163,8 @@ class RAMBox {
         try {
             const data = JSON.parse( await fsP.readFile( this.filePath, 'utf-8' ) );
             return data;
-        } catch( err: any ) {
-            return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${err.message}`, { cause: 'CAN_T_READ' } );
+        } catch( err: unknown ) {
+            return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${( err as Error ).message}`, { cause: 'CAN_T_READ' } );
         };
     };
 
@@ -155,8 +176,8 @@ class RAMBox {
         try {
             const data = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
             return data;
-        } catch( err: any ) {
-            return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${err.message}`, { cause: 'CAN_T_READ' } );
+        } catch( err: unknown ) {
+            return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${( err as Error ).message}`, { cause: 'CAN_T_READ' } );
         };
     };
 
@@ -229,8 +250,8 @@ class RAMBox {
         try {
             fs.writeFileSync( this.filePath, JSON.stringify( this.i, null, 4 ), 'utf-8' );
             return false;
-        } catch( err: any ) {
-            return new Error( `${ErrsMsgs.CAN_T_SAVE}:\n ${err.message}`, { cause: 'CAN_T_SAVE' } );
+        } catch( err: unknown ) {
+            return new Error( `${ErrsMsgs.CAN_T_SAVE}:\n ${( err as Error ).message}`, { cause: 'CAN_T_SAVE' } );
         };
     };
 
@@ -240,8 +261,8 @@ class RAMBox {
             fs.writeFileSync( this.filePath, '[]', 'utf-8' );
             this.i = [];
             return false;
-        } catch( err: any ) {
-            return new Error( `${ErrsMsgs.CAN_T_RESET}:\n ${err.message}`, { cause: 'CAN_T_RESET' } );
+        } catch( err: unknown ) {
+            return new Error( `${ErrsMsgs.CAN_T_RESET}:\n ${( err as Error ).message}`, { cause: 'CAN_T_RESET' } );
         };
     };
 };

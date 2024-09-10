@@ -159,7 +159,7 @@ TO-DO to finish the minimum missing info is in:
         "skipLibCheck": true,               // Skip type checking all .d.ts filess
         "sourceMap": true,                  // .map files to enable better feedback and debugging
 
-        ! "verbatimModuleSyntax": true,     // Explicitly type modded Import, Exports won't be JS emmited AND when ommited it will NOT allow for require statements
+        ! "verbatimModuleSyntax": true,     // Explicitly type modded Import, Exports won't be JS emmited AND when ommited it will NOT allow for require statements. This option is a bit dangerous, in the hopes to prevent problems it might cause others, understand it, always separate type imports from value imports.
 
         "lib": [ "dom", "es2022" ],         // * adds typings for specific environments, improves intellisense a lot
     }
