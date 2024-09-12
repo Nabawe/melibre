@@ -3,38 +3,42 @@ import type { Request, Response } from "express";
 import { fileURLToPath } from 'node:url';
 import RAMBox from "../classes/RAMBox.js";
 
-import type { t_Verdicts } from "../data/verdicts.js";
+import type { t_Verdicts, t_resType } from "../data/verdicts.js";
 import Verdicts from "../data/verdicts.js";
 
 
-const MerchMan = new RAMBox( 'products.json', fileURLToPath( new URL( '../data/', import.meta.url ) ) );
+// Merchandise Manager
+const MerchMan = new RAMBox(
+    'products.json',
+    fileURLToPath( new URL( '../data/', import.meta.url ) )
+);
 const Route_Products = Router();
 
+function f_handleSimpleRAMBoxError( res: Response, result: unknown ) {
+    if ( result instanceof Error ) {
+        const v = Verdicts[ ( result.cause as keyof t_Verdicts ) ];
+        return res.status( v.status )[ ( v.type as t_resType ) ]( v.outcome );
+    };
+    return false;
+};
 
 Route_Products.get( '/products', ( _, res: Response ) => {
     res.render( 'Products_Table', { 'Products': MerchMan.i, 'title': 'Austral Interpretar : Products' } );
 } );
 
 Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
-    const match = MerchMan.m_del( req.body.id );
-    if ( match instanceof Error ) {
-        const v = Verdicts[match.cause];
-        return res.status( v.status )[v.type]( v.outcome );
-    };
-    res.status( 200 ).json( match );
+    // const match = MerchMan.m_del( req.body.id );
+    // if ( match instanceof Error ) {
+    //     const v = Verdicts[ ( match.cause as keyof t_Verdicts ) ];
+    //     return res.status( v.status )[ ( v.type as t_resType ) ]( v.outcome );
+    // };
+    // res.status( 200 ).json( match );
 
-    // ( return f_RAMBoxRun || res.status )
-    // return ( f_RAMBoxRun || res.status )
-    /*
-        ? What happens when if you try
-        return res.status ?
-        in theory a route does not return anything or into anything or does this halt the server?
-        Understand Route_Products and .post
-        ? Or is there another way to use return, another way to cut the excecution, throw was concidered a bad practise? and it should not stop the server for an error
-        * again it seams to be key to understand what happens to the excecution when " return res.status( v.status )[v.type]( v.outcome ); " returns the error
-        ? use some sophistry with a temporal function or a special nesting of code blocks {} ? Wouldn't all that be just like an if?
-        ? What exactly do {} on JavaScript or TypeScript when used as operators? Flow Control or just scope?
-    */
+    const match = MerchMan.m_del( req.body.id );
+    return (
+        f_handleSimpleRAMBoxError( res, match )
+        || res.status( 200 ).json( match )
+    );
 } );
 
 Route_Products.post( '/products/add', ( req, res ) => {

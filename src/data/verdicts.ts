@@ -1,14 +1,23 @@
+/* *
+    Verdicts could store an additional function as one of its members that does what needs to be done on when faced with the corresponding error or handles that function to the server so that the server tweaks it and runs it.
+*/
 import ErrsMsgs from './messages/errors.msg.json' assert { type: "json" };
 
-interface t_Verdicts {
-    [ key: string ]: {
-        status: number;
-        type: string;
-        outcome: {
-            error: string;
-        };
+
+type t_resType = 'json' | 'send';
+
+interface t_Verdict {
+    status: number;
+    type: t_resType;
+    outcome: {
+        error: string;
     };
 };
+
+interface t_Verdicts {
+    [ key: string ]: t_Verdict
+};
+
 
 const Verdicts: t_Verdicts = {
     'CAN_T_READ': {
@@ -43,5 +52,5 @@ const Verdicts: t_Verdicts = {
     },
 };
 
-export type { t_Verdicts };
+export type { t_Verdicts, t_Verdict, t_resType };
 export default Verdicts;

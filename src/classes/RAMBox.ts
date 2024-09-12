@@ -6,6 +6,8 @@
     + // ! Many aspects of the class struggle to define a general form, I believe the class should manage the simplests aspects of the Item's Array. The incoming data should be checked by a specialized part of the server as soon as it is received from the front. This class instead should focus on the integrity of the data so any external customization SHOULD BE AVOIDED BY DESIGN.
     Origins of this thought came from thinking that #init, m_new, m_set would need an external specification of the Item's Extra Properties and how to handle, verify, compare them, etc.
     The other way to think about this is that the class should be re-written for each use case.
+
+    + ? UUIDs are not concidered good indexes for databases, neither linear sequenses for security reasons.
 */
 /* WIP
     + Operaciones Sincronicas a Asincronicas
@@ -57,7 +59,7 @@
             "
         That could be type fixed by :
             "
-                } catch( err: unknown ) {
+                } catch( err ) {
                     if ( err instanceof Error ) {
                         return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${err.message}`, { cause: 'CAN_T_READ' } );
                     };
@@ -132,7 +134,7 @@ class RAMBox {
         try {
             this.i = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
             return false;
-        } catch( err: unknown ) {
+        } catch( err ) {
             return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${( err as Error ).message}`, { cause: 'CLASS__INIT' } ) );
         };
     };
@@ -163,7 +165,7 @@ class RAMBox {
         try {
             const data = JSON.parse( await fsP.readFile( this.filePath, 'utf-8' ) );
             return data;
-        } catch( err: unknown ) {
+        } catch( err ) {
             return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${( err as Error ).message}`, { cause: 'CAN_T_READ' } );
         };
     };
@@ -176,7 +178,7 @@ class RAMBox {
         try {
             const data = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
             return data;
-        } catch( err: unknown ) {
+        } catch( err ) {
             return new Error( `${ErrsMsgs.CAN_T_READ}:\n ${( err as Error ).message}`, { cause: 'CAN_T_READ' } );
         };
     };
@@ -250,7 +252,7 @@ class RAMBox {
         try {
             fs.writeFileSync( this.filePath, JSON.stringify( this.i, null, 4 ), 'utf-8' );
             return false;
-        } catch( err: unknown ) {
+        } catch( err ) {
             return new Error( `${ErrsMsgs.CAN_T_SAVE}:\n ${( err as Error ).message}`, { cause: 'CAN_T_SAVE' } );
         };
     };
@@ -261,7 +263,7 @@ class RAMBox {
             fs.writeFileSync( this.filePath, '[]', 'utf-8' );
             this.i = [];
             return false;
-        } catch( err: unknown ) {
+        } catch( err ) {
             return new Error( `${ErrsMsgs.CAN_T_RESET}:\n ${( err as Error ).message}`, { cause: 'CAN_T_RESET' } );
         };
     };
