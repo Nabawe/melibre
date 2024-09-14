@@ -22,6 +22,7 @@ function f_renderProductsTable( res: Response ) {
 };
 
 // ! Careful overusing this function since each RAMBox method might need special handling.
+/* * The use of try catch statements might be a more typical sollution, specially since RAMBox methods return errors when they fail */
 function f_handleSimpleRAMBoxError( res: Response, result: unknown ) {
     if ( result instanceof Error ) {
         const v = Verdicts[ ( result.cause as keyof t_Verdicts ) ];
@@ -33,6 +34,17 @@ function f_handleSimpleRAMBoxError( res: Response, result: unknown ) {
 
 Route_Products.get( '/products', ( _, res: Response ) => {
     f_renderProductsTable( res );
+} );
+
+Route_Products.get( '/products/:id', ( req: Request, res: Response ) => {
+    const match = MerchMan.m_getById( req.params.id );
+    return (
+        f_handleSimpleRAMBoxError( res, match )
+        || res.render(
+            'Products_Table',
+            { 'Products': [match], 'title': 'Austral Interpretar : Products' }
+        )
+    );
 } );
 
 Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
@@ -117,4 +129,18 @@ export default Route_Products;
     PUT '/api/productos/:id' -> recibe y actualiza un producto según su id.
     DELETE '/api/productos/:id' -> elimina un producto según su id.
     - Agregar una query
+*/
+
+/*
+    MidServer.get( '/api/letter/:num', ( req, res ) => {
+    if ( isNaN( req.params.num ) ) {
+        const content = `
+            ${Front.top}
+                <h1 style='color: hsla(212, 78%, 50%, 1);'>
+                    Error: Not a Number.
+                </h1>
+            ${Front.bot}
+        `;
+        return res.status( 400 ).send( content );
+    };
 */
