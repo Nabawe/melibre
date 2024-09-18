@@ -31,7 +31,6 @@ function f_handleSimpleRAMBoxError( res: Response, result: unknown ) {
     return false;
 };
 
-
 Route_Products.get( '/products', ( _, res: Response ) => {
     f_renderProductsTable( res );
 } );
@@ -44,6 +43,18 @@ Route_Products.get( '/products/:id', ( req: Request, res: Response ) => {
             'Products_Table',
             { 'Products': [match], 'title': 'Austral Interpretar : Products' }
         )
+    );
+} );
+
+/* Example
+    fetch('http://localhost:8080/products/del/d89Jbwvb4EFpBE26g7KNt', { method: 'DELETE' })
+*/
+// * the /del was added as extra insurance.
+Route_Products.delete( '/products/del/:id', ( req: Request, res: Response ) => {
+    const match = MerchMan.m_del( req.params.id );
+    return (
+        f_handleSimpleRAMBoxError( res, match )
+        || f_renderProductsTable( res )
     );
 } );
 
@@ -102,6 +113,17 @@ Route_Products.post( '/products/reset', ( _, res: Response ) => {
         || res.status( 200 ).json( MerchMan.i )
     );
 } );
+
+Route_Products.get( '/products/q', ( req: Request, res: Response ) => {
+    const match = MerchMan.m_filter( req.query.id );
+    return (
+        f_handleSimpleRAMBoxError( res, match )
+        || res.render(
+            'Products_Table',
+            { 'Products': match, 'title': 'Austral Interpretar : Products' }
+        )
+    );
+} );
 // ! Hacer q cada tanto se graben en un archivo, usando timer o cada vez q termina una operación -> Peligro si es ASYNC
 // ! Crear JSONBoxRAMCached, q use UUID y agregar timestamp creted, timestamp mod, si se mod o crea se agrega o re agrega al final del array ( borra y agrega )
     //  q tenga una funcion save o commitToDisk para elegir cuando se guarda en disco y pedir ayuda como diceñar y o investigar (la cola de escritura, etc)
@@ -111,36 +133,40 @@ Route_Products.post( '/products/reset', ( _, res: Response ) => {
 // ! Frenar el cambio de pagina del submit
 
 
-
-
-// Route_Products.post( '/products', ( req: Request, res: Response ) => {
-//     const { name, race, age } = req.body;
-//     Products.push( { name, race, age } );
-//     //res.status( 200 ).json( Products );
-//     res.status( 200 ).end();
-// } );
-
 export default Route_Products;
 
-/*
-    GET '/api/productos' -> devuelve todos los productos.
-    GET '/api/productos/:id' -> devuelve un producto según su id.
-    POST '/api/productos' -> recibe y agrega un producto, y lo devuelve con su id asignado.
-    PUT '/api/productos/:id' -> recibe y actualiza un producto según su id.
-    DELETE '/api/productos/:id' -> elimina un producto según su id.
+/* TO-DO
     - Agregar una query
+        · Para eso agregar la posibilidad de buscar por dateCreated y Price
+    - Ver los otros metodos https://claude.ai/chat/b4c2e582-0b8b-4708-a1e9-74caa596a5a9
+
+    + Add to RAMBox getByDateCreated & dateMod
+
+    + New classes
+        RAMBox-Query extends RAMBox for simple querying
+            Esta creo q puede ir dentro de rambox normal y tener un checkeo q revisa si existe el campo
+
+        RAMBox-ColonQuery to be able to query like scryfall
+
+        RAMBox- aiQuery similarQuery lazyQuery
+
+
+    + Each class Should create a new dir to store assetss
+        Bajo este principio reestructurar los errores y usar imports para armar jerarquía
+        ! Y agregar los nuevos errores para los nuevos metodos
+
+
+    + Add the two last pinned conversations with Claude to .docs
 */
 
-/*
-    MidServer.get( '/api/letter/:num', ( req, res ) => {
-    if ( isNaN( req.params.num ) ) {
-        const content = `
-            ${Front.top}
-                <h1 style='color: hsla(212, 78%, 50%, 1);'>
-                    Error: Not a Number.
-                </h1>
-            ${Front.bot}
-        `;
-        return res.status( 400 ).send( content );
-    };
+/* TO-DO
+    Database > Async > GraphQL > Svelt
+*/
+
+/* WIP
+    Query(id, date, body) > QueryHandler(process the response based on domain) > Results(id, date, ...content) > ResultsHandler()
+    Does query need to separate the domain from the queryBody?
+    Lo q estoy intentando decir es q voy a necesitar una instancia de RAMBox para las Queries y otra para los Resultados de las mismas.
+
+    A page with the lists of queries linking to their results.
 */

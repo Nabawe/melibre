@@ -192,6 +192,17 @@ class RAMBox {
         );
     };
 
+    // type t_filterOperators = '===' | '==' | '!==' ...;
+    m_filter( field: string, operator: string, value: string ): t_Item[] | Error {
+        // ? Can this be done using =>
+        const f = new Function( "obj", `return ${field} ${operator} obj.${value}` );
+        return (
+            this.#dataChecks()
+            || ( this.i.filter( f )
+            || new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } ) )
+        );
+    };
+
     m_new( newItem: t_Item ) {
         // ! HERE BEFORE SENDING req.body there should be somekind of check that confirm the integrity of the data from the front
             // * dataChecks seria solo para cosas como existencia de datos, verificar q haya donde guardarlos y otras generales pero en routes iria el revisar la integridad q el front le paso
