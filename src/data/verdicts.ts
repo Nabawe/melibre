@@ -45,6 +45,11 @@ const Verdicts: t_Verdicts = {
         type: 'json',
         outcome: { "error": ErrsMsgs['SEARCH__PRODUCT_NOT_FOUND'] }
     },
+    'FILTER__NO_MATCH': {
+        status: 404,
+        type: 'json',
+        outcome: { "error": ErrsMsgs['FILTER__NO_MATCH'] }
+    },
     'NO_DATA': {
         status: 412,
         type: 'json',

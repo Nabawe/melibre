@@ -88,11 +88,14 @@ import { nanoid as f_makeUUID } from 'nanoid';
 */
 
 
+type t_Comparison = '==' | '===' | '!=' | '!==' | '>' | '<' | '>=' | '<=';
+// make a better t_Id
+type t_Id = string | number | symbol;
 // ? As I understand I am missing the "template literal type".
 type t_IndexKey = string | number | symbol;
 // type t_Index = { [ key: t_IndexKey ]: any }; // Commented out since it was unused
 interface t_Item {
-    id: string;
+    id: t_Id;
     dateCreated: number;
     dateMod?: number;
     [ key: t_IndexKey ]: any;
@@ -192,15 +195,29 @@ class RAMBox {
         );
     };
 
-    // type t_filterOperators = '===' | '==' | '!==' ...;
-    m_filter( field: string, operator: string, value: string ): t_Item[] | Error {
-        // ? Can this be done using =>
-        const f = new Function( "obj", `return ${field} ${operator} obj.${value}` );
-        return (
-            this.#dataChecks()
-            || ( this.i.filter( f )
-            || new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } ) )
-        );
+    /*
+        field: keyof t_Item causes :
+            " Implicit conversion of a 'symbol' to a 'string' will fail at runtime. Consider wrapping this expression in 'String(...)'.ts(2731) "
+        Furthermore RAMBox is not aware of new custom fields and the way t_Item is defined is quite flexible so this should be redundant.
+    */
+    m_filter( field: string, operator: t_Comparison, value: any ): t_Item[] | Error {
+        const verdict = this.#dataChecks();
+        if ( verdict )
+            return verdict;
+
+        /*
+            If this was used instead :
+                ${value} ${operator} obj.${field}
+
+            Some comparisons would be inverted, since in the URL one specifies the operator first.
+            Think of the > < cases.
+        */
+        const f = new Function( "obj", `return ( obj => obj.${field} ${operator} ${value} )` );
+        const result = this.i.filter( f() );
+        if ( result.length > 0 )
+            return result;
+
+        return new Error( ErrsMsgs['FILTER__NO_MATCH'], { cause: 'FILTER__NO_MATCH' } );
     };
 
     m_new( newItem: t_Item ) {
@@ -218,20 +235,20 @@ class RAMBox {
     };
 
     // Se podria usar delete[index] y luego al grabar o reindexar remover los undefined
-    m_del( id: t_IndexKey ) {
+    m_del( id: t_Id ) {
         const verdict = this.#dataChecks();
         if ( verdict )
             return verdict;
 
         const index = this.i.findIndex( obj => id === obj.id );
-        if ( index === -1 )
-            return new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } );
+        if ( index !== -1 )
+            return this.i.splice( index, 1 );
 
-        return this.i.splice( index, 1 );
+        return new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } );
     };
 
     // ! m_set is subject to the same checking problems as m_new
-    m_set( id: t_IndexKey, data: t_Item ){
+    m_set( id: t_Id, data: t_Item ){
         const verdict = this.#dataChecks();
         if ( verdict )
             return verdict;

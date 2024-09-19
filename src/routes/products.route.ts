@@ -35,28 +35,19 @@ Route_Products.get( '/products', ( _, res: Response ) => {
     f_renderProductsTable( res );
 } );
 
-Route_Products.get( '/products/:id', ( req: Request, res: Response ) => {
-    const match = MerchMan.m_getById( req.params.id );
-    return (
-        f_handleSimpleRAMBoxError( res, match )
-        || res.render(
-            'Products_Table',
-            { 'Products': [match], 'title': 'Austral Interpretar : Products' }
-        )
-    );
-} );
-
 /* Example
     fetch('http://localhost:8080/products/del/d89Jbwvb4EFpBE26g7KNt', { method: 'DELETE' })
 */
 // * the /del was added as extra insurance.
-Route_Products.delete( '/products/del/:id', ( req: Request, res: Response ) => {
-    const match = MerchMan.m_del( req.params.id );
-    return (
-        f_handleSimpleRAMBoxError( res, match )
-        || f_renderProductsTable( res )
-    );
-} );
+/* Commented out since it could block the more useful /products/del, didn't test though
+    Route_Products.delete( '/products/del/:id', ( req: Request, res: Response ) => {
+        const match = MerchMan.m_del( req.params.id );
+        return (
+            f_handleSimpleRAMBoxError( res, match )
+            || f_renderProductsTable( res )
+        );
+    } );
+*/
 
 Route_Products.post( '/products/del', ( req: Request, res: Response ) => {
     const match = MerchMan.m_del( req.body.id );
@@ -83,6 +74,23 @@ Route_Products.post( '/products/add', ( req: Request, res: Response ) => {
     );
 } );
 
+Route_Products.get( '/products/f', ( req: Request, res: Response ) => {
+    // http://localhost:8080/products/f?field=dateCreated&operator=%3D%3D%3D&value=1655604430649
+    // http://localhost:8080/products/f?field=dateCreated&operator====value=1655604430649
+    const { field, operator, value } = req.query;
+    // ! Front and Security Checks
+    // ( remove the "as string" since the checks will give type assurance )
+    const match = MerchMan.m_filter( field as string, operator as string, value as string );
+
+    return (
+        f_handleSimpleRAMBoxError( res, match )
+        || res.render(
+            'Products_Table',
+            { 'Products': match, 'title': 'Austral Interpretar : Products' }
+        )
+    );
+} );
+
 /* * No permite actualizar el id de forma manual, de necesitarlo borrar el producto y re agregarlo, así garantiza el uso correcto de UUID */
 // ! Pork no puedo poner put aquí y q el form lo indique
 // ! Posee los mismos problemas sobre el checkeo d lo q viene del front q /products/add
@@ -92,10 +100,6 @@ Route_Products.post( '/products/update', ( req: Request, res: Response ) => {
         f_handleSimpleRAMBoxError( res, MerchMan.m_set( req.body.id, req.body ) )
         || f_renderProductsTable( res )
     );
-} );
-
-Route_Products.get( '/', ( _, res: Response ) => {
-    res.render( 'Products_InputForm', { 'title': 'Austral Interpretar : Inicio' } );
 } );
 
 // WIP Think what would be a better return
@@ -114,16 +118,23 @@ Route_Products.post( '/products/reset', ( _, res: Response ) => {
     );
 } );
 
-Route_Products.get( '/products/q', ( req: Request, res: Response ) => {
-    const match = MerchMan.m_filter( req.query.id );
+Route_Products.get( '/products/:id', ( req: Request, res: Response ) => {
+    const match = MerchMan.m_getById( req.params.id );
     return (
         f_handleSimpleRAMBoxError( res, match )
         || res.render(
             'Products_Table',
-            { 'Products': match, 'title': 'Austral Interpretar : Products' }
+            { 'Products': [match], 'title': 'Austral Interpretar : Products' }
         )
     );
 } );
+
+/* * Remember that the more general a route the lower in the file it should be as not to obstruct others. */
+Route_Products.get( '/', ( _, res: Response ) => {
+    res.render( 'Products_InputForm', { 'title': 'Austral Interpretar : Inicio' } );
+} );
+
+
 // ! Hacer q cada tanto se graben en un archivo, usando timer o cada vez q termina una operación -> Peligro si es ASYNC
 // ! Crear JSONBoxRAMCached, q use UUID y agregar timestamp creted, timestamp mod, si se mod o crea se agrega o re agrega al final del array ( borra y agrega )
     //  q tenga una funcion save o commitToDisk para elegir cuando se guarda en disco y pedir ayuda como diceñar y o investigar (la cola de escritura, etc)
@@ -136,8 +147,22 @@ Route_Products.get( '/products/q', ( req: Request, res: Response ) => {
 export default Route_Products;
 
 /* TO-DO
+    - Pensar si hacer lo siguiente
+        m_isValidField( field: string ) {
+            return field in o_ValidFields;
+        };
+
+        Al crear nuevos items se checkea si poceen fields nuevos y se los agregan a la lista de valid fields
+
+        Conciderar si este checkeo en realidad tendria q pasar en el front primero
+
+        Conciderar cuanto y como hay q validar field: string, operator: t_Comparison, value: any
+
+    - Repasar q Types se tienen q exportar de RAMBox e importar en las rutas
+
     - Agregar una query
         · Para eso agregar la posibilidad de buscar por dateCreated y Price
+
     - Ver los otros metodos https://claude.ai/chat/b4c2e582-0b8b-4708-a1e9-74caa596a5a9
 
     + Add to RAMBox getByDateCreated & dateMod
@@ -152,8 +177,9 @@ export default Route_Products;
 
 
     + Each class Should create a new dir to store assetss
-        Bajo este principio reestructurar los errores y usar imports para armar jerarquía
+        - Bajo este principio reestructurar los errores y usar imports para armar jerarquía
         ! Y agregar los nuevos errores para los nuevos metodos
+        ? Escribir sobre pork no success: true | false , o sea en vez de success with errors directamente como hubo un error q el mecanismo de errores lo trate? es algo para al menos dejar bien escrito el pensamiento y los fundamentos p cada lado.
 
 
     + Add the two last pinned conversations with Claude to .docs
