@@ -74,11 +74,14 @@ Route_Products.post( '/products/add', ( req: Request, res: Response ) => {
     );
 } );
 
+/* * remember URL escape codes
+    http://localhost:8080/products/f?field=dateCreated&operator=%3D%3D%3D&value=1655604430649
+    http://localhost:8080/products/f?field=price&operator=%3C%3D&value=300
+    http://localhost:8080/products/f?field=price&operator=<%3D&value=300
+*/
 Route_Products.get( '/products/f', ( req: Request, res: Response ) => {
-    // http://localhost:8080/products/f?field=dateCreated&operator=%3D%3D%3D&value=1655604430649
-    // http://localhost:8080/products/f?field=dateCreated&operator====value=1655604430649
     const { field, operator, value } = req.query;
-    // ! Front and Security Checks
+    // ! Front and Security Checks, "sanitisation"
     // ( remove the "as string" since the checks will give type assurance )
     const match = MerchMan.m_filter( field as string, operator as string, value as string );
 

@@ -88,7 +88,7 @@ import { nanoid as f_makeUUID } from 'nanoid';
 */
 
 
-type t_Comparison = '==' | '===' | '!=' | '!==' | '>' | '<' | '>=' | '<=';
+type t_Comparison = '===' | '!==' | '==' | '!=' | '>' | '<' | '>=' | '<=';
 // make a better t_Id
 type t_Id = string | number | symbol;
 // ? As I understand I am missing the "template literal type".
@@ -205,12 +205,33 @@ class RAMBox {
         if ( verdict )
             return verdict;
 
+        console.log( "argTypes : ", typeof field, " ", typeof operator, " ", typeof value, " " );
+
+        // Validate field
+            /* ! Bring back ExtraProps, change its name to reflect that they are only to be specified when an external file brings new props */
+
+        // Validate value
+            // ? Can value be undefined? if so set it as an optinal arg or at least assing empty string or something that coarses to 0
+
+        // ! Changes operators to EQ, M, etc so that it is easier to write or some other way to take the symbols =, >, etc string directly, check how scryfall does
+        const ValidOperators = [ '===' , '!==' , '==' , '!=' , '>' , '<' , '>=' , '<=' ];
+        if ( !( ValidOperators.includes( operator ) ) )
+            return new Error(
+                ErrsMsgs['FILTER__INVALID_OPERATOR'],
+                { cause: 'FILTER__INVALID_OPERATOR' }
+            );
+
+
         /*
             If this was used instead :
                 ${value} ${operator} obj.${field}
 
             Some comparisons would be inverted, since in the URL one specifies the operator first.
             Think of the > < cases.
+
+            ? Are there any special conciderations to be made for the lose operators ? (==, >=, ...)
+                coercion
+            ? All arguments are strings since they come from HTTP URLs do I need a special concideration when for example comparing numbers or other special more complex values?
         */
         const f = new Function( "obj", `return ( obj => obj.${field} ${operator} ${value} )` );
         const result = this.i.filter( f() );

@@ -3,6 +3,7 @@
     "CAN_T_RESET": "Could not reset",
     "CAN_T_SAVE": "Could not save to file",
     "CLASS__INIT": "Could not initialize the class",
+    "FILTER__INVALID_OPERATOR": "Invalid Comparison Operator",
     "FILTER__NO_MATCH": "No subset found",
     "NO_DATA": "No data to realize the operation. Empty Items List",
     "NO_DATA__NO_PRODUCTS": "Empty Products List",

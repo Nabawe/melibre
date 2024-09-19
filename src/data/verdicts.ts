@@ -50,6 +50,11 @@ const Verdicts: t_Verdicts = {
         type: 'json',
         outcome: { "error": ErrsMsgs['FILTER__NO_MATCH'] }
     },
+    'FILTER__INVALID_OPERATOR': {
+        status: 400,
+        type: 'json',
+        outcome: { "error": ErrsMsgs['FILTER__INVALID_OPERATOR'] }
+    },
     'NO_DATA': {
         status: 412,
         type: 'json',
