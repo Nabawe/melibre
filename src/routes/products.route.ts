@@ -74,7 +74,7 @@ Route_Products.post( '/products/add', ( req: Request, res: Response ) => {
     );
 } );
 
-/* * remember URL escape codes
+/* * remember URL escape codes AKAs "percent-encoding", "URL encoding"
     http://localhost:8080/products/f?field=dateCreated&operator=%3D%3D%3D&value=1655604430649
     http://localhost:8080/products/f?field=price&operator=%3C%3D&value=300
     http://localhost:8080/products/f?field=price&operator=<%3D&value=300

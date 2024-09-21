@@ -209,18 +209,80 @@ class RAMBox {
 
         // Validate field
             /* ! Bring back ExtraProps, change its name to reflect that they are only to be specified when an external file brings new props */
+            // m_isValidField don't make it private since it could be useful
 
         // Validate value
             // ? Can value be undefined? if so set it as an optinal arg or at least assing empty string or something that coarses to 0
+            // En el ejemplo "Improved Filter Method with Type Handling" Claude usa el type del Field para convertir el type del valor, de hacerlo aclararlo en una Doc String
+                // ! IMPLEMENTARLO DE ESA FORMA
+            // recordar sobre coersion de Booleans, Null, Dates, y Float
 
         // ! Changes operators to EQ, M, etc so that it is easier to write or some other way to take the symbols =, >, etc string directly, check how scryfall does
+        // ! Double quotes or single quotes on scryfall to allow for spaces
         const ValidOperators = [ '===' , '!==' , '==' , '!=' , '>' , '<' , '>=' , '<=' ];
-        if ( !( ValidOperators.includes( operator ) ) )
+        if ( !( ValidOperators.includes( operator ) ) ) {
             return new Error(
                 ErrsMsgs['FILTER__INVALID_OPERATOR'],
                 { cause: 'FILTER__INVALID_OPERATOR' }
             );
+        };
 
+        /*
+            + Por todo lo siguente usar entonces query
+                - Separation of concerns: It clearly separates the resource identifier (path) from the query criteria.
+                - RESTful design: In RESTful APIs, the path typically identifies a resource, while query parameters modify how that resource is retrieved or filtered.
+                - Flexibility: It's easier to add or remove query parameters without changing the route structure.
+
+            Percent-Encoded
+                : / ? # [ ] @ ! $ & ' ( ) * + , ; = % SPACE
+                So double quotes might be better than single? Test
+
+            * creo q solo debería permitir los q no hacen type coercion
+            * ~ not equal, no se si todos los teclados lo tienen comodo, pensar en alts como :
+                * el alt correcto creo termina siendo ! ya q deberia estar en todos los teclados
+            * ! invert or not
+                * creo q termina siendo mejor usar el - ya q no necesita escape
+            * el uso de : en vez de = por ahi simplifica para teclados
+            * Por ahi se podrian usar {} para reemplazar a las quotes o `
+            * Space o | como separador casi seguro q | esta en todos pero mejor guardarlo para OR
+                * el AND esta representado por ESPACIOS
+            ? XOR
+
+            ':': '===',
+            '!': '!==',
+            '=': '==',
+            '~': '!=',
+            '>': '>',
+            '<': '<',
+            '>=': '>=',
+            '<=': '<='
+
+            'g': '>=',  // 'g' for 'greater than or equal'
+            'l': '<='   // 'l' for 'less than or equal'
+
+            '≠': '!==',
+
+            const mappedOperator = OperatorMap[operator as string] || operator;
+                De esta manera si la comparacion a usar no esta en la array de comparaciones se puede mandar una custom, pensar si eso no seria un error.
+
+            * Scryfall parece q usa una sola string , eso permite escribir cualquier caracter en la URL y se transforma automaticamente, habria q ver como lo recibe el server.
+                ! es muy importante ya q aparentemente esos caracteres especiales por ejemplo se usan para determinar cuando empiesa o termina algo al estilo del & para mas variables, ver para q se usa el ! y :
+                - Use a custom query string format:
+                    http://localhost:8080/products/f?query=dateCreated:1655604430649
+                    Here, you define your own syntax (e.g., : for equality, > for greater than, etc.)
+                - Esto tal vez haga q se tenga q renombrar el metodo o crear otro
+
+            + El artifact Mathematical Symbol Operator Parsing usa
+                const match = queryString.match(/^(\w+)(=|≠|>|<|g|l)(.+)$/);
+
+            + Artifact : "Custom URL Parsing with Special Characters" y "Mathematical Symbol Operator Parsing"
+                tienen mecanismos con regex para match y split
+                    en mi caso usaria 2 tipos de split:
+                        SPACE   = AND
+                        |       = OR
+
+            + Luego de definir si usar query o params tambien crear algo q use req.body q permita recivirlo por POST para queries aun mas complejas
+        */
 
         /*
             If this was used instead :
@@ -229,7 +291,7 @@ class RAMBox {
             Some comparisons would be inverted, since in the URL one specifies the operator first.
             Think of the > < cases.
 
-            ? Are there any special conciderations to be made for the lose operators ? (==, >=, ...)
+            ? Are there any special considerations to be made for the lose operators ? (==, >=, ...)
                 coercion
             ? All arguments are strings since they come from HTTP URLs do I need a special concideration when for example comparing numbers or other special more complex values?
         */
