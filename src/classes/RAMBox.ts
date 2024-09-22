@@ -228,6 +228,8 @@ class RAMBox {
         };
 
         /*
+            * Check the built in encode and decode URL from JS.
+
             + Por todo lo siguente usar entonces query
                 - Separation of concerns: It clearly separates the resource identifier (path) from the query criteria.
                 - RESTful design: In RESTful APIs, the path typically identifies a resource, while query parameters modify how that resource is retrieved or filtered.
@@ -262,6 +264,12 @@ class RAMBox {
 
             '≠': '!==',
 
+            Allowed Characters (can be used without encoding):
+                · Truly "Safe" characters: Alphanumeric characters and -, ., _, ~ are safe to use anywhere in a URL without encoding.
+                · Alphanumeric characters: A-Z, a-z, 0-9
+                · Unreserved characters: - . _ ~ (hyphen, period, underscore, tilde)
+                · Reserved characters (when used for their reserved purposes): ! $ & ' ( ) * + , ; = : @ / ?
+
             const mappedOperator = OperatorMap[operator as string] || operator;
                 De esta manera si la comparacion a usar no esta en la array de comparaciones se puede mandar una custom, pensar si eso no seria un error.
 
@@ -282,6 +290,8 @@ class RAMBox {
                         |       = OR
 
             + Luego de definir si usar query o params tambien crear algo q use req.body q permita recivirlo por POST para queries aun mas complejas
+
+            + No olvidarse de analizar el caso de las dates y las Claude Conversations q ya tuve sobre el tema.
         */
 
         /*
