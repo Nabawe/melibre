@@ -227,7 +227,18 @@ class RAMBox {
             );
         };
 
+
         /*
+            ! Check the query is not empty xD
+                ? Only specifing the FIELD means that the query will seek a result that has that FIELD but what should be the interpretation of the following cases :
+                    "field7:=:",
+                    "field7:>:",
+                    "field8:=::",
+                    "field8:<::",
+                        ? Do they change the nature of "FIELD exists"
+
+            ! trim values, fields, operators
+
             * Check the built in encode and decode URL from JS.
 
             + Por todo lo siguente usar entonces query
