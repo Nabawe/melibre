@@ -44,16 +44,84 @@ testCases.forEach(test => {
     });
 });
  */
+const a_Ini = [ '(', 'N' ];
+const a_End = [ ')' ];
+const a_ImplicitOp = [ 'Y' ];
+const a_Operators = [  'N', 'O', 'Y' ];
+// Using Arrays in case the operators discriminate order.
+const o_OpToBranch = {
+    'N' : [],
+    'O' : [],
+    'Y' : [],
+};
+
+function f_parseLogic( input: string ) {
+    input = input.trim();
+    let buffer = "";    // The characters in waiting
+    let branch = "";    // The current branch of the Tree being constructed
+    const o_Tree = {};  // The Result
+
+    let twigI = "";
+    let twigE = "";
+
+    for ( let i = 0, length = input.length ; i < length ; i++ ) {
+        let char = input[i].trim();
+        // console.log( i, ' ', char );
+
+        for ( const v of a_Ini ) {
+            twigI = char.toUpperCase();
+            if ( twigI === v ) {
+                break;
+            };
+            twigI = "";
+        };
+
+        if ( twigI ) {
+            branch = " ";
+            continue;
+        };
+
+        for ( const v of a_End ) {
+            twigE = char.toUpperCase();
+            if ( twigE === v ) {
+                break;
+            };
+            twigE = "";
+        };
+
+        if ( twigE ) {
+            break;
+        };
+
+        if ( branch ) {
+            branch += char;
+        } else {
+            buffer += char;
+        };
+    };
+
+    return {
+        'branch': branch,
+        'buffer': buffer
+    };
+};
+
+console.info( 'result : ', f_parseLogic( '012 (3456) 789' ) );
+
+
+
+
+
+
+
 
 function parseLogicalQuery(query: string) {
     const tokens = query.match(/(\s*n\s*\(\s*|\s*\(\s*|\s*\)\s*|\s*[yYoO]\s*|\s*[^()\s]+\s*)/g) || [];
-    tokens.push(')'); // Add a closing parenthesis to simplify processing
-
     let index = 0;
 
-    function parseExpression() {
+    function parseExpression(defaultOp = 'Y') {
         let result = [];
-        let currentOperator = 'Y'; // Default to AND
+        let currentOp = defaultOp;
 
         while (index < tokens.length) {
             let token = tokens[index++].trim();
@@ -61,28 +129,30 @@ function parseLogicalQuery(query: string) {
             if (token === ')') {
                 break;
             } else if (token === '(') {
-                result.push(parseExpression());
-            } else if (token.toLowerCase() === 'n(') {
-                result.push({ 'N': parseExpression() });
+                result.push(parseExpression(currentOp));
+            } else if (token.toLowerCase().startsWith('n')) {
+                index++; // Skip the opening parenthesis after 'n'
+                result.push({ 'N': [parseExpression(currentOp)] });
+                index++; // Skip the closing parenthesis
             } else if (token.toLowerCase() === 'y' || token.toLowerCase() === 'o') {
-                currentOperator = token.toUpperCase();
+                currentOp = token.toUpperCase();
             } else {
                 result.push(token); // This is an FVP term
             }
         }
 
-        // If there's only one item, return it directly
-        if (result.length === 1) {
+        // If there's only one item and we're not at the top level, return it directly
+        if (result.length === 1 && defaultOp !== 'Y') {
             return result[0];
         }
 
-        // Otherwise, wrap it in an object with the current operator
-        return { [currentOperator]: result };
+        // Combine items with the same operator
+        return { [currentOp]: result };
     }
 
     const parsed = parseExpression();
 
-    // Remove the top-level Y if it's just wrapping a single item
+    // If the top level has only one child, unwrap it
     if (parsed.Y && parsed.Y.length === 1) {
         return parsed.Y[0];
     }
@@ -98,8 +168,8 @@ const testQueries = [
     "FVP1 FVP2 o FVP3"
 ];
 
-testQueries.forEach(query => {
-    console.log("Query:", query);
-    console.log("Parsed:", JSON.stringify(parseLogicalQuery(query), null, 2));
-    console.log("---");
-});
+// testQueries.forEach(query => {
+//     console.log("Query:", query);
+//     console.log("Parsed:", JSON.stringify(parseLogicalQuery(query), null, 2));
+//     console.log("---");
+// });
