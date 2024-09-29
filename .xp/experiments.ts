@@ -64,55 +64,47 @@ function f_parseLogic( input: string ) {
     let buffer = "";    // The characters in waiting
     let branch = "";    // The current branch of the Tree being constructed
     const o_Tree = {};  // The Result
+    const length = input.length;
 
-    let twigI = "";
-    let twigE = "";
+    function treeMaker( i = 0 ) {
+        for ( ; i < length ; i++ ) {
+            let realChar = input[i];
+            let char = input[i].trim().toUpperCase();
+            // console.log( i, ' ', char );
 
-    for ( let i = 0, length = input.length ; i < length ; i++ ) {
-        let char = input[i].trim();
-        // console.log( i, ' ', char );
+            if ( a_LvlEnd.includes( char ) ) {
+                // break;
 
-        for ( const v of a_LvlEnd ) {
-            twigE = char.toUpperCase();
-            if ( twigE === v ) {
-                break;
+                // * now use o_Tree and make a system that closes and opens the levels, might need to keep track of opened levels to know how many to close
+                buffer += realChar;
+                branch += buffer;
+                buffer = "";
+                // i++;  // ? unsure if this is needed
+                return;
             };
-            twigE = "";
-        };
 
-        if ( twigE ) {
-            break;
-        };
-
-        // * use this a_Ini.includes ( char.toUpperCase() );
-        // a_Ini.find ( char.toUpperCase() );
-        for ( const v of a_LvlIni ) {
-            twigI = char.toUpperCase();
-            if ( twigI === v ) {
-                break;
+            if ( a_LvlIni.includes( char ) ) {
+                buffer += realChar;
+                // continue;   // * recursion start instead of continue
+                treeMaker( ++i );
             };
-            twigI = "";
-        };
 
-        if ( twigI ) {
-            branch = " ";
-            continue;
-        };
-
-        if ( branch ) {
-            branch += char;
-        } else {
-            buffer += char;
+            if ( buffer )
+                buffer += realChar;
         };
     };
 
+    treeMaker();
+
     return {
+        'input': input,
         'branch': branch,
-        'buffer': buffer
+        'buffer': buffer,
+        'o_Tree': o_Tree,
     };
 };
 
-console.info( 'result : ', f_parseLogic( '012 (3456) 789' ) );
+console.info( 'result : ', f_parseLogic( '012 (3 (45) 6) 789' ) );
 
 
 
@@ -138,9 +130,9 @@ function parseLogicalQuery(query: string) {
             } else if (token === '(') {
                 result.push(parseExpression(currentOp));
             } else if (compToken.startsWith('N')) {
-                // index++; // Skip the opening parenthesis after 'n'
+                index++; // Skip the opening parenthesis after 'n'
                 result.push({ 'N': [parseExpression(currentOp)] });
-                // index++; // Skip the closing parenthesis
+                index++; // Skip the closing parenthesis
             } else if (compToken === 'O') {
                 currentOp = compToken;
             } else if (compToken === 'Y') {
