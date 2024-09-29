@@ -44,13 +44,17 @@ testCases.forEach(test => {
     });
 });
  */
-const a_Ini = [ '(', 'N' ];
-const a_End = [ ')' ];
-const a_ImplicitOp = [ 'Y' ];
-const a_Operators = [  'N', 'O', 'Y' ];
+const a_LvlIni = [ '(' ];
+const a_LvlEnd = [ ')' ];
+const a_OpImplicit = [ 'Y' ];
+const a_OpAtIni = [ 'N' ];                  // That interact with ( i.e. forwards with terms
+                                            // ! might need to define if it uses () or other things
+                                            // * there is a need to discriminate between LvlIni and OpAtIni
+const a_OpAtEnd = [];                       // That interact with ) backwards with terms
+const a_OpAtJoints = [ ' ', 'O', 'Y' ];     // ? Could ' ' be used for Y when it is being trimmed
 // Using Arrays in case the operators discriminate order.
 const o_OpToBranch = {
-    'N' : [],
+    'N' : [],                               // Different Kind of operators might need different treatment
     'O' : [],
     'Y' : [],
 };
@@ -68,7 +72,21 @@ function f_parseLogic( input: string ) {
         let char = input[i].trim();
         // console.log( i, ' ', char );
 
-        for ( const v of a_Ini ) {
+        for ( const v of a_LvlEnd ) {
+            twigE = char.toUpperCase();
+            if ( twigE === v ) {
+                break;
+            };
+            twigE = "";
+        };
+
+        if ( twigE ) {
+            break;
+        };
+
+        // * use this a_Ini.includes ( char.toUpperCase() );
+        // a_Ini.find ( char.toUpperCase() );
+        for ( const v of a_LvlIni ) {
             twigI = char.toUpperCase();
             if ( twigI === v ) {
                 break;
@@ -79,18 +97,6 @@ function f_parseLogic( input: string ) {
         if ( twigI ) {
             branch = " ";
             continue;
-        };
-
-        for ( const v of a_End ) {
-            twigE = char.toUpperCase();
-            if ( twigE === v ) {
-                break;
-            };
-            twigE = "";
-        };
-
-        if ( twigE ) {
-            break;
         };
 
         if ( branch ) {
@@ -125,17 +131,20 @@ function parseLogicalQuery(query: string) {
 
         while (index < tokens.length) {
             let token = tokens[index++].trim();
+            let compToken = token.toUpperCase();
 
             if (token === ')') {
                 break;
             } else if (token === '(') {
                 result.push(parseExpression(currentOp));
-            } else if (token.toLowerCase().startsWith('n')) {
-                index++; // Skip the opening parenthesis after 'n'
+            } else if (compToken.startsWith('N')) {
+                // index++; // Skip the opening parenthesis after 'n'
                 result.push({ 'N': [parseExpression(currentOp)] });
-                index++; // Skip the closing parenthesis
-            } else if (token.toLowerCase() === 'y' || token.toLowerCase() === 'o') {
-                currentOp = token.toUpperCase();
+                // index++; // Skip the closing parenthesis
+            } else if (compToken === 'O') {
+                currentOp = compToken;
+            } else if (compToken === 'Y') {
+                currentOp = compToken;
             } else {
                 result.push(token); // This is an FVP term
             }
