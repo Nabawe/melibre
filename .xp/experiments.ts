@@ -61,37 +61,52 @@ const o_OpToBranch = {
 
 function f_parseLogic( input: string ) {
     input = input.trim();
-    let buffer = "";    // The characters in waiting
     let branch = "";    // The current branch of the Tree being constructed
     const o_Tree = {};  // The Result
     const length = input.length;
+    let lvl = 0;
+    let i = 0;
 
-    function treeMaker( i = 0 ) {
-        for ( ; i < length ; i++ ) {
+    function treeMaker() {
+        let buffer = "";    // The characters in waiting
+        console.log( 'lvl ', lvl, 'i ', i, 'buffer ', buffer );
+
+        while ( i < length ) {
             let realChar = input[i];
-            let char = input[i].trim().toUpperCase();
+            let char = realChar.trim().toUpperCase();
             // console.log( i, ' ', char );
 
             if ( a_LvlEnd.includes( char ) ) {
                 // break;
-
                 // * now use o_Tree and make a system that closes and opens the levels, might need to keep track of opened levels to know how many to close
-                buffer += realChar;
+                buffer += char;
                 branch += buffer;
-                buffer = "";
-                // i++;  // ? unsure if this is needed
+                // ! la consola muestra q entra CUATRO veces aqui, pork??>??????? el for y la recursion deben estar mal, ademas se salta el 6
+                console.log( 'lvl ', lvl, 'i ', i, 'char ', char );
+                lvl--;
+                // if ( lvl === 0 )
+                //     buffer = "";
+                i++;  // ? unsure if this is needed
+                // treeMaker();
                 return;
+                // break;
             };
 
             if ( a_LvlIni.includes( char ) ) {
-                buffer += realChar;
+                buffer += char;
+                branch += buffer;
+                lvl++;
                 // continue;   // * recursion start instead of continue
-                treeMaker( ++i );
+                console.log( 'lvl ', lvl, 'i ', i, 'char ', char );
+                i++;
+                treeMaker();
             };
 
-            if ( buffer )
-                buffer += realChar;
+            buffer += realChar;
+            console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'realChar ', realChar );
+            i++;
         };
+        // return;
     };
 
     treeMaker();
@@ -99,7 +114,7 @@ function f_parseLogic( input: string ) {
     return {
         'input': input,
         'branch': branch,
-        'buffer': buffer,
+        // 'buffer': buffer,
         'o_Tree': o_Tree,
     };
 };
@@ -174,3 +189,18 @@ const testQueries = [
 //     console.log("Parsed:", JSON.stringify(parseLogicalQuery(query), null, 2));
 //     console.log("---");
 // });
+
+
+
+/*
+const getMaxCallStackSize = (i) => {
+    try {
+        return getMaxCallStackSize(++i);
+    } catch {
+        return i;
+    }
+};
+
+console.log(getMaxCallStackSize(0));
+
+*/
