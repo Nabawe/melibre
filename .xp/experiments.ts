@@ -62,14 +62,13 @@ const o_OpToBranch = {
 function f_parseLogic( input: string ) {
     input = input.trim();
     let branch = "";    // The current branch of the Tree being constructed
-    const o_Tree = {};  // The Result
+    const o_Tree = [];  // The Result
     const length = input.length;
     let lvl = 0;
     let i = 0;
 
     function treeMaker() {
         let buffer = "";    // The characters in waiting
-        console.log( 'lvl ', lvl, 'i ', i, 'buffer ', buffer );
 
         while ( i < length ) {
             let realChar = input[i];
@@ -77,36 +76,43 @@ function f_parseLogic( input: string ) {
             // console.log( i, ' ', char );
 
             if ( a_LvlEnd.includes( char ) ) {
-                // break;
-                // * now use o_Tree and make a system that closes and opens the levels, might need to keep track of opened levels to know how many to close
                 buffer += char;
                 branch += buffer;
-                // ! la consola muestra q entra CUATRO veces aqui, pork??>??????? el for y la recursion deben estar mal, ademas se salta el 6
-                console.log( 'lvl ', lvl, 'i ', i, 'char ', char );
+                console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'buffer ', buffer );
                 lvl--;
                 // if ( lvl === 0 )
-                //     buffer = "";
-                i++;  // ? unsure if this is needed
+                // buffer = "";
+                i++;
                 // treeMaker();
-                return;
-                // break;
+                // return;
+                break;
             };
 
             if ( a_LvlIni.includes( char ) ) {
-                buffer += char;
+                buffer += char;     // aqui y en LvlEnd hay q mejorar la logica para sabr cuando toma los chars anteriores y seguir viendo q pasa con buffer al volver, si es q retiene los numeros anteriores
                 branch += buffer;
                 lvl++;
+                console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'buffer ', buffer );
                 // continue;   // * recursion start instead of continue
-                console.log( 'lvl ', lvl, 'i ', i, 'char ', char );
+                // buffer = "";
                 i++;
                 treeMaker();
             };
 
-            buffer += realChar;
-            console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'realChar ', realChar );
+            if ( lvl === 0 ) {
+                branch += realChar;
+            } else {
+                buffer += realChar;
+            };
+
+            console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'realChar ', realChar, 'buffer ', buffer );
             i++;
         };
-        // return;
+
+        if ( i < length )
+            treeMaker();
+
+        return;
     };
 
     treeMaker();
