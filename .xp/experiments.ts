@@ -89,8 +89,9 @@ function f_parseLogic( input: string ) {
             };
 
             if ( a_LvlIni.includes( char ) ) {
-                buffer += char;     // aqui y en LvlEnd hay q mejorar la logica para sabr cuando toma los chars anteriores y seguir viendo q pasa con buffer al volver, si es q retiene los numeros anteriores
-                branch += buffer;
+                /* aqui y en LvlEnd hay q mejorar la logica para sabr cuando tomar los chars anteriores y seguir viendo q pasa con buffer al volver, si es q retiene los numeros anteriores */
+                buffer += char;
+                // branch += buffer;
                 lvl++;
                 console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'buffer ', buffer );
                 // continue;   // * recursion start instead of continue

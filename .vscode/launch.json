@@ -27,7 +27,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "TSX Strict Debug Current File",
+            "name": "TSX Debug with ENV Current File",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "node",
@@ -36,6 +36,7 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "env": {
+                // "VSCODE_NODE_PATH": "${env:NODE_PATH}",
                 "NODE_ENV": "development",
                 "LOG_LEVEL": "debug"
             }
