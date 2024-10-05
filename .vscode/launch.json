@@ -3,7 +3,6 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     // SOURCE https://claude.ai/chat/b945ee96-54cf-44ad-97f3-cc68106b5ea8
-    /* * In theory anthing that is passed to TSX is passed to node.js but this configuration would allow to change for another node.js wrapper with more ease should TSX stop working */
     /*
         skipFiles
             On single file debugging it might be useful to check libraries and etc, but when the full project is being debugged better skip them.
@@ -14,15 +13,18 @@
         "console": "integratedTerminal"
             Change to externalTerminal on dual screens.
     */
+    /* To-Do
+        - A Configuration that compiles the entire project and debugs it, may be it could use src/index.ts as the entry point?
+    */
     "version": "0.2.0",
     "configurations": [
         {
             "name": "TSX Debug Current File",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "node",
-            "runtimeArgs": ["--loader", "tsx"],
-            "args": ["${relativeFile}"],
+            "runtimeExecutable": "tsx",
+            "runtimeArgs": ["--no-cache"],
+            "program": "${relativeFile}",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal"
         },
@@ -30,9 +32,9 @@
             "name": "TSX Debug with ENV Current File",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "node",
-            "runtimeArgs": ["--loader", "tsx"],
-            "args": ["${relativeFile}"],
+            "runtimeExecutable": "tsx",
+            "runtimeArgs": ["--no-cache"],
+            "program": "${relativeFile}",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "env": {
@@ -45,42 +47,29 @@
             "name": "TSX Debug experiments.ts",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "node",
-            "runtimeArgs": ["--loader", "tsx"],
-            "args": ["${workspaceFolder}/.xp/experiments.ts"],
-            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "tsx",
+            "runtimeArgs": ["--no-cache"],
+            "program": "${workspaceFolder}/.xp/experiments.ts",
             "console": "integratedTerminal"
         },
         {
             "name": "TSX Debug Project",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "dev"],
+            "runtimeExecutable": "tsx",
+            "runtimeArgs": ["--clear-screen=false", "src/index.ts"],
             "console": "integratedTerminal",
             "skipFiles": [
                 "<node_internals>/**",
                 "${workspaceFolder}/node_modules/**"
-            ],
-        },
-        {
-            "name": "Compile & Debug experiments.ts",
-            "type": "node",
-            "request": "launch",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "xp"],
-            "outFiles": ["${workspaceFolder}/.xp/**/*.js"],
-            "console": "integratedTerminal",
-            "skipFiles": [
-                "${workspaceFolder}/dist/**"
             ]
         },
         {
-            "name": "Compile & Debug src files",
+            "name": "Compile & Debug Current File",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "dev"],
+            "runtimeArgs": ["run", "build"],
             "outFiles": ["${workspaceFolder}/dist/**/*.js"],
             "console": "integratedTerminal",
             "skipFiles": [
