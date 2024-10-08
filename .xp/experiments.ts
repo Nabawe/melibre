@@ -85,11 +85,12 @@ function f_parseLogic( input: string ) {
                 i++;
                 // treeMaker();
                 // return;
-                break;
+                // break;
+                continue;
             };
 
             if ( a_LvlIni.includes( char ) ) {
-                /* aqui y en LvlEnd hay q mejorar la logica para sabr cuando tomar los chars anteriores y seguir viendo q pasa con buffer al volver, si es q retiene los numeros anteriores */
+                /* aqui y en LvlEnd hay q mejorar la logica para saber cuando tomar los chars anteriores y seguir viendo q pasa con buffer al volver, si es q retiene los numeros anteriores */
                 buffer += char;
                 // branch += buffer;
                 lvl++;
