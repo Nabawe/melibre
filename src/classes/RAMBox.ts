@@ -100,7 +100,7 @@ interface t_Item {
     dateMod?: number;
     [ key: t_IndexKey ]: any;
 };
-interface DataChecksFlags {
+interface t_DataChecksFlags {
     [ key: Uppercase<string> ]: boolean;
 };
 
@@ -146,13 +146,14 @@ class RAMBox {
     /* WIP Add ways to specify the checks like with a hash 3b40v69 or binary string 010110 or flags object, so it can skip unnecesary checks for a given scenario */
     // ? Should both Parameters be optional
     // ! this function will NEVER return void, always false or a specific Error w a cause
-    #dataChecks( flags?: DataChecksFlags | undefined, data = this.i ): false | Error | void {
+    #dataChecks( flags?: t_DataChecksFlags | undefined, data = this.i ): false | Error | void {
         // Add new default values to flags in F.
         /*
-            let F: DataChecksFlags = { NO_DATA: true, ...flags };
-            This line should fail when flags is undefined or an empty object since both are not iterables
+            let F: t_DataChecksFlags = { NO_DATA: true, ...flags };
+            This line should fail when flags is undefined or an empty object since both are not iterables.
+                Thats what the docs say but it practice I never saw it fail.
         */
-        let F: DataChecksFlags = { NO_DATA: true };
+        let F: t_DataChecksFlags = { NO_DATA: true };
         if ( flags )
             F = { ...F,  ...flags };
         if ( F.NO_DATA && !data.length )

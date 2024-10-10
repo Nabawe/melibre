@@ -59,65 +59,53 @@ const o_OpToBranch = {
     'Y' : [],
 };
 
+/* * Esta la pocibilidad de hacer una traduccion en la string y luego usar algo tipo eval para convertirlo en objeto , al estilo ( convertido en { y otras mas complejas */
 function f_parseLogic( input: string ) {
     input = input.trim();
-    let branch = "";    // The current branch of the Tree being constructed
-    const o_Tree = [];  // The Result
+    // let branch = "";    // The current branch of the Tree being constructed
+    const branch: any[] = [];
+    const buffer: any[] = [];
+    const o_Tree: any[] = [];  // The Result
+    const currentBranch: any[] = [];
     const length = input.length;
     let lvl = 0;
-    let i = 0;
+    // let i = 0;
 
-    function treeMaker() {
-        let buffer = "";    // The characters in waiting
+    // console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'buffer ', buffer );
+    // console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'buffer ', buffer );
+    // console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'realChar ', realChar, 'buffer ', buffer );
+    // function treeMaker() {
+    // let buffer = "";    // The characters in waiting
 
-        while ( i < length ) {
-            let realChar = input[i];
-            let char = realChar.trim().toUpperCase();
-            // console.log( i, ' ', char );
+    for ( let i = 0 ; i < length ; i++ ) {
+        let realChar = input[i];
+        let char = realChar.trim().toUpperCase();
 
-            if ( a_LvlEnd.includes( char ) ) {
-                buffer += char;
-                branch += buffer;
-                console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'buffer ', buffer );
-                lvl--;
-                // if ( lvl === 0 )
-                // buffer = "";
-                i++;
-                // treeMaker();
-                // return;
-                // break;
-                continue;
-            };
-
-            if ( a_LvlIni.includes( char ) ) {
-                /* aqui y en LvlEnd hay q mejorar la logica para saber cuando tomar los chars anteriores y seguir viendo q pasa con buffer al volver, si es q retiene los numeros anteriores */
-                buffer += char;
-                // branch += buffer;
-                lvl++;
-                console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'buffer ', buffer );
-                // continue;   // * recursion start instead of continue
-                // buffer = "";
-                i++;
-                treeMaker();
-            };
-
-            if ( lvl === 0 ) {
-                branch += realChar;
-            } else {
-                buffer += realChar;
-            };
-
-            console.log( 'lvl ', lvl, 'i ', i, 'char ', char, 'realChar ', realChar, 'buffer ', buffer );
-            i++;
+        if ( a_LvlEnd.includes( char ) ) {
+            // close branch
+            lvl--;
+            continue;
         };
 
-        if ( i < length )
-            treeMaker();
+        if ( a_LvlIni.includes( char ) ) {
+            lvl++;
+            if ( !( branch[lvl] ) )
+                branch[lvl] = [];
 
-        return;
+            /* El codigo en realidad se pareceria a mas crear una nueva [] y recordar la posicion donde se la grabo para poder accederla */
+
+            // add to tree
+            currentBranch.push( branch[lvl] );
+            continue;
+        };
+
+        if ( lvl === 0 ) {
+            o_Tree.push( realChar );
+        } else {
+            branch[lvl].push( realChar );
+        };
+
     };
-
-    treeMaker();
 
     return {
         'input': input,
@@ -127,7 +115,9 @@ function f_parseLogic( input: string ) {
     };
 };
 
-console.info( 'result : ', f_parseLogic( '012 (3 (45) 6) 789' ) );
+const entry = '012 (3 (45) 6) 789';
+console.log( 'entry : ', entry );
+console.info( 'result : ', f_parseLogic( entry ) );
 
 
 
