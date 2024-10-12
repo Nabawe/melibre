@@ -63,10 +63,12 @@ const o_OpToBranch = {
 function f_parseLogic( input: string ) {
     input = input.trim();
     // let branch = "";    // The current branch of the Tree being constructed
-    const branch: any[] = [];
+    const growingBranches: any[] = [];
     const buffer: any[] = [];
     const o_Tree: any[] = [];  // The Result
-    const currentBranch: any[] = [];
+    let currentBranch: any[] = o_Tree;
+        // !!! Mal las branches y el tree se organizan distinto sino nose preservaria el significado de los conectores logicos o de quien pertenese a quien
+    let currentTwig = 0;
     const length = input.length;
     let lvl = 0;
     // let i = 0;
@@ -82,42 +84,62 @@ function f_parseLogic( input: string ) {
         let char = realChar.trim().toUpperCase();
 
         if ( a_LvlEnd.includes( char ) ) {
-            // close branch
-            lvl--;
+            // close branches and twigs
+            if ( currentTwig - 1 < 0 ) {
+                lvl--;
+                currentTwig = 0;
+            } else {
+                currentTwig--;
+            };
+            currentBranch = growingBranches[lvl][currentTwig];
             continue;
         };
 
         if ( a_LvlIni.includes( char ) ) {
             lvl++;
-            if ( !( branch[lvl] ) )
-                branch[lvl] = [];
+            // const L = growingBranches[lvl].length;   // ver q pasa cuando no existe
+            // let twig = L - 1 > 0 ? L - 1 : 0;
+            let twig = 0;                               // * conciderar q twig arranque de 1
 
-            /* El codigo en realidad se pareceria a mas crear una nueva [] y recordar la posicion donde se la grabo para poder accederla */
+            if ( !( growingBranches[lvl] ) ) {
+                growingBranches[lvl] = [];
+            } else {
+                twig = growingBranches[lvl].length;     // this already adds 1 to twig
+            };
 
-            // add to tree
-            currentBranch.push( branch[lvl] );
+            if ( !( growingBranches[lvl][twig] ) ) {
+                growingBranches[lvl][twig] = [];
+                // growingBranches[lvl][twig].push( [] ); // ver si push crea un array para no tener q lidiar con la pos 0, en este caso crearia la array de twig y devolveria 0 para la pos para guardarla en twig ( la variable en este caso )
+            };
+            currentTwig = twig;             // ! meditar si se necesita controlar mas est asignacion
+            currentBranch = growingBranches[lvl][currentTwig];
+
+            // growingBranches[lvl][twig].insertionPos = o_Tree.push( currentBranch ) - 1; // falta un if por si esta vacia
+            o_Tree.push( currentBranch );
             continue;
         };
 
-        if ( lvl === 0 ) {
-            o_Tree.push( realChar );
-        } else {
-            branch[lvl].push( realChar );
-        };
-
+        // ! meditar si falta regular insercion de twig de la misma forma q level
+        // if ( lvl === 0 ) {
+        //     o_Tree.push( realChar );
+        // } else {
+        //     currentBranch.push( realChar );
+        // };
+        currentBranch.push( realChar );
     };
 
     return {
         'input': input,
-        'branch': branch,
+        // 'branch': currentBranch,
         // 'buffer': buffer,
         'o_Tree': o_Tree,
     };
 };
 
-const entry = '012 (3 (45) 6) 789';
+let entry = '012 (3 (45) 6) 789';
 console.log( 'entry : ', entry );
 console.info( 'result : ', f_parseLogic( entry ) );
+entry = 'AB (C (DE) F  (G H)I)(JK(L))';
 
 
 
