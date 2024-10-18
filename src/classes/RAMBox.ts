@@ -69,7 +69,7 @@
         But the "type fixed" way just puts layers on a return that must happen if it enters into the catch.
     +
 */
-/* TO-DO
+/* To-Do
     + DO A METHOD to search by any property, the way to evaluate each property might be needed or use simple comparisons, search like exact and lazy, fuzy.
 */
 import ErrsMsgs from '../data/messages/errors.msg.json' assert { type: "json" };
@@ -188,10 +188,10 @@ class RAMBox {
     };
 
     // <3
-    m_getById( id: t_Item["id"] ): t_Item | Error {
+    m_getById( _id: t_Item["id"] ): t_Item | Error {
         return (
             this.#dataChecks()
-            || ( this.i.find( obj => id === obj.id )
+            || ( this.i.find( obj => _id === obj.id )
             || new Error( ErrsMsgs['SEARCH__NOT_FOUND'], { cause: 'SEARCH__NOT_FOUND' } ) )
         );
     };

@@ -1,0 +1,111 @@
++ Names
++ Class : Element
++ Arrays all the Way
++ Iterator
++ array mutation, splice vs delete
++ Branches vs Nodes
++ Sparce Arrays
++ Modeling
+
+
++ Names
+    TidyTree, NearTree, InfinityCupboard, TaggedCupboard, chest of drawers, stack, accumulate, dresser?
++
+
+
++ Class : Element
+    tal vez crear una clase Element q normalmente solo guarda el value y se convierte en un array al tener un child pero creo q es peor ya q siempre va a ser alguna estructura mas grande q una Array y va a consumir mas CPU time
++
+
+
++ Arrays all the Way
+    Para guardar un dato se guardaría en [].value pero cada branch es simplemente una array vacía en su expresión mínima, de esta manera las relaciones : parent, sibling, children quedan actualizadas automáticamente y también recuerdan un orden
+
+    Aún así crear la clase branch o node
++
+
+
++ Iterator
+    Define an iterator that iterates over the whole tree in an ordered way that allows it to "be read" and keep hierarchy and etc.
++
+
+
++ array mutation, splice vs delete
+    splice and other methods are to be used when modding an array and NOT delete
+
+    delete though could be used to delete the 0 index and create an SPARCEARRAY check MDN delete
++
+
+
++ Branches vs Nodes
+    meditar si la conceptualizacion es a base d nodos o branches
+
+    Decirle a Guido un ejemplo de cosas para pensar es q puedo preguntarle a un Node q una Branch no pueda responder, por ejemplo como encontrar los silblings y ver q concepto funciona mejor para modelar ( explicar q es modelar, creacion de classes ) o si es necesario usar los 2 conceptos, q es lo q estoy evitando, para q todo sea bien lean.
+
+    Un nodo pierde el weight entre conexiones al crear un nodo nuevo y en contraste una rama mantiene identidad y valor ( imaginar q a una rama gorda le sale una rama fina )
+
+    Las ramas permiten visualizar los valores q guardan y en este caso buscan ser más permanentes.
+
+    Los nodos probablemente pueden almacenar una diversidad mayor de información o sea más variedad de tipo de conceptos de información
+
+    pensar sobre lo de distancia al centro y otras cosas reprecentables por el diametro del nodo, es una analogia, una visualizacion de una propiedad igual y seguro se podría hacer lo mismo con una branch. su ancho?
++
+
+
++ Sparce Arrays
+    Revisar en MDN q es lo q pierden las array si definía custom props estoy casi seguro q está en la pag mdn arrays
++
+
+
++ Modeling
+    Otros métodos podrían ser:
+    +Continue dónde crea una branch sibling
+    +Spawn dónde crea una branch child
+    +spawnUncle donde crea una branch sibling al parent
+
+    Creo q es mejor q todos empiecen con spawn
+
+    O sea son metodos q permiten el ir haciendo crecer el árbol de manera lógica e ir guardando valores.
+
+    Otros métodos:
+    Open,close,grow ... Branch q equivalen a ( ) newSibling
+
+    openNewBranch, closeLastOpenedBranch
++
+
+
++ f_parseLogic
+    ask claude about coping, remembering and modifying arrays, about shallow vs deep
+
+    Franco Chiavarini, [09/10/2024 5:59 am]
+    Recordar pos con array o una var q sea current.
+
+    branch[lvl][twig] = [];
+    branch[lvl][twig].insertionPos
+
+    vs
+
+    current
+    insertionPos
+
+
+    luego abajo:
+
+    if lvl === 0 o_Tree.push( realChar )
+    else currentParent.push( realChar)
+    OR
+    else branch[lvl][twig].push ( realChar)
+
+
+    Luego arriba en )
+    Retorna el puntero a la array q sea su padre
+
+    currentBranch = [];
+    growingBranches[lvl][twig] = currentBranch;
+    currentBranch.insertionPos = posición en la array parent; (ver q se guarde en la array original y no en el puntero)
+    currentTwig = twig;
+
+    id o twig ya q puede haber más de un set de paréntesis por Branch.
+
+    Ver si delete causa reindexacion
++

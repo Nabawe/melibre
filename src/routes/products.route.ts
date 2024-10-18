@@ -149,7 +149,7 @@ Route_Products.get( '/', ( _, res: Response ) => {
 
 export default Route_Products;
 
-/* TO-DO
+/* To-Do
     - Pensar si hacer lo siguiente
         m_isValidField( field: string ) {
             return field in o_ValidFields;
@@ -188,7 +188,7 @@ export default Route_Products;
     + Add the two last pinned conversations with Claude to .docs
 */
 
-/* TO-DO
+/* To-Do
     Database > Async > GraphQL > Svelt
 */
 
