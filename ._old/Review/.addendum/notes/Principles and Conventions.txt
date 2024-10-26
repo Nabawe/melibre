@@ -23,6 +23,7 @@
     Array?                  Array or a_Array need to define, casi seguro q lo correcto es camelCase pero revisando codigo viejo veo q uso PascalCase como en los Objetos. ! Definir.
     Modulos                 .mjs or .module.js or similar. Pero para el nombre en si del modulo?
     cb                      Callback
+    getter, setter          getters and setters should start with getX, setX but the question is about opbject properties that use them, how to distinguish them
 
     Definir si aplicar este tipo de nomenclatura solo a nivel global, ya q por ejemplo dentro de una función queda más prolija usar :
         nombreVariable

@@ -7,7 +7,8 @@
 // ? As I understand I am missing the "template literal type".
 type t_Key = string | number | symbol;
 
-class Branch {
+// class or f_createTidyBranch
+class c_TidyBranch {
     constructor( public value: any, public index: t_Key ){
         this = [];
         [].storage = value;
@@ -23,7 +24,7 @@ class Branch {
   * @param {string} fileDir The path must end with a slash /
 */
 // ! una prop de TidyTree va a ser LastIndex para guardar cual fue la ultima id
-class TidyTree {
+class c_TidyTree {
     public filePath: string;
     // "!" as TS "non-null assertion operator" not sure if it is the correct usage.
     public i!: t_Item[];
@@ -67,4 +68,5 @@ class TidyTree {
 };
 
 // export type { t_Item };
-export default TidyTree;
+export { c_TidyBranch } ;
+export default c_TidyTree;

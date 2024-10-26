@@ -1,4 +1,4 @@
-// import anything so that it is a module, else it might not run
+// import or export anything so that it is considered a module, else TS will nag
 import { nanoid as f_makeUUID } from 'nanoid';
 
 // continuation passing style experiment

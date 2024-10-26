@@ -1,4 +1,6 @@
 + Names
++ Abstract
++ Multithread, Async
 + Class : Element
 + Arrays all the Way
 + Iterator
@@ -6,10 +8,24 @@
 + Branches vs Nodes
 + Sparce Arrays
 + Modeling
++ Experiment Adding String Properties to Arrays
 
 
 + Names
     TidyTree, NearTree, InfinityCupboard, TaggedCupboard, chest of drawers, stack, accumulate, dresser?
++
+
+
++ Abstract
+    Explicar origen, problema ( parsing FVE Field Value Expressions linked by logic ), la motivacion, posibles utilidades, etc.
+
+    Counter Arguments :
+        Q muchas veces termina siendo mas eficiente transcodear el formato de una querry en otro simplemente tratandola con string manipulation en vez d tener q descomponer la logica.
++
+
+
++ Multithread, Async
+    ! One might need to Freeze and UnFreeze and object when traversing it if multithread, async behaviour is involved
 +
 
 
@@ -34,6 +50,8 @@
     splice and other methods are to be used when modding an array and NOT delete
 
     delete though could be used to delete the 0 index and create an SPARCEARRAY check MDN delete
+
+    It seams I will need to create a custom method that creates a deep-copy then fixes the new references coz delete and such methods seam to leave blank slots.
 +
 
 
@@ -53,7 +71,32 @@
 
 
 + Sparce Arrays
-    Revisar en MDN q es lo q pierden las array si definía custom props estoy casi seguro q está en la pag mdn arrays
+    Revisar en MDN q es lo q pierden las array si definía custom props estoy casi seguro q está en la pag mdn arrays.
+
+    const arr = [1, 2, , , 5]; // Create a sparse array
+    ! Spreading into an Array
+        const another = [...arr]; // "another" is [ 1, 2, undefined, undefined, 5 ]
+        !!! Spreading into an Object uses property enumeration, not the array's iterator
+            const objectSpread = { ...arr }; // { '0': 1, '1': 2, '4': 5 }
+
+    But in others (most notably array iteration methods), empty slots are skipped.
+        ! const hasFalsy = arr.some((k) => !k); // false
+
+        * Property enumeration
+            const keys = Object.keys(arr); // [ '0', '1', '4' ]
+            for (const key in arr)
+                console.log(key);
+
+        * const mapped = arr.map((i) => i + 1); // [ 2, 3, <2 empty items>, 6 ]
+        * arr.forEach((i) => console.log(i)); // 1 2 5
+        * const filtered = arr.filter(() => true); // [ 1, 2, 5 ]
+
+    Hacer mas prolijo y funcional el resumen? tal vez mejor skim y encontrar una solucion mas universal, pensar menos en esto, crear la clase y luego ver los problemas teniendo una base teorica general.
+
+    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Indexed_collections#sparse_arrays
+        poorly writen just check the specific section
+
+    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#array_methods_and_empty_slots
 +
 
 
@@ -108,4 +151,9 @@
     id o twig ya q puede haber más de un set de paréntesis por Branch.
 
     Ver si delete causa reindexacion
++
+
+
++ Experiment Adding String Properties to Arrays
+    See what happens with different iteration methods, fors, etc.
 +
