@@ -38,6 +38,8 @@
     Para guardar un dato se guardaría en [].value pero cada branch es simplemente una array vacía en su expresión mínima, de esta manera las relaciones : parent, sibling, children quedan actualizadas automáticamente y también recuerdan un orden
 
     Aún así crear la clase branch o node
+
+    Por ahi sea mejor usar Maps o WeakMaps en vez de arrays, supuestamente estan optimizados para ser modificados continuamente, al menos la doc dice q los objetos no lo estan pero no dice de las arrays ( y ademas todo es deribado de Object en JS... ).
 +
 
 

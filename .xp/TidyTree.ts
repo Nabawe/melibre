@@ -1,5 +1,6 @@
 /* * NADA DE TEXTO ARRIBA DE LA DEF DEL SIMBOLO, escribir en el encabezado o pie del doc las cosas generales, explicativas, etc y solo poner dentro del statement lo especifico, recordatorio lo mas corto posible.
-   * Lo mismo para los WIPs, y To-Dos agruparlos arriba o abajo, tal vez esto sea mejor abajo y explicaciones arriba, usar _Q template.
+    * Lo mismo para los WIPs, y To-Dos agruparlos arriba o abajo, tal vez esto sea mejor abajo y explicaciones arriba, usar _Q template.
+    * Explicar lo de Arrays all the way y la idea de tags para guardar info. Ver draft.txt y Odday.
 */
 
 import { Interface } from "readline";
@@ -17,8 +18,8 @@ type t_TidyBranch = [][] & t_TidyBranchProps;
 interface t_TidyBranchProps {
     data?: any;
     // 4- Shouldn't it be t_TidyBranch | c_TidyTree.Root and not any array
-    parent?: t_TidyBranch | [];
-    rootId?: keyof t_Mimir;
+    parent: t_TidyBranch | [];
+    rootId: keyof t_Mimir;
 };
 
 
@@ -31,6 +32,10 @@ function f_createTidyBranch( { data, parent, rootId }: t_TidyBranchProps ): t_Ti
         writable: true,
     };
     return Object.defineProperties( [], {
+        data: {
+            ...CommonProps,
+            value: data,
+        },
         parent: {
             ...CommonProps,
             value: parent,
@@ -38,10 +43,6 @@ function f_createTidyBranch( { data, parent, rootId }: t_TidyBranchProps ): t_Ti
         rootId: {
             ...CommonProps,
             value: rootId,
-        },
-        data: {
-            ...CommonProps,
-            value: data,
         },
     } );
 };
@@ -62,7 +63,7 @@ class c_TidyTree {
     // Index Signature
     // Explain
     // comment on how this use is counter intuitive
-/*     // test what kind of values the Signature can have, it might need the key any value any typing. */
+    // test what kind of values the Signature can have, it might need the key:any value:any typing.
     // any[]
     // Don't forget that proxies can be used to control the access to the props
     [ key: t_Key ]: any;
@@ -73,12 +74,43 @@ class c_TidyTree {
     };
 
     /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
-    m_sprout( { data, parent, rootId } ) {
+    // 8- Shouldn't it be { data, parent, rootId }: t_TidyBranchProp ? I get errors doing so.
+    m_sprout( { data, parent } ) {
         parent = parent || this.Root;
-        rootId = rootId || this.m_genId();
-        return this.Mimir.set( rootId, f_createTidyBranch( { data, parent, rootId } ) );
+        const rootId = this.m_genId();
+        const newBranch = ( f_createTidyBranch( { data, parent, rootId } ) );
+        parent.push( this.Mimir.set( rootId, newBranch ) );
+        return newBranch;
         // return this.Mimir.set( rootId, f_createTidyBranch( arguments[0] ) );
-        /* ? 8- if the return line was defined as in the comment above, When parent or rootId use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
+        /* ? 9- if the return line was defined as in the comment above, When parent or rootId use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
+    };
+
+    m_get( rootId: t_TidyBranchProps["rootId"] ) {
+        return this.Mimir.get( rootId );
+    };
+
+    m_triangulate( ...Coords ) {
+        // Coords function call signature
+        try {
+            let str = '';
+            for ( const k of Coords )
+                str += `[${k}]`
+
+            // eval or use a function to use the string version of the coords on this.Root
+            // this.Root
+            // return match;
+        } catch( err ) {
+            // Out of bounds + JavaScript error should be the output
+            return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${( err as Error ).message}`, { cause: 'CLASS__INIT' } ) );
+        };
+    };
+
+    m_openBranch() {
+        /* the dif between this and m_sprout is that this one is used to sequentialy build the tree from a group of Field Value Expressions */
+    };
+
+    m_closeBranch() {
+
     };
 
     // m_getBranchCoords
@@ -92,7 +124,7 @@ class c_TidyTree {
         /* or it could be created from a string using a completly custom way like [ []1, [ [], []2 ] ]*/
 };
 
-// export type { t_Item, t_TidyBranch, t_TidyTree };
+export type { t_TidyBranch };
 export { f_createTidyBranch } ;
 export default c_TidyTree;
 
@@ -119,4 +151,8 @@ private m_genId() {
     // return `i${this.Mimir.size + 1}`;
 };
 
+*/
+
+/* To-Do
+    + Add Docstrings with a general description and its params to each method.
 */
