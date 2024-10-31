@@ -80,6 +80,7 @@
     // * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#primitive_values
     // * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_overview
     // * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types#literals
+    // * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects
 
     JavaScript:
         bigint, boolean, null, number, object, string, symbol, undefined
@@ -334,6 +335,7 @@
     // !WIP Ver si esta info esta actualizada o si hay una forma mejor de hacerlo
     // ? Abstract Modifier
     /* ? Ver como se combinan los access modifiers public, private, protected con # ; ya q TS access modifiers supuestamente HACEN NADA en JS y JS ya tiene la funcionalidad, en especial ver si private se traduce a # */
+    /* Una forma de crear props realmente privadas es usando Symbol Properties, tambien sino usando Object.defineProperty. Ya q de esta manera no son enumeradas por defecto y a menos q se tenga el Symbol exacto no se las puede acceder, al menos en teoria... ya q seguramente hay alguna forma de ver todas las props de un objeto aun las no enumeradas o brute-force search. Igual es mejor evitar esto y usar los metodos anteriores. Abria q ver q tan fiable es usando Symbol.for()*/
 /* + Classes */
 
 

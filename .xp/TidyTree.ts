@@ -2,71 +2,121 @@
    * Lo mismo para los WIPs, y To-Dos agruparlos arriba o abajo, tal vez esto sea mejor abajo y explicaciones arriba, usar _Q template.
 */
 
+import { Interface } from "readline";
 
-// Maybe a factory function will be more clean
-// ? As I understand I am missing the "template literal type".
+/* AI Hi here is my first attempt, could you tell me how would you improve it? also review ALL comments that aren't docstrings as they highlight questions and issues, they are numbered for you to reference. */
+    /* !!! It might need more tokens that the ones it can output in a single response it might be wise to ask it to review just half then the other half */
+
+/* ? 1- When referencing the values that a key in an object could take MDN Docs mention a "template literal type" how do I add it to t_Key? */
 type t_Key = string | number | symbol;
+type t_Mimir = Map<number, t_TidyBranch>;
 
-// class or f_createTidyBranch
-class c_TidyBranch {
-    constructor( public value: any, public index: t_Key ){
-        this = [];
-        [].storage = value;
-        [].index = index;
-        // [ "storage" ] = value;
-        // ? delete index 0
-        // ? ver q pasa al hacer for...of y for...in
-    };
+/* 2- Improve t_TidyBranch, a TidyBranch should be an array with special extra props that could cointain either no other TidyBranches or infinite nested TidyBranches. Here I used an array of arrays which I think it is incomplete and could fail if I nest TidyBranches like [ [ [] ] ] */
+// 3- Also should this be an interface instead of a type?
+type t_TidyBranch = [][] & t_TidyBranchProps;
+interface t_TidyBranchProps {
+    data?: any;
+    // 4- Shouldn't it be t_TidyBranch | c_TidyTree.Root and not any array
+    parent?: t_TidyBranch | [];
+    rootId?: keyof t_Mimir;
 };
 
-/** Creates a simple interface wich helps manipulate a basic array of items stored in a JSON file. A JSON file's internal items manager. This variation of JSONBox makes its instances work on a RAM cached array and they only commit it to JSON file on command.
-  * @param {string} fileName
+
+/* 5- Add Docstring, general description, general use of the parameters, or would it be better if it is added to the type t_TidyBranch? */
+/* ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in t_TidyBranch to type the parameters of the function since they will always need to match? */
+function f_createTidyBranch( { data, parent, rootId }: t_TidyBranchProps ): t_TidyBranch {
+    const CommonProps = {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+    };
+    return Object.defineProperties( [], {
+        parent: {
+            ...CommonProps,
+            value: parent,
+        },
+        rootId: {
+            ...CommonProps,
+            value: rootId,
+        },
+        data: {
+            ...CommonProps,
+            value: data,
+        },
+    } );
+};
+
+
+/** Class Description.
   * @param {string} fileDir The path must end with a slash /
 */
-// ! una prop de TidyTree va a ser LastIndex para guardar cual fue la ultima id
 class c_TidyTree {
-    public filePath: string;
-    // "!" as TS "non-null assertion operator" not sure if it is the correct usage.
-    public i!: t_Item[];
-    constructor(
-        public fileName: string,
-        public fileDir: string
-    ) {
-        // this.fileName = fileName;
-        // this.fileDir = fileDir;
-        this.filePath = `${fileDir}${fileName}`;
-        this.#init();
+    public Mimir: t_Mimir = new Map();
+    public Root: t_TidyBranch[] = [];
+    public lastId: number = -1;
+    constructor() {
     };
 
-    /** Initializes the items storage in memory.
-      * @returns Returns false if it initialized without errors.
-    */
-    #init(): false | Error | void {
-        try {
-            this.i = JSON.parse( fs.readFileSync( this.filePath, 'utf-8' ) );
-            return false;
-        } catch( err ) {
-            return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${( err as Error ).message}`, { cause: 'CLASS__INIT' } ) );
-        };
+    /* * For documenting and styling reference examples check the methods init, dataChecks from RAMBox, but don't use a private init method, put that kind of code inside the constructor unless there is some kind of a special need like reset button */
+
+    // Index Signature
+    // Explain
+    // comment on how this use is counter intuitive
+/*     // test what kind of values the Signature can have, it might need the key any value any typing. */
+    // any[]
+    // Don't forget that proxies can be used to control the access to the props
+    [ key: t_Key ]: any;
+
+    // ? 7- Which is best # or private to hide a method?
+    private m_genId() {
+        return ++this.lastId;
     };
 
-
-    #dataChecks( flags?: t_DataChecksFlags | undefined, data = this.i ): false | Error | void {
-        // Add new default values to flags in F.
-        /*
-            let F: t_DataChecksFlags = { NO_DATA: true, ...flags };
-            This line should fail when flags is undefined or an empty object since both are not iterables.
-                Thats what the docs say but it practice I never saw it fail.
-        */
-        let F: t_DataChecksFlags = { NO_DATA: true };
-        if ( flags )
-            F = { ...F,  ...flags };
-        if ( F.NO_DATA && !data.length )
-            return console.error( new Error( `${ErrsMsgs.NO_DATA}`, { cause: 'NO_DATA' } ) );
-        return false;
+    /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
+    m_sprout( { data, parent, rootId } ) {
+        parent = parent || this.Root;
+        rootId = rootId || this.m_genId();
+        return this.Mimir.set( rootId, f_createTidyBranch( { data, parent, rootId } ) );
+        // return this.Mimir.set( rootId, f_createTidyBranch( arguments[0] ) );
+        /* ? 8- if the return line was defined as in the comment above, When parent or rootId use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
     };
+
+    // m_getBranchCoords
+        /* usando el Index does an inverted travelsal parent to parent and returns the specified Branch coordinates */
+
+    // m_cloneFromOldTree( origing: t_TidyTree ) {};
+        /* the idea would be to make a new tree based on the old one using a deep copy as to avoid affecting the original */
+
+    // m_createFromLitteral
+        /* here one could feed the class with an array of arrays expression like [ [].storage = 1, [ [], [].storage = 2 ] ] that reserves words like storage to skip those props since they wont be flagged as not enumerable and creates a propper TidyTree */
+        /* or it could be created from a string using a completly custom way like [ []1, [ [], []2 ] ]*/
 };
 
-// export type { t_Item };
-export { c_TidyBranch } ;
+// export type { t_Item, t_TidyBranch, t_TidyTree };
+export { f_createTidyBranch } ;
 export default c_TidyTree;
+
+// const a = new c_TidyTree();
+// a.Mimir.set( 'asd', [[],[]] );
+// const b = new c_TidyTree();
+// b.Mimir.set( 'zxc', [[]] );
+// b.Mimir.set( 'fgh', [[],[],[ [] ]] );
+
+// console.info(
+//     'a : ', a.Mimir, '\n',
+//     'b : ', b.Mimir
+// );
+
+
+
+
+
+/* Old Ideas
+
+private m_genId() {
+    return 'i' + this.Mimir.size + 1;
+    // ? I understand string literals are faster am I wrong? Would the line below be better?
+    // return `i${this.Mimir.size + 1}`;
+};
+
+*/
