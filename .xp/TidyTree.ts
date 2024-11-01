@@ -14,24 +14,36 @@ type t_Mimir = Map<number, t_TidyBranch>;
 
 /* 2- Improve t_TidyBranch, a TidyBranch should be an array with special extra props that could cointain either no other TidyBranches or infinite nested TidyBranches. Here I used an array of arrays which I think it is incomplete and could fail if I nest TidyBranches like [ [ [] ] ] */
 // 3- Also should this be an interface instead of a type?
-type t_TidyBranch = [][] & t_TidyBranchProps;
+type t_TidyBranch = any[] & t_TidyBranchProps;
 interface t_TidyBranchProps {
+    /* 4- I want to improve the type of address, it should match the type used by keys.
+        If I use " keyof t_Mimir " or " keyof c_TidyTree["Mimir"] " I get the following error inside the m_sprout method at the line:
+        const newBranch = ( f_createTidyBranch( { address, data, parent } ) );
+        "
+            Type 'number' is not assignable to type 'keyof t_Mimir'.ts(2322)
+            TidyTree.ts(20, 5): The expected type comes from property 'address' which is declared here on type 't_TidyBranchProps'
+            (property) t_TidyBranchProps.address: keyof t_Mimir
+        "
+    */
+    address: number;
     data?: any;
-    // 4- Shouldn't it be t_TidyBranch | c_TidyTree.Root and not any array
-    parent: t_TidyBranch | [];
-    rootId: keyof t_Mimir;
+    parent: t_TidyBranch | c_TidyTree["Root"];
 };
 
 
 /* 5- Add Docstring, general description, general use of the parameters, or would it be better if it is added to the type t_TidyBranch? */
 /* ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in t_TidyBranch to type the parameters of the function since they will always need to match? */
-function f_createTidyBranch( { data, parent, rootId }: t_TidyBranchProps ): t_TidyBranch {
+function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_TidyBranch {
     const CommonProps = {
         configurable: true,
         enumerable: false,
         writable: true,
     };
-    return Object.defineProperties( [], {
+    return ( Object.defineProperties( [], {
+        address: {
+            ...CommonProps,
+            value: address,
+        },
         data: {
             ...CommonProps,
             value: data,
@@ -40,11 +52,7 @@ function f_createTidyBranch( { data, parent, rootId }: t_TidyBranchProps ): t_Ti
             ...CommonProps,
             value: parent,
         },
-        rootId: {
-            ...CommonProps,
-            value: rootId,
-        },
-    } );
+    } ) as unknown ) as t_TidyBranch;   // 7- This casting can't possibly be the right thing to do
 };
 
 
@@ -52,9 +60,9 @@ function f_createTidyBranch( { data, parent, rootId }: t_TidyBranchProps ): t_Ti
   * @param {string} fileDir The path must end with a slash /
 */
 class c_TidyTree {
+    public lastAddress: number = -1;
     public Mimir: t_Mimir = new Map();
     public Root: t_TidyBranch[] = [];
-    public lastId: number = -1;
     constructor() {
     };
 
@@ -68,48 +76,55 @@ class c_TidyTree {
     // Don't forget that proxies can be used to control the access to the props
     [ key: t_Key ]: any;
 
-    // ? 7- Which is best # or private to hide a method?
-    private m_genId() {
-        return ++this.lastId;
+    // ? 8- Which is best # or private to hide a method?
+    private m_genAddress() {
+        return ++this.lastAddress;
     };
 
     /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
-    // 8- Shouldn't it be { data, parent, rootId }: t_TidyBranchProp ? I get errors doing so.
-    m_sprout( { data, parent } ) {
-        parent = parent || this.Root;
-        const rootId = this.m_genId();
-        const newBranch = ( f_createTidyBranch( { data, parent, rootId } ) );
-        parent.push( this.Mimir.set( rootId, newBranch ) );
+    // 9- Shouldn't it be { data, parent, address }: t_TidyBranchProp ? I get errors doing so.
+    m_sprout( { data, parent = this.Root } ) {
+        const address = this.m_genAddress();
+        const newBranch = f_createTidyBranch( { address, data, parent } );
+        this.Mimir.set( address, newBranch )
+        parent.push( newBranch );
         return newBranch;
-        // return this.Mimir.set( rootId, f_createTidyBranch( arguments[0] ) );
-        /* ? 9- if the return line was defined as in the comment above, When parent or rootId use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
+        // return this.Mimir.set( address, f_createTidyBranch( arguments[0] ) );
+        /* ? 10- if the return line was defined as in the comment above, When parent or address use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
     };
 
-    m_get( rootId: t_TidyBranchProps["rootId"] ) {
-        return this.Mimir.get( rootId );
+    m_get( address: t_TidyBranchProps["address"] ) {
+        return this.Mimir.get( address );
     };
 
-    m_triangulate( ...Coords ) {
+    m_triangulate( ...Coords: number[] ) {
         // Coords function call signature
         try {
             let str = '';
-            for ( const k of Coords )
-                str += `[${k}]`
+            for ( const k of Coords ) str += `[${k}]`;
 
             // eval or use a function to use the string version of the coords on this.Root
             // this.Root
             // return match;
         } catch( err ) {
             // Out of bounds + JavaScript error should be the output
-            return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${( err as Error ).message}`, { cause: 'CLASS__INIT' } ) );
+            // return console.error( new Error( `${ErrsMsgs.CLASS__INIT}:\n ${( err as Error ).message}`, { cause: 'CLASS__INIT' } ) );
         };
     };
 
-    m_openBranch() {
-        /* the dif between this and m_sprout is that this one is used to sequentialy build the tree from a group of Field Value Expressions */
+    m_sequentialBranching( { data, parent = this.Root } ) {
+        /* the dif between this and m_sprout is that this one is used to sequentialy build the tree from structures like groups of Field Value Expressions */
+        // pensar en como se abre un parentesis y se "sube" de level
+            // en vez de parent = this.Root tendria q ser parent = lastParent
+            // o deducir mirando el length
+        const address = this.m_genAddress();
+        const newBranch = f_createTidyBranch( { address, data, parent } );
+        this.Mimir.set( address, newBranch )
+        parent.push( newBranch );
+        return newBranch;
     };
 
-    m_closeBranch() {
+    m_sequentialClose() {
 
     };
 
@@ -145,7 +160,7 @@ export default c_TidyTree;
 
 /* Old Ideas
 
-private m_genId() {
+private m_genAddress() {
     return 'i' + this.Mimir.size + 1;
     // ? I understand string literals are faster am I wrong? Would the line below be better?
     // return `i${this.Mimir.size + 1}`;
