@@ -3,7 +3,6 @@
     * Explicar lo de Arrays all the way y la idea de tags para guardar info. Ver draft.txt y Odday.
 */
 
-import { Interface } from "readline";
 
 /* AI Hi here is my first attempt, could you tell me how would you improve it? also review ALL comments that aren't docstrings as they highlight questions and issues, they are numbered for you to reference. */
     /* !!! It might need more tokens that the ones it can output in a single response it might be wise to ask it to review just half then the other half */
@@ -17,7 +16,7 @@ type t_Mimir = Map<number, t_TidyBranch>;
 type t_TidyBranch = any[] & t_TidyBranchProps;
 interface t_TidyBranchProps {
     /* 4- I want to improve the type of address, it should match the type used by keys.
-        If I use " keyof t_Mimir " or " keyof c_TidyTree["Mimir"] " I get the following error inside the m_sprout method at the line:
+        If I use " keyof t_Mimir " or " keyof c_TidyTree['Mimir'] " I get the following error inside the m_sprout method at the line:
         const newBranch = ( f_createTidyBranch( { address, data, parent } ) );
         "
             Type 'number' is not assignable to type 'keyof t_Mimir'.ts(2322)
@@ -27,7 +26,7 @@ interface t_TidyBranchProps {
     */
     address: number;
     data?: any;
-    parent: t_TidyBranch | c_TidyTree["Root"];
+    parent: t_TidyBranch | c_TidyTree['Root'];
 };
 
 
@@ -63,6 +62,10 @@ class c_TidyTree {
     public lastAddress: number = -1;
     public Mimir: t_Mimir = new Map();
     public Root: t_TidyBranch[] = [];
+    private seq = {
+        currentBranch: this.Root,
+        prevBranch: this.Root,
+    };
     constructor() {
     };
 
@@ -93,7 +96,7 @@ class c_TidyTree {
         /* ? 10- if the return line was defined as in the comment above, When parent or address use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
     };
 
-    m_get( address: t_TidyBranchProps["address"] ) {
+    m_get( address: t_TidyBranchProps['address'] ) {
         return this.Mimir.get( address );
     };
 
@@ -112,20 +115,63 @@ class c_TidyTree {
         };
     };
 
-    m_sequentialBranching( { data, parent = this.Root } ) {
+    // ! Agregar algun tipo de checkeo a las acciones sequenciales para garantizar q no queden niveles abiertos.
+        /* Eso implicaria q estos 3 metodos sean privados y q se use un solo comando q los dispara como corresponda para acegurarse q se cierre, ya q en realidad quedar abierto no estaria mal pork uno tiene q poder elegir q el arbol no siga creciendo y luego continuar creciendolo donde estaba antes */
+        // * la condicion para terminar entonce sería this.seq.currentBranch === this.Root
+
+    m_sequentialBranching( data: t_TidyBranchProps['data'] ) {
         /* the dif between this and m_sprout is that this one is used to sequentialy build the tree from structures like groups of Field Value Expressions */
-        // pensar en como se abre un parentesis y se "sube" de level
-            // en vez de parent = this.Root tendria q ser parent = lastParent
-            // o deducir mirando el length
+        const parent = this.seq.currentBranch;
         const address = this.m_genAddress();
         const newBranch = f_createTidyBranch( { address, data, parent } );
-        this.Mimir.set( address, newBranch )
+        this.Mimir.set( address, newBranch );
         parent.push( newBranch );
         return newBranch;
     };
 
-    m_sequentialClose() {
+    m_sequentialLevelUp( data: t_TidyBranchProps['data'] ) {
+        this.seq.prevBranch = this.seq.currentBranch;
+        const parent = this.seq.currentBranch;
+        const address = this.m_genAddress();
+        const newBranch = f_createTidyBranch( { address, data, parent } );
+        this.Mimir.set( address, newBranch );
+        parent.push( newBranch );
+        this.seq.currentBranch = newBranch;
+        return newBranch;
+    };
 
+    m_sequentialLevelDown() {
+        // ? this.seq.currentBranch.parent vs this.seq.prevBranch
+        this.seq.currentBranch = this.seq.prevBranch;
+    };
+
+    /*
+        El dibujo buscaria algo asi como
+        if data === undefined then print N/A or 00
+            A[
+                A1
+                A2
+                B[
+                    B1
+                    B2
+                    C[
+                        C1
+                        C2
+                    ]
+                ]
+                A3
+            ]
+    */
+    // instanceof or Array.isArray()
+    /* Object.hasOwn() or in ( creo q in es mas lento ya q checkea prototype chain pero realmente no se cuanto mas lento ) */
+    m_printRoot() {
+        let on = true;
+        let branch = this.Root;
+        while ( on ) {
+            if ( branch instanceof ( f_createTidyBranch || c_TidyTree ) ) {
+
+            };
+        };
     };
 
     // m_getBranchCoords
@@ -153,6 +199,31 @@ export default c_TidyTree;
 //     'a : ', a.Mimir, '\n',
 //     'b : ', b.Mimir
 // );
+
+const Barbol = new c_TidyTree();
+
+Barbol.m_sequentialBranching( 'A1' );
+Barbol.m_sequentialLevelUp( 'B' );
+Barbol.m_sequentialBranching( 'B1' );
+Barbol.m_sequentialBranching( 'B2' );
+Barbol.m_sequentialBranching( 'B3' );
+Barbol.m_sequentialLevelUp( 'C' );
+Barbol.m_sequentialBranching( 'C1' );
+Barbol.m_sequentialBranching( 'C2' );
+Barbol.m_sequentialLevelDown();
+Barbol.m_sequentialLevelDown();
+Barbol.m_sequentialBranching( 'A2' );
+Barbol.m_sequentialBranching( 'A3' );
+Barbol.m_sequentialLevelUp( 'D' );
+Barbol.m_sequentialBranching( 'D1' );
+Barbol.m_sequentialBranching( 'D2' );
+Barbol.m_sequentialLevelDown();
+
+
+
+
+console.info( 'BARBOL RAAAWWWR', Barbol.Root );
+
 
 
 
