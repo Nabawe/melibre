@@ -54,6 +54,35 @@ function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_T
     } ) as unknown ) as t_TidyBranch;   // 7- This casting can't possibly be the right thing to do
 };
 
+/*
+    class c_TidyBranch {
+        // ! tendria q def mejor storage y una index signature o algo asi p/ el uso al estilo array
+        // ! y por eso creo q seria mucho desperdicio en contraste del uso de una funcion
+        private storage;
+        constructor( { address, data, parent }: t_TidyBranchProps ) {
+            const CommonProps = {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+            };
+            this.storage = ( Object.defineProperties( [], {
+                address: {
+                    ...CommonProps,
+                    value: address,
+                },
+                data: {
+                    ...CommonProps,
+                    value: data,
+                },
+                parent: {
+                    ...CommonProps,
+                    value: parent,
+                },
+            } ) as unknown ) as t_TidyBranch;
+        };  // This casting can't possibly be the right thing to do
+    };
+ */
+
 
 /** Class Description.
   * @param {string} fileDir The path must end with a slash /
@@ -167,9 +196,23 @@ class c_TidyTree {
     m_printRoot() {
         let on = true;
         let branch = this.Root;
+        let lvl = 0;
+        const pos: number[] = []; // cada indice guarda la posicion en la q se estaba para cada nivel
+        // ! no olvidarse lo pensado antes ya q aqui creo q lo toy forzando y creo q tendria q separar la iteracion de Root de las branches ya q son un poco distintas, esta en old ideas abajo de todo en este archivo
+        /* termina cuando se esta en el lvl 0 y este no tiene mas elementos, tal vez comparando con el length PERO esto se puede simplificar checkeando si hay un elemento asignable o sea undefined o un agujero en la chain */
         while ( on ) {
-            if ( branch instanceof ( f_createTidyBranch || c_TidyTree ) ) {
-
+            // hay q hacer el for de esta forma ya q se va a necesitar recordar en q parte de la array estaba uno parado para continuar al subir y bajar d niveles
+            // el || 0 es para initializar cuando el nivel esta undefined en pos
+            for ( let i = pos[lvl] || 0, current: t_TidyBranch ; current = branch[i] ; i++ ) {
+                // this is the workarround for a lack of ""instaceof"" t_TidyBranch check
+                if ( 'data' in current ) {
+                    if ( current.length > 0 ) {     // ! aqui va a cambiar por size
+                        console.log( `${current.data}[` );  // ! falta el cerrar ]
+                        // go back to the while to go deeper
+                    } else {
+                        console.log( current.data );
+                    };
+                };
             };
         };
     };
@@ -235,6 +278,14 @@ private m_genAddress() {
     return 'i' + this.Mimir.size + 1;
     // ? I understand string literals are faster am I wrong? Would the line below be better?
     // return `i${this.Mimir.size + 1}`;
+};
+
+m_printRoot() {
+    // ? ambas formas del for para rootBranch tendran problemas con undefined? o agujeros en la array?
+    // for ( let i = 0, rootBranch ; rootBranch = this.Root[i] ; i++  ) {
+        // let branch = rootBranch;
+    // la razon de usar un for es para no tener q checkear por instancia de this.Root y la prop data en cada salto, asi q para el primer nivel q esta en root use un for
+    for ( const rootBranch in this.Root ) {
 };
 
 */
