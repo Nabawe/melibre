@@ -9,10 +9,17 @@
 
 /* ? 1- When referencing the values that a key in an object could take MDN Docs mention a "template literal type" how do I add it to t_Key? */
 type t_Key = string | number | symbol;
-type t_Mimir = Map<number, c_TidyBranch>;
+type t_Mimir = Map<number, t_TidyBranch>;
+type t_Root = Map<number, t_TidyBranch> & t_RootProps;
+interface t_RootProps {
+    push?: ( newBranch: t_TidyBranch ) => void;
+};
 
+// 2- Improve t_TidyBranch, a TidyBranch should be an array with special extra props that could cointain either no other TidyBranches or infinite nested TidyBranches. Here I used an array of arrays which I think it is incomplete and could fail if I nest TidyBranches like [ [ [] ] ]
+// 3- Also should this be an interface instead of a type?
+type t_TidyBranch = Map<number, t_TidyBranch> & t_TidyBranchProps;
 interface t_TidyBranchProps {
-    /* ! 4- I want to improve the type of address, it should match the type used by keys.
+    /* 4- I want to improve the type of address, it should match the type used by keys.
         If I use " keyof t_Mimir " or " keyof c_TidyTree['Mimir'] " I get the following error inside the m_sprout method at the line:
         const newBranch = ( f_createTidyBranch( { address, data, parent } ) );
         "
@@ -23,29 +30,42 @@ interface t_TidyBranchProps {
     */
     address: number;
     data?: any;
-    // children: Map<number, c_TidyBranch>;   // ! FIX Q  ? What's best, to include the children prop here or not? Should it be an optional prop? It would be good to get a primer on the theory of what should be declared here and what elsewhere on the class, and what function they fulfill by where they are declared.
-    parent: c_TidyBranch | c_TidyTree['Root'];
+    parent: t_TidyBranch | c_TidyTree['Root'];
+    // Methods
+    push?: ( newBranch: t_TidyBranch ) => void;
 };
 
 
-/* Q5- Add Docstring, general description, general use of the parameters */
-/* ! FIX Q ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in c_TidyBranch to type the parameters of the function since they will always need to match? */
-class c_TidyBranch {
-    public children: Map<number, c_TidyBranch> = new Map();
-    constructor( { address, data, parent }: t_TidyBranchProps ) {
-        // ! testear si es necesario definir this.address = address; y las otras 2
+// 5- Add Docstring, general description, general use of the parameters, or would it be better if it is added to the type t_TidyBranch?
+// ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in t_TidyBranch to type the parameters of the function since they will always need to match?
+function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_TidyBranch {
+    const CommonPropsCfgs = {
+        configurable: true,
+        enumerable: false,
+        writable: true,
     };
-
-    // ! Missing: Call and or Index signature to manipulate the children with a cleaner expression
-
-    // by pointer I mean the object that is stored in Root.Mimir
-    set set( pointer: c_TidyBranch  ) {
-        this.children.set( this.children.size + 1, pointer );
-    };
-
-    get size() {
-        return this.children.size;
-    };
+    // 7- Is casting this as t_TidyBranch correct? or Should I do it in another way?
+    return Object.defineProperties( new Map() as t_TidyBranch, {
+        address: {
+            ...CommonPropsCfgs,
+            value: address,
+        },
+        data: {
+            ...CommonPropsCfgs,
+            value: data,
+        },
+        parent: {
+            ...CommonPropsCfgs,
+            value: parent,
+        },
+        // Methods
+        push: {
+            ...CommonPropsCfgs,
+            value: function( newBranch: t_TidyBranch ) {
+                this.parent.set( this.parent.size + 1, newBranch );
+            },
+        },
+    } );
 };
 
 
@@ -53,14 +73,31 @@ class c_TidyBranch {
   * @param {string} fileDir The path must end with a slash /
 */
 class c_TidyTree {
+    /* 8- Did I mess up the initialization and the constructor? are seq and Root properly initializated or is there a better way? */
     public lastAddress: number = -1;
     public Mimir: t_Mimir = new Map();
-    public Root: c_TidyBranch[] = [];
-    private seq = {
-        currentBranch: this.Root,
-        prevBranch: this.Root,
-    };
+    private seq: { currentBranch: t_TidyBranch | t_Root; prevBranch: t_TidyBranch | t_Root };
+    public Root: t_Root;
     constructor() {
+        /* 9- Is this descriptor correct? or for a method I should turn writable or something off? but what if afterwards I want to make a hook or some other modification? */
+        const CommonRootPropsCfgs = {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+        };
+        this.Root = Object.defineProperties( new Map() as t_Root, {
+            push: {
+                ...CommonRootPropsCfgs,
+                value: function( newBranch: t_TidyBranch ) {
+                    this.set( this.size + 1, newBranch );
+                },
+            },
+        } );
+
+        this.seq = {
+            currentBranch: this.Root,
+            prevBranch: this.Root,
+        };
     };
 
     /* * For documenting and styling reference examples check the methods init, dataChecks from RAMBox, but don't use a private init method, put that kind of code inside the constructor unless there is some kind of a special need like reset button */
@@ -73,21 +110,22 @@ class c_TidyTree {
     // Don't forget that proxies can be used to control the access to the props
     [ key: t_Key ]: any;
 
-    // ? 8- Which is best # or private to hide a method?
+    // ? 10- Which is best # or private to hide a method?
     private m_genAddress() {
+        // This way it won't matter if something gets deleted
         return ++this.lastAddress;
     };
 
     /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
-    // 9- Shouldn't it be { data, parent, address }: t_TidyBranchProp ? I get errors doing so.
+    // 11- Shouldn't it be { data, parent, address }: t_TidyBranchProp ? I get errors doing so.
     m_sprout( { data, parent = this.Root } ) {
         const address = this.m_genAddress();
-        const newBranch = new c_TidyBranch( { address, data, parent } );
+        const newBranch = f_createTidyBranch( { address, data, parent } );
         this.Mimir.set( address, newBranch )
         parent.push( newBranch );
         return newBranch;
-        // return this.Mimir.set( address, new c_TidyBranch( arguments[0] ) );
-        /* ? 10- if the return line was defined as in the comment above, When parent or address use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
+        // return this.Mimir.set( address, f_createTidyBranch( arguments[0] ) );
+        /* ? 12- if the return line was defined as in the comment above, When parent or address use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
     };
 
     m_get( address: t_TidyBranchProps['address'] ) {
@@ -117,9 +155,9 @@ class c_TidyTree {
         /* the dif between this and m_sprout is that this one is used to sequentialy build the tree from structures like groups of Field Value Expressions */
         const parent = this.seq.currentBranch;
         const address = this.m_genAddress();
-        const newBranch = new c_TidyBranch( { address, data, parent } );
+        const newBranch = f_createTidyBranch( { address, data, parent } );
         this.Mimir.set( address, newBranch );
-        parent.set( newBranch );
+        parent.push( newBranch );
         return newBranch;
     };
 
@@ -127,9 +165,9 @@ class c_TidyTree {
         this.seq.prevBranch = this.seq.currentBranch;
         const parent = this.seq.currentBranch;
         const address = this.m_genAddress();
-        const newBranch = new c_TidyBranch( { address, data, parent } );
+        const newBranch = f_createTidyBranch( { address, data, parent } );
         this.Mimir.set( address, newBranch );
-        parent.set( newBranch );
+        parent.push( newBranch );
         this.seq.currentBranch = newBranch;
         return newBranch;
     };
@@ -168,14 +206,15 @@ class c_TidyTree {
         while ( on ) {
             // hay q hacer el for de esta forma ya q se va a necesitar recordar en q parte de la array estaba uno parado para continuar al subir y bajar d niveles
             // el || 0 es para initializar cuando el nivel esta undefined en pos
-            for ( let i = pos[lvl] || 0, current: c_TidyBranch ; current = branch[i] ; i++ ) {
+            for ( let i = pos[lvl] || 0, active: t_TidyBranch ; active = branch[i] ; i++ ) {
                 // this is the workarround for a lack of ""instaceof"" t_TidyBranch check
-                if ( 'data' in current ) {
-                    if ( current.size > 0 ) {     // ! aqui va a cambiar por size
-                        console.log( `${current.data}[` );  // ! falta el cerrar ]
+                // pero Root no tiene data, eso no es un error ya q podria empesar con un modifier?
+                if ( 'data' in active ) {
+                    if ( active.size > 0 ) {
+                        console.log( `${active.data}[` );  // ! falta el cerrar ]
                         // go back to the while to go deeper
                     } else {
-                        console.log( current.data );
+                        console.log( active.data );
                     };
                 };
             };
@@ -193,8 +232,8 @@ class c_TidyTree {
         /* or it could be created from a string using a completly custom way like [ []1, [ [], []2 ] ]*/
 };
 
-export type { t_TidyBranchProps };
-export { c_TidyBranch } ;
+export type { t_TidyBranch, t_TidyBranchProps };
+export { f_createTidyBranch } ;
 export default c_TidyTree;
 
 // const a = new c_TidyTree();
@@ -237,7 +276,12 @@ console.info( 'BARBOL RAAAWWWR', Barbol.Root );
 
 
 
-// + Old Ideas
+/* + Old Ideas
+    - m_genAddress
+    - m_printRoot
+    - c_TidyBranch
+*/
+
     /* - m_genAddress */ /*
         private m_genAddress() {
             return 'i' + this.Mimir.size + 1;
@@ -256,10 +300,7 @@ console.info( 'BARBOL RAAAWWWR', Barbol.Root );
         };
     /* - m_printRoot */
 
-    /* - f_createTidyBranch */ /*
-        // 2- Improve t_TidyBranch, a TidyBranch should be an array with special extra props that could cointain either no other TidyBranches or infinite nested TidyBranches. Here I used an array of arrays which I think it is incomplete and could fail if I nest TidyBranches like [ [ [] ] ]
-        // 3- Also should this be an interface instead of a type?
-        type t_TidyBranch = any[] & t_TidyBranchProps;
+    /* - c_TidyBranch */ /*
         interface t_TidyBranchProps {
             /* 4- I want to improve the type of address, it should match the type used by keys.
                 If I use " keyof t_Mimir " or " keyof c_TidyTree['Mimir'] " I get the following error inside the m_sprout method at the line:
@@ -272,35 +313,31 @@ console.info( 'BARBOL RAAAWWWR', Barbol.Root );
             */ /*
             address: number;
             data?: any;
-            parent: t_TidyBranch | c_TidyTree['Root'];
+            // children: Map<number, c_TidyBranch>;   // 5- What's best, to include the children prop here or not? Should it be an optional prop? It would be good to get a primer on the theory of what should be declared here and what elsewhere on the class, and what function they fulfill by where they are declared.
+            parent: c_TidyBranch | c_TidyTree['Root'];
         };
 
 
-        // 5- Add Docstring, general description, general use of the parameters, or would it be better if it is added to the type t_TidyBranch?
-        // ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in t_TidyBranch to type the parameters of the function since they will always need to match?
-        function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_TidyBranch {
-            const CommonProps = {
-                configurable: true,
-                enumerable: false,
-                writable: true,
+        // 6- Add Docstring, general description, general use of the parameters.
+        class c_TidyBranch {
+            public children: Map<number, c_TidyBranch> = new Map();
+            constructor( { address, data, parent }: t_TidyBranchProps ) {
+                // ! testear si es necesario definir this.address = address; y las otras 2
             };
-            return ( Object.defineProperties( [], {
-                address: {
-                    ...CommonProps,
-                    value: address,
-                },
-                data: {
-                    ...CommonProps,
-                    value: data,
-                },
-                parent: {
-                    ...CommonProps,
-                    value: parent,
-                },
-            } ) as unknown ) as t_TidyBranch;   // 7- This casting can't possibly be the right thing to do
+
+            // ! Missing: Call and or Index signature to manipulate the children with a cleaner expression
+
+            // by pointer I mean the object that is stored in Root.Mimir
+            set set( pointer: c_TidyBranch  ) {
+                this.children.set( this.children.size + 1, pointer );
+            };
+
+            get size() {
+                return this.children.size;
+            };
         };
-    /* - f_createTidyBranch */
-// + Old Ideas
+    /* - c_TidyBranch */
+/* + Old Ideas */
 
 
 
