@@ -9,13 +9,10 @@
 
 /* ? 1- When referencing the values that a key in an object could take MDN Docs mention a "template literal type" how do I add it to t_Key? */
 type t_Key = string | number | symbol;
-type t_Mimir = Map<number, t_TidyBranch>;
+type t_Mimir = Map<number, c_TidyBranch>;
 
-/* 2- Improve t_TidyBranch, a TidyBranch should be an array with special extra props that could cointain either no other TidyBranches or infinite nested TidyBranches. Here I used an array of arrays which I think it is incomplete and could fail if I nest TidyBranches like [ [ [] ] ] */
-// 3- Also should this be an interface instead of a type?
-type t_TidyBranch = any[] & t_TidyBranchProps;
 interface t_TidyBranchProps {
-    /* 4- I want to improve the type of address, it should match the type used by keys.
+    /* ! 4- I want to improve the type of address, it should match the type used by keys.
         If I use " keyof t_Mimir " or " keyof c_TidyTree['Mimir'] " I get the following error inside the m_sprout method at the line:
         const newBranch = ( f_createTidyBranch( { address, data, parent } ) );
         "
@@ -26,62 +23,30 @@ interface t_TidyBranchProps {
     */
     address: number;
     data?: any;
-    parent: t_TidyBranch | c_TidyTree['Root'];
+    // children: Map<number, c_TidyBranch>;   // ! FIX Q  ? What's best, to include the children prop here or not? Should it be an optional prop? It would be good to get a primer on the theory of what should be declared here and what elsewhere on the class, and what function they fulfill by where they are declared.
+    parent: c_TidyBranch | c_TidyTree['Root'];
 };
 
 
-/* 5- Add Docstring, general description, general use of the parameters, or would it be better if it is added to the type t_TidyBranch? */
-/* ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in t_TidyBranch to type the parameters of the function since they will always need to match? */
-function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_TidyBranch {
-    const CommonProps = {
-        configurable: true,
-        enumerable: false,
-        writable: true,
+/* Q5- Add Docstring, general description, general use of the parameters */
+/* ! FIX Q ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in c_TidyBranch to type the parameters of the function since they will always need to match? */
+class c_TidyBranch {
+    public children: Map<number, c_TidyBranch> = new Map();
+    constructor( { address, data, parent }: t_TidyBranchProps ) {
+        // ! testear si es necesario definir this.address = address; y las otras 2
     };
-    return ( Object.defineProperties( [], {
-        address: {
-            ...CommonProps,
-            value: address,
-        },
-        data: {
-            ...CommonProps,
-            value: data,
-        },
-        parent: {
-            ...CommonProps,
-            value: parent,
-        },
-    } ) as unknown ) as t_TidyBranch;   // 7- This casting can't possibly be the right thing to do
-};
 
-/*
-    class c_TidyBranch {
-        // ! tendria q def mejor storage y una index signature o algo asi p/ el uso al estilo array
-        // ! y por eso creo q seria mucho desperdicio en contraste del uso de una funcion
-        private storage;
-        constructor( { address, data, parent }: t_TidyBranchProps ) {
-            const CommonProps = {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-            };
-            this.storage = ( Object.defineProperties( [], {
-                address: {
-                    ...CommonProps,
-                    value: address,
-                },
-                data: {
-                    ...CommonProps,
-                    value: data,
-                },
-                parent: {
-                    ...CommonProps,
-                    value: parent,
-                },
-            } ) as unknown ) as t_TidyBranch;
-        };  // This casting can't possibly be the right thing to do
+    // ! Missing: Call and or Index signature to manipulate the children with a cleaner expression
+
+    // by pointer I mean the object that is stored in Root.Mimir
+    set set( pointer: c_TidyBranch  ) {
+        this.children.set( this.children.size + 1, pointer );
     };
- */
+
+    get size() {
+        return this.children.size;
+    };
+};
 
 
 /** Class Description.
@@ -90,7 +55,7 @@ function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_T
 class c_TidyTree {
     public lastAddress: number = -1;
     public Mimir: t_Mimir = new Map();
-    public Root: t_TidyBranch[] = [];
+    public Root: c_TidyBranch[] = [];
     private seq = {
         currentBranch: this.Root,
         prevBranch: this.Root,
@@ -117,11 +82,11 @@ class c_TidyTree {
     // 9- Shouldn't it be { data, parent, address }: t_TidyBranchProp ? I get errors doing so.
     m_sprout( { data, parent = this.Root } ) {
         const address = this.m_genAddress();
-        const newBranch = f_createTidyBranch( { address, data, parent } );
+        const newBranch = new c_TidyBranch( { address, data, parent } );
         this.Mimir.set( address, newBranch )
         parent.push( newBranch );
         return newBranch;
-        // return this.Mimir.set( address, f_createTidyBranch( arguments[0] ) );
+        // return this.Mimir.set( address, new c_TidyBranch( arguments[0] ) );
         /* ? 10- if the return line was defined as in the comment above, When parent or address use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
     };
 
@@ -152,9 +117,9 @@ class c_TidyTree {
         /* the dif between this and m_sprout is that this one is used to sequentialy build the tree from structures like groups of Field Value Expressions */
         const parent = this.seq.currentBranch;
         const address = this.m_genAddress();
-        const newBranch = f_createTidyBranch( { address, data, parent } );
+        const newBranch = new c_TidyBranch( { address, data, parent } );
         this.Mimir.set( address, newBranch );
-        parent.push( newBranch );
+        parent.set( newBranch );
         return newBranch;
     };
 
@@ -162,9 +127,9 @@ class c_TidyTree {
         this.seq.prevBranch = this.seq.currentBranch;
         const parent = this.seq.currentBranch;
         const address = this.m_genAddress();
-        const newBranch = f_createTidyBranch( { address, data, parent } );
+        const newBranch = new c_TidyBranch( { address, data, parent } );
         this.Mimir.set( address, newBranch );
-        parent.push( newBranch );
+        parent.set( newBranch );
         this.seq.currentBranch = newBranch;
         return newBranch;
     };
@@ -203,10 +168,10 @@ class c_TidyTree {
         while ( on ) {
             // hay q hacer el for de esta forma ya q se va a necesitar recordar en q parte de la array estaba uno parado para continuar al subir y bajar d niveles
             // el || 0 es para initializar cuando el nivel esta undefined en pos
-            for ( let i = pos[lvl] || 0, current: t_TidyBranch ; current = branch[i] ; i++ ) {
+            for ( let i = pos[lvl] || 0, current: c_TidyBranch ; current = branch[i] ; i++ ) {
                 // this is the workarround for a lack of ""instaceof"" t_TidyBranch check
                 if ( 'data' in current ) {
-                    if ( current.length > 0 ) {     // ! aqui va a cambiar por size
+                    if ( current.size > 0 ) {     // ! aqui va a cambiar por size
                         console.log( `${current.data}[` );  // ! falta el cerrar ]
                         // go back to the while to go deeper
                     } else {
@@ -228,8 +193,8 @@ class c_TidyTree {
         /* or it could be created from a string using a completly custom way like [ []1, [ [], []2 ] ]*/
 };
 
-export type { t_TidyBranch };
-export { f_createTidyBranch } ;
+export type { t_TidyBranchProps };
+export { c_TidyBranch } ;
 export default c_TidyTree;
 
 // const a = new c_TidyTree();
@@ -272,23 +237,72 @@ console.info( 'BARBOL RAAAWWWR', Barbol.Root );
 
 
 
-/* Old Ideas
+// + Old Ideas
+    /* - m_genAddress */ /*
+        private m_genAddress() {
+            return 'i' + this.Mimir.size + 1;
+            // ? I understand string literals are faster am I wrong? Would the line below be better?
+            // return `i${this.Mimir.size + 1}`;
+        };
+    /* - m_genAddress */
 
-private m_genAddress() {
-    return 'i' + this.Mimir.size + 1;
-    // ? I understand string literals are faster am I wrong? Would the line below be better?
-    // return `i${this.Mimir.size + 1}`;
-};
+    /* - m_printRoot */ /*
+        m_printRoot() {
+            // ? ambas formas del for para rootBranch tendran problemas con undefined? o agujeros en la array?
+            // for ( let i = 0, rootBranch ; rootBranch = this.Root[i] ; i++  ) {
+                // let branch = rootBranch;
+            // la razon de usar un for es para no tener q checkear por instancia de this.Root y la prop data en cada salto, asi q para el primer nivel q esta en root use un for
+            for ( const rootBranch in this.Root ) {
+        };
+    /* - m_printRoot */
 
-m_printRoot() {
-    // ? ambas formas del for para rootBranch tendran problemas con undefined? o agujeros en la array?
-    // for ( let i = 0, rootBranch ; rootBranch = this.Root[i] ; i++  ) {
-        // let branch = rootBranch;
-    // la razon de usar un for es para no tener q checkear por instancia de this.Root y la prop data en cada salto, asi q para el primer nivel q esta en root use un for
-    for ( const rootBranch in this.Root ) {
-};
+    /* - f_createTidyBranch */ /*
+        // 2- Improve t_TidyBranch, a TidyBranch should be an array with special extra props that could cointain either no other TidyBranches or infinite nested TidyBranches. Here I used an array of arrays which I think it is incomplete and could fail if I nest TidyBranches like [ [ [] ] ]
+        // 3- Also should this be an interface instead of a type?
+        type t_TidyBranch = any[] & t_TidyBranchProps;
+        interface t_TidyBranchProps {
+            /* 4- I want to improve the type of address, it should match the type used by keys.
+                If I use " keyof t_Mimir " or " keyof c_TidyTree['Mimir'] " I get the following error inside the m_sprout method at the line:
+                const newBranch = ( f_createTidyBranch( { address, data, parent } ) );
+                "
+                    Type 'number' is not assignable to type 'keyof t_Mimir'.ts(2322)
+                    TidyTree.ts(20, 5): The expected type comes from property 'address' which is declared here on type 't_TidyBranchProps'
+                    (property) t_TidyBranchProps.address: keyof t_Mimir
+                "
+            */ /*
+            address: number;
+            data?: any;
+            parent: t_TidyBranch | c_TidyTree['Root'];
+        };
 
-*/
+
+        // 5- Add Docstring, general description, general use of the parameters, or would it be better if it is added to the type t_TidyBranch?
+        // ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in t_TidyBranch to type the parameters of the function since they will always need to match?
+        function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_TidyBranch {
+            const CommonProps = {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+            };
+            return ( Object.defineProperties( [], {
+                address: {
+                    ...CommonProps,
+                    value: address,
+                },
+                data: {
+                    ...CommonProps,
+                    value: data,
+                },
+                parent: {
+                    ...CommonProps,
+                    value: parent,
+                },
+            } ) as unknown ) as t_TidyBranch;   // 7- This casting can't possibly be the right thing to do
+        };
+    /* - f_createTidyBranch */
+// + Old Ideas
+
+
 
 /* To-Do
     + Add Docstrings with a general description and its params to each method.
