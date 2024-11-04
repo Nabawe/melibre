@@ -22,6 +22,7 @@ interface t_RootProps {
     - Ask about the methods, when typing the parameters I am doing the typing twice, in the type and in the method definition.
         For example in m_push if I remove the typing from the paramether newBranch: t_TidyBranch, TypeScript complains that newBranch is of the any type, shouldn't it inherit the correct typing from the casting of defineProperties or somewhere? Is there a way to do that?
     - I am using the ? modifier for props that don't need to be specified on creation but it is not correct to say that they are optional is there a more correct way to describe them? is not exactly they are private it is just that they are operated by the code differently. ( data is truly optional but lastAddress isn't ).
+        // removed lastAddress but the question is still valid
 */
 type t_TidyBranch = Map<number, t_TidyBranch> & t_TidyBranchProps;
 interface t_TidyBranchProps {
@@ -36,7 +37,6 @@ interface t_TidyBranchProps {
     */
     address: number;
     data?: any;
-    lastAddress?: number;
     parent: t_TidyBranch | c_TidyTree['Root'];
     // Methods
     m_genAddress?: () => number;
@@ -61,10 +61,6 @@ function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_T
         data: {
             ...CommonPropsCfgs,
             value: data,
-        },
-        lastAddress: {
-            ...CommonPropsCfgs,
-            value: -1,
         },
         parent: {
             ...CommonPropsCfgs,
