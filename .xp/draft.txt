@@ -122,7 +122,6 @@
 + f_parseLogic
     ask claude about coping, remembering and modifying arrays, about shallow vs deep
 
-    Franco Chiavarini, [09/10/2024 5:59 am]
     Recordar pos con array o una var q sea current.
 
     branch[lvl][twig] = [];

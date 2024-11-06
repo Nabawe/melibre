@@ -145,7 +145,7 @@ class c_TidyTree {
     m_sprout( { data, parent = this.Root } ) {
         const address = this.m_genAddress();
         const newBranch = f_createTidyBranch( { address, data, parent } );
-        this.Mimir.set( address, newBranch )
+        this.Mimir.set( address, newBranch );
         parent.m_push( newBranch );
         return newBranch;
         // return this.Mimir.set( address, f_createTidyBranch( arguments[0] ) );
