@@ -19,6 +19,8 @@
 + Abstract
     Explicar origen, problema ( parsing FVE Field Value Expressions linked by logic ), la motivacion, posibles utilidades, etc.
 
+    Luego de testear los limites de los Maps, Arrays, Number.MAX_SAFE_INTEGER, etc vi q es mejor hacer algo bastante light y para aplicaciones más serias usar una base de datos para Graphs u otra estructura especializada ya q JavaScript base no esta armado para operar en casos complejos pero si se lo puede extender.
+
     Counter Arguments :
         Q muchas veces termina siendo mas eficiente transcodear el formato de una querry en otro simplemente tratandola con string manipulation en vez d tener q descomponer la logica.
 +
