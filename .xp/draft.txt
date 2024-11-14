@@ -70,6 +70,12 @@
     Then to represent the arrangement of the Branches, its order, a separate Array of Branch pointers is kept, that is c_TidyBranch[]. Again this contains the pointers and not the Ids, if an Id for a concrete position is needed it is simply obtained by doing .id .
 
     - Advantages of Maps over Arrays
+        Luego de rever las ventajas pensar:
+            - Si Children solo se preocupa por la operacion .has no serviria mas q sea un Set?
+            - Se podra eliminar Children y solo usar Layout y IdToPos? Ya q se usan los Ids de Mimir en vez de internos Branch por Branch.
+            - Si la limitante es la cantidad de Ids q Mimir pueda contener, transformar Mimir en algo q guarda las Branches por donde estan contenidas y su Id dentro de esa Branch, o sea una Branch otorga Id interno a cada child.
+            - The reasons to use a single array to keep the children arrangement are, to eliminate the need of traversing each child to peform any operation on the order and to be able to "operate directly on the order" like in a math function.
+
     - About Destructive Modifications
 
     - insertionPos:
