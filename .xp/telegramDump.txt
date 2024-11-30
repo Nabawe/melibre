@@ -1,0 +1,253 @@
+Rename Mimir to Iddrir o Iddir = IDs Directory
+
+
+
+
+Hacer metodos q ayudan a conocer cosas sin saber el diceño de la clase.
+Ejemplo una prop de una Branch sería .pos q es un getter q se fija pos en su parent
+O sea q sea intuitivo
+
+
+
+Principio: el índice de colecciones debe ser lo más simple de comparar, con la intención de optimizar la query( expresar mejor).
+
+Entonces idToPos indexa por ids en vez del puntero del objeto.
+
+Conclusiones para Branches:
+Como las IDs las aporta Mimir y por los análisis sobre como representar el orden de las Branches no tiene sentido q las Branches tengan q re guardar sus Children sino solo preocuparse por su orden y optimizar propiedades como con idToPos.
+
+- Rename Layout to Children= objectPointer[]
+- idToPos=Map<id, pos>
+
+
+
+!!! Ask AI how objects are stored in objects coz if it is bulkier then just store the object on Mimir and use IDs for everything else , a big con is the need to query Mimir to do anything.
+
+
+
+
+codear m_push e ir agarrando todo lo de telegram y pasarlo a limpio
+
+
+
+
+
+Ver si los maps tienen sort o alguna forma de te ordenar o insertar entre valores
+
+
+
+
+Hay q hacer q el Root sea una branch y luego se le agregan las cosas extra pero asi instanceof funciona para los 2
+Meditar si volver al diceño de clase ya q va a haber q crear el array del orden
+
+
+
+
+Franco Chiavarini, [04/11/2024 5:10 am]
+??????? SHOULD I ADD lastAddress to Root? SHOULD lastAddress be also the index of the Branches?
+
+Franco Chiavarini, [04/11/2024 5:18 am]
+REMOVE parent.m_push( newBranch ); replace for parent.set( address, newBranch );
+check how it should be handled in the branches, careful with the arrow function ( though it should not matter since it is going to be removed )
+
+The tree alone should manage the addressess but remember what was learned about possible "indexes" collitions if size is used
+
+DO NOT REMOVE m_push, to use the universal address there is Mimir and the .address prop. Keep the lastAddress and per branch generation mechanics else the coordinate system might get ruin, THOUGH the cordinate system cant rely on addresses since they are not continuos? is there a way for coords to work with out being continuos? I am trying to avoid the need of something like Object.keys
+
+! Podria ser un Custom Iterator q "salta" las address q faltan, ya q las addresses son siempre numeros se podría hacer un for hasta el size, q va contando e ignorando las address q no esten y resuelve todo por posicion en vez de hacer un Object.keys. Pero se crea el nuevo problema de q si entre cada address de una misma branch hay muchos saltos ... aunque este problema tendria q ser mucho menor ya q cada rama tiene su propio recuento.
+Cómo solución sería q cada operación q genera un "agujero" o discontinuidad en los índices lo graba en un array q es consultado por el iterador lo siguiente es importante El ITERADOR CONSULTA ese índice de skips y le PERMITE SALTAR sin tener q verificar cada address o sea modifica la dummy del for ( o sea no es i++ sino un condicional entre sumar 1 o lo q le diga este array ).
+Se crea el problema de si está Array de skips se vuelve muy grande ya en ese caso se debería hacer una reindexacion? NO o sea el array de skips tendría q poder describir rangos al estilo saltar las 3 próximas y no solo guardar lo q falta o definir algún tipo de ecuación o rangos o sea array de rangos, el tema está q puede seguir creciendo... CREO Q TERMINA siendo mejor buscar algo q reemplazar a last address como mecanismo para evitar colisiones? Y si se te usarán los agujeros así hay un proceso q reduce el tamaño del array de skips? En realidad está el tema de q las address de cada rama individual no son importantes y q SOLO DEBEN ESTAR QUIETAS EN EL MOMENTO Q SE LAS CUENTA O TRAVERSA u OBSERVA, pensar en esto y el posible reemplazo de lastAddress.
+Recordar q las coordenadas son RELATIVAS AL ESTADO ACTUAL DEL ÁRBOL y no absolutas ( o sea NO apuntan al mismo objeto si se modifica el árbol luego de generar las coords )
+
+No sirve lo de te usar los agujeros ya q eso arruinaría el crecimiento secuencial o sea arruinaría parte de la gracia por más q el map lo deje correctamente posicionado la address dentro de la rama no lo reflejaría.
+
+Ahora considerando todo eso convendría volver a arrays? Creo q no por las otras cosas ya probadas.
+
+
+
+Pensar en terminos distintos para decir ADDRESS a nivel Root y Address interna de la branch o sea posicion o id o index ... o coordenada, aunque coordenada seria dentro de TODO el tree o sea pariendo de Root.
+Nombre para array de skips, synonyms for chain, holes, chain of holes, skip, etc
+
+Franco Chiavarini, [04/11/2024 6:26 pm]
+Escribir en algún lado sobre la filosofía de no tener q reindexar al hacer modificaciones
+
+Franco Chiavarini, [04/11/2024 6:48 pm]
+Escribir todo esto en Odday y o draft.txt
+
+Franco Chiavarini, [04/11/2024 6:57 pm]
+Ask AIs if there is some kind of tool or digital notebook or paper and pen method to writes pros and cons or ideas and counter arguments in a tidy way.
+
+Franco Chiavarini, [04/11/2024 7:02 pm]
+Recordar q m_push tiene que  escribir en Mimir too.
+
+Franco Chiavarini, [04/11/2024 7:54 pm]
+!!!!!!!!!
+El mecanismo de lastAddress arruinaria las coords por los agujeros, por esto y por todo lo pensado antes AGREGAR UN ARRAY a las branches y a Root q permite hacer algo tipo Object.keys pero q esta guardado y actualizado, entonces si se hace una modificacion destructiva en la Branch SE RE CREA esta array para q SIEMPRE REFLEJE EL ORDEN de sus elementos.'
+
+Franco Chiavarini, [04/11/2024 8:58 pm]
+for (const [key, value] of myMap) {
+  console.log(${key}: ${value});
+}
+
+for (const entry of myMap) {
+  console.log(entry);
+}
+
+Franco Chiavarini, [04/11/2024 9:42 pm]
+!!! Hay q dar la opción de poder elegir un punto de inicio para sequential grow y no va a ser tan obvio sino no se lo podría parar y hacer otra cosa y volver a sequential. Pensar q va a afectar la sea.current, prev y de q rama seguir creciendo o cerrando.
+
+
+
+
+Franco Chiavarini, [03/11/2024 5:35 am]
+Cannot invoke an object which is possibly 'undefined'.ts(2722)
+(parameter) parent: t_Root
+parent.push( newBranch );
+
+Why?
+
+first finish testing and print then ask questions
+
+Franco Chiavarini, [03/11/2024 6:23 am]
+Extension to improve Typescript errors
+Enable Quokka
+
+Franco Chiavarini, [03/11/2024 1:09 pm]
+! El mecanismo de push está mal tiene q usar last address ya q si se borra algo podría haber colision
+
+Las branches van a necesitar un método de genId ya q no se puede usar el size
+
+Franco Chiavarini, [03/11/2024 1:32 pm]
+Meditar si genId y lastId deben ser privadas o publicas
+
+
+
+
+Franco Chiavarini, [02/11/2024 3:25 am]
+Change TinyBranch into Map based and turn into a class with index signature for array like access
+Recordar q es para preservar las root Addresses
+
+TERMINAR DE LEER SOBRE MAPAS PRIMERO , limpiar TELEGRAM DESPUES de programar
+
+! Ask claude for help configuring ESLint o whatever is that I should use for styling, etc
+
+before closing the day just ask Claude the current questions in TidyTree
+
+Franco Chiavarini, [02/11/2024 9:35 am]
+Por ahí en vez de forzar la notación con [] para las branches , tal vez sea mejor usar CALL SIGNATURE con () si es q así evito el uso de proxys
+
+Franco Chiavarini, [02/11/2024 9:45 am]
+Escribir la razones del cambió a Maps :
+- agujeros
+- mantener addresses
+- print significativo termina siendo custom
+- modificar como funciona el length termina siendo arriesgado
+- size es mejor q length
+
+Franco Chiavarini, [02/11/2024 11:22 am]
+Pensé en echelon pero la palabra es children = map
+
+
+
+
+
+Franco Chiavarini, [30/10/2024 2:48 pm]
+which corresponds to the order in which each key-value pair was first inserted into the map by the set() method (that is, there wasn't a key with the same value already in the map when set() was called
+
+Ver en q order se itera si se sobreescribe aún si no debería pasar, sino !!! Modificar el Mapa.set method para q las props sean read-only
+
+Franco Chiavarini, [30/10/2024 6:21 pm]
+Maps
+Performs better in scenarios involving frequent additions and removals of key-value pairs.
+
+Franco Chiavarini, [31/10/2024 3:14 am]
+Ask AI if using weakmaps could help
+
+Franco Chiavarini, [31/10/2024 5:38 am]
+Just make the next method that is needed to process a complete FVE and log.info TidyTree.Root
+
+Franco Chiavarini, [31/10/2024 2:38 pm]
+! Tal vez sea mejor usar un SET en vez de un MAP para Mimir
+
+No ya q los sets se manejas con .has y no con Ids.
+
+
+
+
+
+#melibre migrate to deno2
+
+
+
+
+Franco Chiavarini, [17/10/2024 12:52 am]
+If this is true : the length property will be one more than the highest index stored in the array.
+Then deleting 0 might not help to align the array, test.
+
+Franco Chiavarini, [17/10/2024 1:01 am]
+for (let i = 0, div; (div = divs[i]); i++)
+
+Franco Chiavarini, [17/10/2024 1:04 am]
+Unassigned (undef on creation) values are not iterated in a forEach loop.
+
+Franco Chiavarini, [17/10/2024 1:05 am]
+but are listed when undefined has been manually assigned to the element
+
+Franco Chiavarini, [17/10/2024 1:05 am]
+What about map?
+
+Franco Chiavarini, [17/10/2024 1:08 am]
+Since JavaScript array elements are saved as standard object properties, it is not advisable to iterate through JavaScript arrays using for...in loops, because normal elements and all enumerable properties will be listed.
+
+Franco Chiavarini, [17/10/2024 1:25 am]
+The flat() method returns a new array with all sub-array elements concatenated into it recursively up to the specified depth.
+
+The sort() method sorts the elements of an array in place, and returns a reference to the array.
+
+Franco Chiavarini, [17/10/2024 2:52 am]
+forEach method (and others below) that take a callback are known as iterative methods
+
+
+The forEach() method executes callback on every array item and returns undefined.
+
+
+The map() method returns a new array of the return value from executing callback on every array item.
+
+Franco Chiavarini, [17/10/2024 2:58 am]
+The some() method returns true if callback returns true for at least one item in the array.
+every() is true if ALL pass
+
+Franco Chiavarini, [17/10/2024 11:59 pm]
+To use Object.groupBy(), you supply a callback function that is called with the current element, and optionally the current index and array, and returns a string indicating the group of the element.
+
+If you can't use a string as the key, for example, if the information to group is associated with an object that might change, then you can instead use Map.groupBy(). This is very similar to Object.groupBy() except that it groups the elements of the array into a Map that can use an arbitrary value (object or primitive) as a key.
+
+Franco Chiavarini, [18/10/2024 12:47 am]
+!!! ONLY ENUMERABLE PROPs are spread using the spread operator.
+
+
+
+Play with the enumerable attr example of :
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#modifying_a_property
+
+Franco Chiavarini, [18/10/2024 12:48 am]
+Review Delete and array modification strategies AFTER creating the core of the class and see how to deal with empty slots, avoid re indexation and re referencing of pointers
+
+Franco Chiavarini, [26/10/2024 12:41 pm]
+Test Length
+
+Franco Chiavarini, [29/10/2024 3:35 am]
+Copiar Claude code y experimentar
+Testear q todo funcione :
+
+const Barbol = new TidyTree( etc, etc);
+
+console.log(
+
+Barbol["i12"] ,      // acceso al index
+Barbol( 1, 1, 0 ) ,  // coords
+Barbol.someNonEnumProp   // q propiedades fuera del index funcionen
+Barbol.openParens()
+);
+
+Meditar si el index es un Map con keys i + hex o si es simplemente un array

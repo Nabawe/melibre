@@ -7,19 +7,47 @@
 /* AI Hi here is my first attempt, could you tell me how would you improve it? also review ALL comments that aren't docstrings as they highlight questions and issues, they are numbered for you to reference. */
     /* !!! It might need more tokens that the ones it can output in a single response it might be wise to ask it to review just half then the other half */
 
-
+/* ? 1- When referencing the values that a key in an object could take MDN Docs mention a "template literal type" how do I add it to t_Key? */
 type t_Key = string | number | symbol;
-type t_Iddir = Map<number, c_TidyBranch>;
-interface t_TidyBranchProps {
+type t_Mimir = Map<number, t_TidyBranch>;
+type t_Root = Map<number, t_TidyBranch> & t_RootProps;
+/* ? 2- Should I include all of c_TidyTree['Root'] properties and methods here or when I create the class? What's the criteria to deside where to declare them? */
+interface t_RootProps {
     data?: any;
-    id: number;
-    children: c_TidyBranch[];
-    parent: c_TidyBranch | c_TidyTree['Root'];
+    m_push?: ( newBranch: t_TidyBranch ) => void;
 };
 
+/* ! FIX QUESTION 3- Improve t_TidyBranch, a TidyBranch should be an array with special extra props that could cointain either no other TidyBranches or infinite nested TidyBranches. Here I used an array of arrays which I think it is incomplete and could fail if I nest TidyBranches like [ [ [] ] ].
+    - Also should this be an interface instead of a type?.
+    - Ask about the methods, when typing the parameters I am doing the typing twice, in the type and in the method definition.
+        For example in m_push if I remove the typing from the paramether newBranch: t_TidyBranch, TypeScript complains that newBranch is of the any type, shouldn't it inherit the correct typing from the casting of defineProperties or somewhere? Is there a way to do that?
+    - I am using the ? modifier for props that don't need to be specified on creation but it is not correct to say that they are optional is there a more correct way to describe them? is not exactly they are private it is just that they are operated by the code differently. ( data is truly optional but lastId isn't ).
+        // removed lastId but the question is still valid
+*/
+type t_TidyBranch = Map<number, t_TidyBranch> & t_TidyBranchProps;
 
+interface t_TidyBranchProps {
+    /* 4- I want to improve the type of id, it should match the type used by keys.
+        If I use " keyof t_Mimir " or " keyof c_TidyTree['Mimir'] " I get the following error inside the m_sprout method at the line:
+        const newBranch = ( f_createTidyBranch( { id, data, parent } ) );
+        "
+            Type 'number' is not assignable to type 'keyof t_Mimir'.ts(2322)
+            TidyTree.ts(20, 5): The expected type comes from property 'id' which is declared here on type 't_TidyBranchProps'
+            (property) t_TidyBranchProps.id: keyof t_Mimir
+        "
+    */
+    data?: any;
+    // how to specify that id can only be an interger between -1 and +inf
+    id: number;
+    // children: Map<number, c_TidyBranch>;   // 5- What's best, to include the children prop here or not? Should it be an optional prop? It would be good to get a primer on the theory of what should be declared here and what elsewhere on the class, and what function they fulfill by where they are declared.
+    parent: c_TidyBranch | c_TidyTree['Root'];
+};
+type t_BranchOrRoot = t_TidyBranch | t_Root;    // ! casi seguro q se puede borrar este type
+
+
+// 6- Add Docstring, general description, general use of the parameters.
 class c_TidyBranch {
-    public children: c_TidyBranch[] = [];
+    public children: Map<number, c_TidyBranch> = new Map();
     public layout: c_TidyBranch[] = [];
     constructor( { data, id, parent }: t_TidyBranchProps ) {
         // ! testear si es necesario definir this.id = id; y las otras 2
@@ -211,6 +239,139 @@ class c_TidyTree {
         /* or it could be created from a string using a completly custom way like [ []1, [ [], []2 ] ]*/
 };
 
-export type { t_TidyBranchProps };
-export { c_TidyBranch } ;
+export type { t_TidyBranch, t_TidyBranchProps };
+export { f_createTidyBranch } ;
 export default c_TidyTree;
+
+// const a = new c_TidyTree();
+// a.Mimir.set( 'asd', [[],[]] );
+// const b = new c_TidyTree();
+// b.Mimir.set( 'zxc', [[]] );
+// b.Mimir.set( 'fgh', [[],[],[ [] ]] );
+
+// console.info(
+//     'a : ', a.Mimir, '\n',
+//     'b : ', b.Mimir
+// );
+
+const Barbol = new c_TidyTree();
+
+Barbol.Root.data = 'Barbol here';
+Barbol.m_sequentialBranching( 'A1' );
+Barbol.m_sequentialLevelUp( 'B' );
+Barbol.m_sequentialBranching( 'B1' );
+Barbol.m_sequentialBranching( 'B2' );
+Barbol.m_sequentialBranching( 'B3' );
+Barbol.m_sequentialLevelUp( 'C' );
+Barbol.m_sequentialBranching( 'C1' );
+Barbol.m_sequentialBranching( 'C2' );
+Barbol.m_sequentialLevelDown();
+Barbol.m_sequentialLevelDown();
+Barbol.m_sequentialBranching( 'A2' );
+Barbol.m_sequentialBranching( 'A3' );
+Barbol.m_sequentialLevelUp( 'D' );
+Barbol.m_sequentialBranching( 'D1' );
+Barbol.m_sequentialBranching( 'D2' );
+Barbol.m_sequentialLevelDown();
+
+
+
+
+console.log( 'BARBOL RAAAWWWR' );
+console.dir( Barbol.Root, { depth: null } );
+
+
+
+
+
+/* + Old Ideas
+    - m_genAddress
+    - m_printRoot
+    - f_createTidyBranch
+*/
+
+    /* - m_genAddress */ /*
+        private m_genAddress() {
+            return 'i' + this.Mimir.size + 1;
+            // ? I understand string literals are faster am I wrong? Would the line below be better?
+            // return `i${this.Mimir.size + 1}`;
+        };
+    /* - m_genAddress */
+
+    /* - m_printRoot */ /*
+        m_printRoot() {
+            // ? ambas formas del for para rootBranch tendran problemas con undefined? o agujeros en la array?
+            // for ( let i = 0, rootBranch ; rootBranch = this.Root[i] ; i++  ) {
+                // let branch = rootBranch;
+            // la razon de usar un for es para no tener q checkear por instancia de this.Root y la prop data en cada salto, asi q para el primer nivel q esta en root use un for
+            for ( const rootBranch in this.Root ) {
+        };
+    /* - m_printRoot */
+
+    /* - f_createTidyBranch */ /*
+        type t_TidyBranch = Map<number, t_TidyBranch> & t_TidyBranchProps;
+        interface t_TidyBranchProps {
+            /* 4- I want to improve the type of address, it should match the type used by keys.
+                If I use " keyof t_Mimir " or " keyof c_TidyTree['Mimir'] " I get the following error inside the m_sprout method at the line:
+                const newBranch = ( f_createTidyBranch( { address, data, parent } ) );
+                "
+                    Type 'number' is not assignable to type 'keyof t_Mimir'.ts(2322)
+                    TidyTree.ts(20, 5): The expected type comes from property 'address' which is declared here on type 't_TidyBranchProps'
+                    (property) t_TidyBranchProps.address: keyof t_Mimir
+                "
+            */ /*
+            address: number;
+            data?: any;
+            parent: t_TidyBranch | c_TidyTree['Root'];
+            // Methods
+            m_genAddress?: () => number;
+            m_push?: ( newBranch: t_TidyBranch ) => void;
+        };
+        type t_BranchOrRoot = t_TidyBranch | t_Root;
+
+
+        // 5- Add Docstring, general description, general use of the parameters, or would it be better if it is added to the type t_TidyBranch?
+        // ? 6- If this function used clasical parameters ( not passed as an object ), would there a way to use the props in t_TidyBranch to type the parameters of the function since they will always need to match?
+        function f_createTidyBranch( { address, data, parent }: t_TidyBranchProps ): t_TidyBranch {
+            const CommonPropsCfgs = {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+            };
+            return Object.defineProperties( new Map(), {
+                address: {
+                    ...CommonPropsCfgs,
+                    value: address,
+                },
+                data: {
+                    ...CommonPropsCfgs,
+                    value: data,
+                },
+                parent: {
+                    ...CommonPropsCfgs,
+                    value: parent,
+                },
+                // Methods
+                m_genAddress: {
+                    ...CommonPropsCfgs,
+                    value: function() {
+                        // This way it won't matter if something gets deleted
+                        return ++this.lastAddress;
+                    },
+                },
+                m_push: {
+                    ...CommonPropsCfgs,
+                    value: function( newBranch: t_TidyBranch ) {
+                        this.set( this.m_genAddress(), newBranch );
+                    },
+                },
+            // 7- Is casting this as t_TidyBranch correct? or Should I do it in another way?.
+            } ) as t_TidyBranch;
+        };
+    /* - f_createTidyBranch */
+/* + Old Ideas */
+
+
+/* To-Do
+    + Add Docstrings with a general description and its params to each method.
+*/
