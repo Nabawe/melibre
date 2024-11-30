@@ -1,5 +1,6 @@
 + CODEX
 + JavaScript
++ TypeScript
 + Una f no tiene q funcionar si le falta algo fundamental ( ? Critico )
 + GPS CSS
 + User Defined Files Load
@@ -33,6 +34,12 @@
     Para CONSTANTES globales NOMBRE_CONSTANTE
 
     https://www.robinwieruch.de/javascript-naming-conventions/
++
+
+
++ TypeScript
+    t_Name              for Types or Interfaces
+    h_Name              for Type Helpers
 +
 
 

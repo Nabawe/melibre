@@ -8,18 +8,25 @@
     /* !!! It might need more tokens that the ones it can output in a single response it might be wise to ask it to review just half then the other half */
 
 
+/* Type Helpers that extract the type of the key or value of a Map. "never" is returned if what was being checked is not a Map, as a way to return an error.
+I am not completly sure this is the right way. */
+type h_MapValueType<T> = T extends Map<any, infer V> ? V : never;
+type h_MapKeyType<T> = T extends Map<infer K, any> ? K : never;
+
 type t_Key = string | number | symbol;
 type t_Iddir = Map<number, c_TidyBranch>;
 interface t_TidyBranchProps {
     data?: any;
     id: number;
-    children: c_TidyBranch[];
+    // children: h_MapValueType<t_Iddir>[];
+    // childrenPos: Map<h_MapKeyType<t_Iddir>, number>;
     parent: c_TidyBranch | c_TidyTree['Root'];
 };
 
 
 class c_TidyBranch {
-    public children: c_TidyBranch[] = [];
+    public children: h_MapValueType<t_Iddir>[] = [];
+    public childrenPos: Map< h_MapKeyType<t_Iddir>, number > = new Map();
     public layout: c_TidyBranch[] = [];
     constructor( { data, id, parent }: t_TidyBranchProps ) {
         // ! testear si es necesario definir this.id = id; y las otras 2
