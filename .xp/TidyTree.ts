@@ -15,21 +15,23 @@ type h_MapKeyType<T> = T extends Map<infer K, any> ? K : never;
 
 type t_Key = string | number | symbol;
 type t_Iddir = Map<number, c_TidyBranch>;
-interface t_TidyBranchProps {
+interface t_TidyBranchParams {
     data?: any;
     id: number;
-    // children: h_MapValueType<t_Iddir>[];
-    // childrenPos: Map<h_MapKeyType<t_Iddir>, number>;
-    parent: c_TidyBranch | c_TidyTree['Root'];
+    parent?: c_TidyBranch;  // needs to be optional so that Root's can be empty or it self.
 };
 
 
 class c_TidyBranch {
-    public children: h_MapValueType<t_Iddir>[] = [];
-    public childrenPos: Map< h_MapKeyType<t_Iddir>, number > = new Map();
-    public layout: c_TidyBranch[] = [];
-    constructor( { data, id, parent }: t_TidyBranchProps ) {
-        // ! testear si es necesario definir this.id = id; y las otras 2
+    /* There is a way to use the "implements" TS keyword to avoid the need to repeat the typings of data, id, parent, etc but then the posiblity to specify that they are optional or other modifiers is lost. */
+    public data?: any;
+    public readonly id: number;
+    public layout: h_MapValueType<t_Iddir>[] = [];  // children, layout was more graphic
+    public parent?: c_TidyBranch;
+    public positions: Map< h_MapKeyType<t_Iddir>, number > = new Map();  // children positions was too long
+    constructor( { data, id, parent }: t_TidyBranchParams ) {
+        /* this line replaces this.id = id like lines, I just dislike that I am wasting 3 objects, on the instance creation with the "new" line then in the destructuring params and lastly recreating an object using Object.assing to copy them, but this seams easier to mantain and cleaner. */
+        Object.assign( this, { data, id, parent } );
     };
 
     // ! Missing: Call and or Index signature to manipulate the children with a cleaner expression
@@ -40,10 +42,17 @@ class c_TidyBranch {
     };
 
     get size() {
-        return this.children.size;
+        return this.positions.size;
     };
 
-    // m_push()
+    get length() {
+        return this.layout.length;
+    };
+
+    m_push( pointer: c_TidyBranch ) {
+        this.positions.set( pointer.id, this.layout.length );
+        this.layout.push( pointer );
+    };
 };
 
 
@@ -218,6 +227,9 @@ class c_TidyTree {
         /* or it could be created from a string using a completly custom way like [ []1, [ [], []2 ] ]*/
 };
 
-export type { t_TidyBranchProps };
+// export type { t_TidyBranchProps };
 export { c_TidyBranch } ;
 export default c_TidyTree;
+
+
+const BranchTest = new c_TidyBranch( { data: "asdasd", id: 123 } );

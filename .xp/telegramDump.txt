@@ -1,6 +1,7 @@
 Rename Mimir to Iddrir o Iddir = IDs Directory
 
 
+! Should id be readonly? what else?
 
 
 Hacer metodos q ayudan a conocer cosas sin saber el diceño de la clase.
