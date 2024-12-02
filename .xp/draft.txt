@@ -17,6 +17,7 @@
 + Sparce Arrays
 + Modeling
 + Experiment Adding String Properties to Arrays
++ DocStrings
 
 
 + Names
@@ -225,4 +226,9 @@
 
 + Experiment Adding String Properties to Arrays
     See what happens with different iteration methods, fors, etc.
++
+
+
++ DocStrings
+    https://claude.ai/chat/e670ecbe-3a7c-47db-8369-f99f17fa62f7
 +

@@ -22,6 +22,10 @@ interface t_TidyBranchParams {
 };
 
 
+/** // WIP add class description
+  * @property {array<branch>} layout - Branch children arrangement. Warning: Reconstructed during operations that create gaps, avoid direct references.
+  * @property {map<id, position>} positions - Maps child IDs to positions, used for optimizing operations and layout reconstruction.
+*/
 class c_TidyBranch {
     /* There is a way to use the "implements" TS keyword to avoid the need to repeat the typings of data, id, parent, etc but then the posiblity to specify that they are optional or other modifiers is lost. */
     public data?: any;
@@ -30,16 +34,11 @@ class c_TidyBranch {
     public parent?: c_TidyBranch;
     public positions: Map< h_MapKeyType<t_Iddir>, number > = new Map();  // children positions was too long
     constructor( { data, id, parent }: t_TidyBranchParams ) {
-        /* this line replaces this.id = id like lines, I just dislike that I am wasting 3 objects, on the instance creation with the "new" line then in the destructuring params and lastly recreating an object using Object.assing to copy them, but this seams easier to mantain and cleaner. */
+        /* this replaces this.id = id like lines, I just dislike that I am wasting 3 objects, on the instance creation with the "new" line then in the destructuring params and lastly recreating an object using Object.assing to copy them, but this seams easier to mantain and cleaner. */
         Object.assign( this, { data, id, parent } );
     };
 
     // ! Missing: Call and or Index signature to manipulate the children with a cleaner expression
-
-    // by pointer I mean the object that is stored in Root.Mimir
-    set set( pointer: c_TidyBranch  ) {
-        this.children.set( this.children.size + 1, pointer );
-    };
 
     get size() {
         return this.positions.size;
@@ -49,10 +48,15 @@ class c_TidyBranch {
         return this.layout.length;
     };
 
+    // m_set
+        // ? ya q todo se hace con metodos layout y positions deberian ser read only?
+
     m_push( pointer: c_TidyBranch ) {
         this.positions.set( pointer.id, this.layout.length );
         this.layout.push( pointer );
     };
+
+    // m_delete()
 };
 
 
