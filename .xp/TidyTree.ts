@@ -15,11 +15,11 @@ type h_MapKeyType<T> = T extends Map<infer K, any> ? K : never;
 
 type t_Key = string | number | symbol;
 type t_Iddir = Map<number, c_TidyBranch>;
-interface t_TidyBranchParams {
-    data?: any;
-    id: number;
-    parent?: c_TidyBranch;  // needs to be optional so that Root's can be empty or it self.
-};
+// interface t_TidyBranchParams {
+//     data?: any;
+//     id: number;
+//     parent?: c_TidyBranch;  // needs to be optional so that Root's can be empty or it self.
+// };
 
 
 /** // WIP add class description, branchReference vs pointer vs branch?
@@ -27,18 +27,14 @@ interface t_TidyBranchParams {
   * @property {map<id, position>} positions - Maps child IDs to positions, used for optimizing operations and layout reconstruction.
 */
 class c_TidyBranch {
-    /* There is a way to use the "implements" TS keyword to avoid the need to repeat the typings of data, id, parent, etc but then the posiblity to specify that they are optional or other modifiers is lost. */
-    public data?: any;
-    public readonly id: number;
-    public layout: h_MapValueType<t_Iddir>[] = [];  // children, layout was more graphic
-    public parent?: c_TidyBranch;
-    public positions: Map< h_MapKeyType<t_Iddir>, number > = new Map();  // children positions was too long
-    constructor( { data, id, parent }: t_TidyBranchParams ) {
-        /* this replaces this.id = id like lines, I just dislike that I am wasting 3 objects, on the instance creation with the "new" line then in the destructuring params and lastly recreating an object using Object.assing to copy them, but this seams easier to mantain and cleaner. */
-        // ? ask how much wasteful is this line vs the multiple lines expressions.
-        Object.assign( this, { data, id, parent } );
+    public layout: h_MapValueType<t_Iddir>[] = [];
+    public positions: Map< h_MapKeyType<t_Iddir>, number > = new Map();
+    /** @param {c_TidyBranch} [parent] - Must be specified for all branches except Root. The property was set as optional since Root would have no parent to be assigned to. */
+    constructor(
+        public readonly id: number,
+        public parent?: c_TidyBranch,
+        public data?: any ) {
     };
-
     // ! Missing: Call and or Index signature to manipulate the children with a cleaner expression
 
     get size() {
@@ -49,8 +45,16 @@ class c_TidyBranch {
         return this.layout.length;
     };
 
-    // m_set
-        // ? ya q todo se hace con metodos layout y positions deberian ser read only?
+    // m_delete() should be able to delete by id or position, use f overload? or pass it as an object like id: xxx or position: xxx and that is used to target?
+
+    m_set( position: number, pointer: c_TidyBranch ) {
+        const prev = this.layout[position].id;
+        this.positions.delete( prev );
+        this.layout[position] = pointer;
+        this.positions.set( pointer.id, position );
+    };
+
+    // m_insert()
 
     // Would branchReference be better?
     m_push( pointer: c_TidyBranch ) {
@@ -58,7 +62,9 @@ class c_TidyBranch {
         this.layout.push( pointer );
     };
 
-    // m_delete()
+    // m_pop y los otros 2 q operan del otro lado p por ejemplo manejo de stacks
+    // ? ya q todo se hace con metodos layout y positions deberian ser read only?
+    // ? q hay de data? es lo suficientemente claro q se usa directamente? branch.data = "asd"
 };
 
 
