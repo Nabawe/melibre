@@ -45,7 +45,43 @@ class c_TidyBranch {
         return this.layout.length;
     };
 
-    // m_delete() should be able to delete by id or position, use f overload? or pass it as an object like id: xxx or position: xxx and that is used to target?
+    /* Used this approach intead of creating two methods or using function overloading to try to ensure that id and position aren't mixed up. */
+    /** @description If id and position are both specified only the specified id will be deleted. */
+    m_delete( { id, position }: { id?: h_MapKeyType<t_Iddir>; position?:number; } ) {
+        // ? Should I use try catch expressions?
+        let target: c_TidyBranch;
+        /* !!! if possition or id are not destructured will they still be initialized? Will the scope be limited to the if clause or re initialized? */
+        if ( id ) {
+            // ? ask if there is a better sollution than to use -1
+            position = this.positions.get( id ) || -1;
+            target = this.layout[position];
+        } else if ( position ) {
+            target = this.layout[position];
+            id = target.id;
+        } else {
+            // ! error ? is it really needed? or Does destructuring parameters make all the parameters optional? ( I know I specified it in the type but how do you make a single destructuring parameter optional? )
+            return false;
+        };
+        // ? use splice or toSpliced? or is my method faster?
+        if ( target ) {
+            const oldPos = position;
+            const newLayout: c_TidyBranch[] = [];
+            for ( let i = 0 ; i < oldPos ; i++ )
+                newLayout.push( this.layout[i] );
+            for ( let i = oldPos + 1, len = this.layout.length ; i < len ; i++ )
+                newLayout.push( this.layout[i] );
+            // ? Should I additionally delete the old layout? how exactly?
+            // delete this.layout
+            this.positions.delete( id );
+            this.layout = newLayout;
+            return target;
+        } else {
+            return false;
+            // ! error or false as it doesn't exist? but wasn't false used for successful operations
+        };
+        // ! La logica de delete esta mal se puede ver en el experimento q 31 y 311 sobreviven, solo tienen 1 elemento entonces no lo pueden borar.
+        // ! tambien el metodo no contempla q pasa los con susecivos children.
+    };
 
     m_set( position: number, pointer: c_TidyBranch ) {
         const prev = this.layout[position].id;
@@ -56,6 +92,9 @@ class c_TidyBranch {
 
     // m_insert()
 
+    // ! push should be able to take multiple branches to add at a time
+    // !!! q pasa si se pushea un elemento q ya existe, no va a tener 2 posiciones o si permitirlo?
+    // ! Tambien parece q algo puede hacer a.m_push( a ), no deberia ser permitido o si?
     // Would branchReference be better?
     m_push( pointer: c_TidyBranch ) {
         this.positions.set( pointer.id, this.layout.length );
@@ -244,4 +283,39 @@ export { c_TidyBranch } ;
 export default c_TidyTree;
 
 
-const BranchTest = new c_TidyBranch( { data: "asdasd", id: 123 } );
+const BranchTest0 = new c_TidyBranch( 0, undefined, "data of 10" );
+const BranchTest1 = new c_TidyBranch( 10, BranchTest0, "data of 10" );
+const BranchTest2 = new c_TidyBranch( 20, BranchTest0, "data of 20" );
+const BranchTest3 = new c_TidyBranch( 30, BranchTest0, "data of 30" );
+const BranchTest4 = new c_TidyBranch( 40, BranchTest0, "data of 40" );
+
+const BranchTest31 = new c_TidyBranch( 31, BranchTest3, "data of 31" );
+
+const BranchTest311 = new c_TidyBranch( 311, BranchTest31, "data of 311" );
+
+BranchTest0.m_push( BranchTest1 );
+BranchTest0.m_push( BranchTest2 );
+BranchTest0.m_push( BranchTest3 );
+BranchTest0.m_push( BranchTest4 );
+
+BranchTest3.m_push( BranchTest31 );
+
+BranchTest31.m_push( BranchTest311 );
+
+BranchTest3.m_delete( { id: BranchTest31.id } );
+
+
+
+console.log( 'TEST OUTPUT' );
+console.dir( BranchTest0, { depth: null } );
+
+// console.log( 'SPREAD TEST' );
+
+// const ar1 = [ "a", "b", "c", "d", "e" ];
+
+// delete ar1[2];
+// const ar2 = [ ...ar1 ];
+
+// console.info( 'ar2 : ', ar2 );
+
+
