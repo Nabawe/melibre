@@ -45,12 +45,13 @@ class c_TidyBranch {
         return this.layout.length;
     };
 
+    /* !!! DELETE and Similar methods that need to see multiple branches at a time should be IN THE TREE and not here, for example m_delete here even if it can see its children it shouldn't need to do so, the class should focus on it self, furthermore is the issue that is has no "normal" way of deleting the record in Iddir */
     /* Used this approach intead of creating two methods or using function overloading to try to ensure that id and position aren't mixed up. */
     /** @description If id and position are both specified only the specified id will be deleted. */
     m_delete( { id, position }: { id?: h_MapKeyType<t_Iddir>; position?:number; } ) {
         // ? Should I use try catch expressions?
         let target: c_TidyBranch;
-        /* !!! if possition or id are not destructured will they still be initialized? Will the scope be limited to the if clause or re initialized? */
+        /* ? if possition or id are not destructured will they still be initialized? Will the scope be limited to the if clause or re initialized? */
         if ( id ) {
             // ? ask if there is a better sollution than to use -1
             position = this.positions.get( id ) || -1;
@@ -59,7 +60,7 @@ class c_TidyBranch {
             target = this.layout[position];
             id = target.id;
         } else {
-            // ! error ? is it really needed? or Does destructuring parameters make all the parameters optional? ( I know I specified it in the type but how do you make a single destructuring parameter optional? )
+            // ! error ? is it really needed? or Does destructuring parameters make all the parameters optional? ( I know I specified it in the type but how do you make a single destructuring parameter optional? And the type is not the same as JavaScript )
             return false;
         };
         // ? use splice or toSpliced? or is my method faster?
@@ -74,6 +75,7 @@ class c_TidyBranch {
             // delete this.layout
             this.positions.delete( id );
             this.layout = newLayout;
+            // ! update this.positions
             return target;
         } else {
             return false;
@@ -82,6 +84,9 @@ class c_TidyBranch {
         // ! La logica de delete esta mal se puede ver en el experimento q 31 y 311 sobreviven, solo tienen 1 elemento entonces no lo pueden borar.
         // ! tambien el metodo no contempla q pasa los con susecivos children.
     };
+
+    // m_deleteRange()
+    // m_splice and m_toSpliced?
 
     m_set( position: number, pointer: c_TidyBranch ) {
         const prev = this.layout[position].id;
