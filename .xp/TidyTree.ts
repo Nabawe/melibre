@@ -49,6 +49,7 @@ class c_TidyBranch {
     /* Used this approach intead of creating two methods or using function overloading to try to ensure that id and position aren't mixed up. */
     /** @description If id and position are both specified only the specified id will be deleted. */
     m_delete( { id, position }: { id?: h_MapKeyType<t_Iddir>; position?:number; } ) {
+        // ? optimize using variables to avoid repeating this. ?
         // ? Should I use try catch expressions?
         let target: c_TidyBranch;
         /* ? if possition or id are not destructured will they still be initialized? Will the scope be limited to the if clause or re initialized? */
@@ -65,17 +66,10 @@ class c_TidyBranch {
         };
         // ? use splice or toSpliced? or is my method faster?
         if ( target ) {
-            const oldPos = position;
-            const newLayout: c_TidyBranch[] = [];
-            for ( let i = 0 ; i < oldPos ; i++ )
-                newLayout.push( this.layout[i] );
-            for ( let i = oldPos + 1, len = this.layout.length ; i < len ; i++ )
-                newLayout.push( this.layout[i] );
-            // ? Should I additionally delete the old layout? how exactly?
-            // delete this.layout
+            this.layout.splice( position, 1 );
             this.positions.delete( id );
-            this.layout = newLayout;
-            // ! update this.positions
+            for ( let i = position, len = this.layout.length ; i < len ; i++ )
+                this.positions.set( this.layout[i].id, i );
             return target;
         } else {
             return false;
@@ -307,12 +301,16 @@ BranchTest3.m_push( BranchTest31 );
 
 BranchTest31.m_push( BranchTest311 );
 
-BranchTest3.m_delete( { id: BranchTest31.id } );
+// BranchTest3.m_delete( { id: BranchTest31.id } );        // ! fails
+BranchTest31.m_delete( { id: BranchTest311.id } );        // ! fails
+// BranchTest0.m_delete( { id: BranchTest4.id } );      // works
+// BranchTest0.m_delete( { id: BranchTest2.id } );      // works
 
 
 
 console.log( 'TEST OUTPUT' );
 console.dir( BranchTest0, { depth: null } );
+// console.info( BranchTest3.layout );
 
 // console.log( 'SPREAD TEST' );
 
