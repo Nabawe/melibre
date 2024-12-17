@@ -35,7 +35,7 @@ class c_TidyBranch {
         public parent?: c_TidyBranch,
         public data?: any ) {
     };
-    // ! Missing: Call and or Index signature to manipulate the children with a cleaner expression
+    // ! Missing: Call and or Index signature to manipulate or access children with a cleaner expression
 
     get size() {
         return this.positions.size;
@@ -45,62 +45,26 @@ class c_TidyBranch {
         return this.layout.length;
     };
 
-    /* !!! DELETE and Similar methods that need to see multiple branches at a time should be IN THE TREE and not here, for example m_delete here even if it can see its children it shouldn't need to do so, the class should focus on it self, furthermore is the issue that is has no "normal" way of deleting the record in Iddir */
-    /* Used this approach intead of creating two methods or using function overloading to try to ensure that id and position aren't mixed up. */
-    /** @description If id and position are both specified only the specified id will be deleted. */
-    m_delete( { id, position }: { id?: h_MapKeyType<t_Iddir>; position?:number; } ) {
-        // ? optimize using variables to avoid repeating this. ?
-        // ? Should I use try catch expressions?
-        let target: c_TidyBranch;
-        /* ? if possition or id are not destructured will they still be initialized? Will the scope be limited to the if clause or re initialized? */
-        if ( id ) {
-            // ? ask if there is a better sollution than to use -1
-            position = this.positions.get( id ) || -1;
-            target = this.layout[position];
-        } else if ( position ) {
-            target = this.layout[position];
-            id = target.id;
-        } else {
-            // ! error ? is it really needed? or Does destructuring parameters make all the parameters optional? ( I know I specified it in the type but how do you make a single destructuring parameter optional? And the type is not the same as JavaScript )
-            return false;
-        };
-        // ? use splice or toSpliced? or is my method faster?
-        if ( target ) {
-            this.layout.splice( position, 1 );
-            this.positions.delete( id );
-            for ( let i = position, len = this.layout.length ; i < len ; i++ )
-                this.positions.set( this.layout[i].id, i );
-            return target;
-        } else {
-            return false;
-            // ! error or false as it doesn't exist? but wasn't false used for successful operations
-        };
-        // ! La logica de delete esta mal se puede ver en el experimento q 31 y 311 sobreviven, solo tienen 1 elemento entonces no lo pueden borar.
-        // ! tambien el metodo no contempla q pasa los con susecivos children.
-    };
+    /* * COMO CONTRA ARGUMENTO A LO DE PONER LAS COSAS EN EL TREE
+       * Metodos como delete podrian pedir q sus children activen sus propios metodos delete y q se borre todo hasta llegar a una Branch sin children. En cada activacion de delete la Branch llama a un metodo del Tree para borrarse de Iddir.
+        ? LA CUESTION ESTA si es realmente necesario borrar todo 1 por 1, no hay forma más directa o genera basura? o generar basura en realidad es mejor ya q para eso esta el garbage collector?
+    */
 
-    // m_deleteRange()
-    // m_splice and m_toSpliced?
-
-    m_set( position: number, pointer: c_TidyBranch ) {
-        const prev = this.layout[position].id;
-        this.positions.delete( prev );
-        this.layout[position] = pointer;
-        this.positions.set( pointer.id, position );
-    };
-
-    // m_insert()
+   // m_insert()
 
     // ! push should be able to take multiple branches to add at a time
     // !!! q pasa si se pushea un elemento q ya existe, no va a tener 2 posiciones o si permitirlo?
     // ! Tambien parece q algo puede hacer a.m_push( a ), no deberia ser permitido o si?
+    /* !!! SINCE THE PARENT is specified on creation then any new Branch should be linked and added to its parent THEREFORE the moment of creation should specify where it goes, and if unspecified it would be added to the end in a push like fashion */
+    /* * what I am trying to say is that there is a DISPARITY between the class instantiation and the actual creation of a Branch since its creation needs external access to its parent properties, Positions and Layout, the Branche's constructor should be able to handle everything !!! */
     // Would branchReference be better?
     m_push( pointer: c_TidyBranch ) {
         this.positions.set( pointer.id, this.layout.length );
         this.layout.push( pointer );
+        pointer.parent = this;
     };
 
-    // m_pop y los otros 2 q operan del otro lado p por ejemplo manejo de stacks
+    // m_pop y los otros 2 q operan del otro lado p por ejemplo manejo de stacks !! NO ya q delete necesita de info a nivel arbol no pueden ir aquí
     // ? ya q todo se hace con metodos layout y positions deberian ser read only?
     // ? q hay de data? es lo suficientemente claro q se usa directamente? branch.data = "asd"
 };
@@ -159,6 +123,83 @@ class c_TidyTree {
     m_genid() {
         // This way it won't matter if something gets deleted
         return ++this.lastId;
+    };
+
+    /* * Takeaways Insights
+        - moved here from the Branch class
+        - DELETE should be in the Tree, a Branch should only modify it self and not its children, furthermore it has no way of deleting the reccords in Iddir.
+        - Should I delete the object it self or only clear all the references?
+        - use vars to avoid repeating this.xxxx ?
+        - 'try catch' to manage failures and errors?
+        - if possition or id are not destructured will they still be initialized? Will the scope be limited to the if clause or re initialized?
+        ! Need to properly delete all references, if a children ends with no parent then they and their children should also be deleted.
+        - m_deleteRange()
+        - m_splice and m_toSpliced?
+        ! this was written in the Branch
+        - check the BranchTest s
+    */
+    /* Used this approach intead of creating two methods or using function overloading to try to ensure that id and position aren't mixed up. */
+    /** @description If id and position are both specified only the specified id will be deleted. */
+    m_delete( { id, position }: { id?: h_MapKeyType<t_Iddir>; position?:number; } ) {
+        let target: c_TidyBranch;
+        if ( id ) {
+            // ? ask if there is a better sollution than to use -1
+            position = this.positions.get( id ) || -1;
+            target = this.layout[position];
+        } else if ( position ) {
+            target = this.layout[position];
+            id = target.id;
+        } else {
+            // error ? is it really needed? or Does destructuring parameters make all the parameters optional? ( I know I specified it in the type but how do you make a single destructuring parameter optional? And the type is not the same as JavaScript )
+            return false;
+        };
+        // use splice or toSpliced? or is my method faster?
+        if ( target ) {
+            this.layout.splice( position, 1 );
+            this.positions.delete( id );
+            for ( let i = position, len = this.layout.length ; i < len ; i++ )
+                this.positions.set( this.layout[i].id, i );
+            return target;
+        } else {
+            return false;
+            // error or false as it doesn't exist? but wasn't false used for successful operations
+        };
+    };
+    /*
+        const BranchTest0 = new c_TidyBranch( 0, undefined, "data of 10" );
+        const BranchTest1 = new c_TidyBranch( 10, BranchTest0, "data of 10" );
+        const BranchTest2 = new c_TidyBranch( 20, BranchTest0, "data of 20" );
+        const BranchTest3 = new c_TidyBranch( 30, BranchTest0, "data of 30" );
+        const BranchTest4 = new c_TidyBranch( 40, BranchTest0, "data of 40" );
+
+        const BranchTest31 = new c_TidyBranch( 31, BranchTest3, "data of 31" );
+
+        const BranchTest311 = new c_TidyBranch( 311, BranchTest31, "data of 311" );
+
+        BranchTest0.m_push( BranchTest1 );
+        BranchTest0.m_push( BranchTest2 );
+        BranchTest0.m_push( BranchTest3 );
+        BranchTest0.m_push( BranchTest4 );
+
+        BranchTest3.m_push( BranchTest31 );
+
+        BranchTest31.m_push( BranchTest311 );
+
+        // BranchTest3.m_delete( { id: BranchTest31.id } );        // ! fails
+        BranchTest31.m_delete( { id: BranchTest311.id } );        // ! fails
+        // BranchTest0.m_delete( { id: BranchTest4.id } );      // works
+        // BranchTest0.m_delete( { id: BranchTest2.id } );      // works
+
+        console.log( 'TEST OUTPUT' );
+        console.dir( BranchTest0, { depth: null } );
+    */
+
+    /* ! WRONG ( moved here from the Branch class ) delete must be carried out by the Tree, just deleting the Positions record would leave floating Branches */
+    m_set( position: number, pointer: c_TidyBranch ) {
+        const prev = this.layout[position].id;
+        this.positions.delete( prev );
+        this.layout[position] = pointer;
+        this.positions.set( pointer.id, position );
     };
 
     /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
@@ -280,32 +321,6 @@ class c_TidyTree {
 // export type { t_TidyBranchProps };
 export { c_TidyBranch } ;
 export default c_TidyTree;
-
-
-const BranchTest0 = new c_TidyBranch( 0, undefined, "data of 10" );
-const BranchTest1 = new c_TidyBranch( 10, BranchTest0, "data of 10" );
-const BranchTest2 = new c_TidyBranch( 20, BranchTest0, "data of 20" );
-const BranchTest3 = new c_TidyBranch( 30, BranchTest0, "data of 30" );
-const BranchTest4 = new c_TidyBranch( 40, BranchTest0, "data of 40" );
-
-const BranchTest31 = new c_TidyBranch( 31, BranchTest3, "data of 31" );
-
-const BranchTest311 = new c_TidyBranch( 311, BranchTest31, "data of 311" );
-
-BranchTest0.m_push( BranchTest1 );
-BranchTest0.m_push( BranchTest2 );
-BranchTest0.m_push( BranchTest3 );
-BranchTest0.m_push( BranchTest4 );
-
-BranchTest3.m_push( BranchTest31 );
-
-BranchTest31.m_push( BranchTest311 );
-
-// BranchTest3.m_delete( { id: BranchTest31.id } );        // ! fails
-BranchTest31.m_delete( { id: BranchTest311.id } );        // ! fails
-// BranchTest0.m_delete( { id: BranchTest4.id } );      // works
-// BranchTest0.m_delete( { id: BranchTest2.id } );      // works
-
 
 
 console.log( 'TEST OUTPUT' );
