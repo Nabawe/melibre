@@ -1,3 +1,5 @@
+// !!! revisar las notas de TidyTree.old.ts
+
 /* * NADA DE TEXTO ARRIBA DE LA DEF DEL SIMBOLO, escribir en el encabezado o pie del doc las cosas generales, explicativas, etc y solo poner dentro del statement lo especifico, recordatorio lo mas corto posible.
     * Lo mismo para los WIPs, y To-Dos agruparlos arriba o abajo, tal vez esto sea mejor abajo y explicaciones arriba, usar _Q template.
     * Explicar lo de Arrays all the way y la idea de tags para guardar info. Ver draft.txt y Odday.
@@ -22,7 +24,7 @@ type t_Iddir = Map<number, c_TidyBranch>;
 // };
 
 
-/** // WIP add class description, branchReference vs pointer vs branch?
+/** // WIP add high level class description, branchReference vs pointer vs branch?
   * @property {branch[]} layout - Branch children arrangement. Warning: Reconstructed during operations that create gaps, avoid direct references.
   * @property {map<id, position>} positions - Maps child IDs to positions, used for optimizing operations and layout reconstruction.
 */
@@ -37,6 +39,8 @@ class c_TidyBranch {
     };
     // ! Missing: Call and or Index signature to manipulate or access children with a cleaner expression
 
+    // ? should I remove the setter fuction for .layout.length?
+
     get size() {
         return this.positions.size;
     };
@@ -48,6 +52,7 @@ class c_TidyBranch {
     /* * COMO CONTRA ARGUMENTO A LO DE PONER LAS COSAS EN EL TREE
        * Metodos como delete podrian pedir q sus children activen sus propios metodos delete y q se borre todo hasta llegar a una Branch sin children. En cada activacion de delete la Branch llama a un metodo del Tree para borrarse de Iddir.
         ? LA CUESTION ESTA si es realmente necesario borrar todo 1 por 1, no hay forma más directa o genera basura? o generar basura en realidad es mejor ya q para eso esta el garbage collector?
+        - Why methods are removed from Branches, stack overflow since the methods will need to cascade
     */
 
    // m_insert()
