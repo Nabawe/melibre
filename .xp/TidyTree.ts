@@ -41,15 +41,19 @@ class c_TidyBranch {
 
     // ! Missing: Call and or Index signature to manipulate or access children with a cleaner expression
     // [ key: number ]: c_TidyBranch;
-    [ key: t_Key ]: any;
+    // [ key: t_Key ]: any;
     // * si Index and Call signatures no functiona y si no veo el uso de los proxies podria hacer q el constructor retorne una funcion q accede a la instancia de la clase de la forma q yo espero o ver si se puede hacer algo con function overloading.
         // ! la Branch no necesita las I, C signatures pero si el Tree
             // ? si los necesita ya q enmascaran lo q serian los setters y getters para .layout y .positions?
                 // * o sea tengo q re-pensar y meditar como se setean .layout y .positions inicialmente y como se los deberia acceder y modificar on runtime. Y si volver a q todo se defina en el constructor con Destructuring Params y meter a .layout y .positions para q se los puedan definir en una linea, ya q tal vez c_TidyBranch queda como simplemente un Objeto con 2 colecciones asociadas a un puntero y unas props extra.
                     // * usar proxies en las Branches de seguro agrega overhead q ademas es no importante ya q todo deberia controlarse desde el Tree y como se escriban las Branches no deberia afectar.
-    /*
+        // * hacer el metodo m_accessByCoords y dejar la call signature para el acceso directo con ID, ya q los proxies interceptan TODO y se requieren para q la Index Signature funcione correctamente.
+    /* Call Signatures
         ( this: c_TidyBranch, ...coords: number[] ): any {
             return this.fSearch(...coords);
+        };
+        ( this: c_TidyTree, id: h_MapValueType<t_Iddir> ): c_TidyBranch {
+            return this.getId( id );
         };
     */
 
