@@ -18,6 +18,8 @@
         2 - Do not use loops.
 
     I wanted to create a mechanism that used destructuring for precision and speed and that's what's explored here.
+
+    It happened while improving on an API's /update route and m_set method of a class that controlled a stock.
 +
 
 
@@ -69,7 +71,7 @@
 
 
 + Conclusion
-    Even though all the exploration was worth it in reality one should be able to directly add req.body to the collection provided the frontend and server checked the integrity and validity of the data.
+    Even though all the exploration was worth it in reality one should be able to directly add req.body to the collection provided the frontend and the server checked the integrity and validity of the data.
 +
 */
 

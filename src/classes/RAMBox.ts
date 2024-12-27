@@ -326,7 +326,7 @@ class RAMBox {
     };
 
     m_new( newItem: t_Item ) {
-        // ! HERE BEFORE SENDING req.body there should be somekind of check that confirm the integrity of the data from the front
+        // ! HERE BEFORE RECEIVING req.body there should be somekind of check that confirms the integrity of the data from the front-end
             // * dataChecks seria solo para cosas como existencia de datos, verificar q haya donde guardarlos y otras generales pero en routes iria el revisar la integridad q el front le paso
         const verdict = this.#dataChecks( { NO_DATA: false } );
         if ( verdict )

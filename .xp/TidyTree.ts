@@ -4,6 +4,9 @@
     * Lo mismo para los WIPs, y To-Dos agruparlos arriba o abajo, tal vez esto sea mejor abajo y explicaciones arriba, usar _Q template.
     * Explicar lo de Arrays all the way y la idea de tags para guardar info. Ver draft.txt y Odday.
 */
+/* * Comments Guidelines
+    - Arriba de cada Clase o f dejar para DocStrings y abajo de todo agregar como block comments, Insights, Questions, etc. Solo poner lo critico y en lo posible en gris dentro del codigo.
+*/
 
 
 /* AI Hi here is my first attempt, could you tell me how would you improve it? also review ALL comments that aren't docstrings as they highlight questions and issues, they are numbered for you to reference. */
@@ -16,7 +19,11 @@ type h_MapValueType<T> = T extends Map<any, infer V> ? V : never;
 type h_MapKeyType<T> = T extends Map<infer K, any> ? K : never;
 
 type t_Key = string | number | symbol;
-type t_Iddir = Map<number, c_TidyBranch>;
+type t_IddirKey = h_MapKeyType< c_TidyTree['Iddir'] >;
+type t_IddirValue = h_MapValueType< c_TidyTree['Iddir'] >;
+// type t_Iddir = Map<number, c_TidyBranch>;
+// type t_IddirKey = h_MapKeyType<t_Iddir>;
+// type t_IddirValue = h_MapValueType<t_Iddir>;
 // interface t_TidyBranchParams {
 //     data?: any;
 //     id: number;
@@ -30,32 +37,14 @@ type t_Iddir = Map<number, c_TidyBranch>;
   * @property {map<id, position>} positions - Maps child IDs to positions, used for optimizing operations and layout reconstruction.
 */
 class c_TidyBranch {
-    public layout: h_MapValueType<t_Iddir>[] = [];
-    public positions: Map< h_MapKeyType<t_Iddir>, number > = new Map();
+    public layout: t_IddirValue[] = [];
+    public positions: Map< t_IddirKey, number > = new Map();
     /** @param {c_TidyBranch} [parent] - Must be specified for all branches except Root. The property was set as optional since Root would have no parent to be assigned to. */
     constructor(
-        public readonly id: number,
+        public readonly id: t_IddirKey,
         public parent?: c_TidyBranch,
         public data?: any ) {
     };
-
-    // ! Missing: Call and or Index signature to manipulate or access children with a cleaner expression
-    // [ key: number ]: c_TidyBranch;
-    // [ key: t_Key ]: any;
-    // * si Index and Call signatures no functiona y si no veo el uso de los proxies podria hacer q el constructor retorne una funcion q accede a la instancia de la clase de la forma q yo espero o ver si se puede hacer algo con function overloading.
-        // ! la Branch no necesita las I, C signatures pero si el Tree
-            // ? si los necesita ya q enmascaran lo q serian los setters y getters para .layout y .positions?
-                // * o sea tengo q re-pensar y meditar como se setean .layout y .positions inicialmente y como se los deberia acceder y modificar on runtime. Y si volver a q todo se defina en el constructor con Destructuring Params y meter a .layout y .positions para q se los puedan definir en una linea, ya q tal vez c_TidyBranch queda como simplemente un Objeto con 2 colecciones asociadas a un puntero y unas props extra.
-                    // * usar proxies en las Branches de seguro agrega overhead q ademas es no importante ya q todo deberia controlarse desde el Tree y como se escriban las Branches no deberia afectar.
-        // * hacer el metodo m_accessByCoords y dejar la call signature para el acceso directo con ID, ya q los proxies interceptan TODO y se requieren para q la Index Signature funcione correctamente.
-    /* Call Signatures
-        ( this: c_TidyBranch, ...coords: number[] ): any {
-            return this.fSearch(...coords);
-        };
-        ( this: c_TidyTree, id: h_MapValueType<t_Iddir> ): c_TidyBranch {
-            return this.getId( id );
-        };
-    */
 
     // ? should I remove the setter fuction for .layout.length?
 
@@ -67,23 +56,20 @@ class c_TidyBranch {
         return this.layout.length;
     };
 
-    // ! push should be able to take multiple branches to add at a time
-    // !!! q pasa si se pushea un elemento q ya existe, va a existir o tener 2 posiciones o si permitirlo?
-    // ! Tambien parece q algo puede hacer a.m_push( a ), no deberia ser permitido o si?
-    // Would branchReference be better?
-    m_push( pointer: c_TidyBranch ) {
-        this.positions.set( pointer.id, this.layout.length );
-        this.layout.push( pointer );
-        pointer.parent = this;
-    };
-
     /* * Insights
         - Most methods were removed from the Branches since they tend to require the modification of other Branches and Iddir on a big scale. For example if m_delete was fitted into the c_TidyBranch then one of the methods steps will be to ask its children to delete its own children, clear its parent reference, etc and so on, making a cascade that could cause an stack overflow.
-        Similar issues happened with other methods, making troublesome manipulations of .layout or .positions .
+        Similar issues happened with other methods, since they ended requiring troublesome manipulations of .layout or .positions .
         - Parent is left as optional not only because it made sense for the Root Branch but most of the times c_TidyBranch will be used just to spawn the instance and then a method like m_add, m_sprout or m_insert will link the newly created Branch to its parent and make the reference.
+        - Index and Call Signatures
+            The Index Signature was dropped since to propperly set it it would require the use of a Proxy which in turn will add a big overhead to any operation since Proxies require to intercept EVERYTHING. They might be useful in the Tree but making every Branch slower was not acceptable.
+            Therefore if I what I might add is a method m_accessByCoords and use the Call Signature to access a specific ID,
+                * but the more I think about it the more it seams better to manipulate everything from the Tree, leaving the Branches as close as a pure container object which has its properties defined by a class contructor.
+        - Proxies
+            * To reduce proxy overhead may be one can create a container object that only exposes the methods the proxy would use, that way the "real instance" with many different members stays optimized and the proxy works on the container so that it does not need to iterate on all the members, a proxy for the proxy.
+        - .layout, .positions & .parent
+            I am still unsure if I am going to add manipulation methods inside the Branch class since it seams that every time any of the 3 props are modified in a single Branch a "birds eye view", and cascading access to multiple Branches, are needed so that said modification makes sense. So again it seams it makes more sense to manage everything from the Tree.
     */
-
-    /* ? Branch Questions
+    /* ? Questions
         - should all Branch properties be manipulated through methods?
         - .layout and .positions : should I limit its access?, how?, is it really worth it?, best practices? make public methods to control their access and modification but make the properties private?. Would setting them to read-only be a mistake, since sometimes I might need to recreate them and read-only locks re-refrencing using the same name, right?. The thinking came about to protect the integrity and make sure that any modification in .layout gets automatically and properly reflected on .positions and vice-versa.
             * Make .layout & .positions readonly and private, if they need to be modified their read-only status can be modified on the fly with .defineProperty(), and they should not be direct accessible, all through specialiced setters, getters and methods to ensure they are properly modified.
@@ -95,56 +81,38 @@ class c_TidyBranch {
 
 
 /** Class Description.
-  * @param {string} fileDir The path must end with a slash /
+  * @property
 */
 class c_TidyTree {
-    /* 8- Did I mess up the initialization and the constructor? are seq and Root properly initializated or is there a better way?. For example on data I made the typing explisit but isn't there a better way that brings all the typings from the previously defined types like t_Root and t_RootProps */
-    public lastId: number = -1;
-    public Mimir: t_Mimir = new Map();
-    public Root: t_Root;
-    private seq: { currentBranch: t_BranchOrRoot; prevBranch: t_BranchOrRoot };
+    // 8 is an important old TidyTree question, remember to check all of that file's questions.
+    /* 8- Did I mess up the initialization and the constructor? are seq and Root properly initializated or is there a better way?. For example on data I made the typing explisit but isn't there a better way that brings all the typings from the previously defined types like t_Root and t_RootProps. */
+    /* Should this type of comments be on a DocString? though the .lastId prop proper initialization is important, since its unrelated to its use I think it shouldn't be on the DocString, is there a better place for the comment or format? like atop the prop?. */
+    public lastId: number = 0; // set to -1 if .Root is initialized differently.
+    public Iddir: Map<number, c_TidyBranch> = new Map();
+    public Root: c_TidyBranch = new c_TidyBranch( 0 );
+    private seq = { currentBranch: this.Root, prevBranch: this.Root };
     constructor() {
-        /* * The reason for members to be defined to Root directly is so that it shouldn't need a special treatment when doing Branch like operations. */
-        /* 9- Is this descriptor correct? or for a method I should turn writable or something off? but what if afterwards I want to make a hook or some other modification? Is there a better way to define this method for Root? */
-        const CommonRootPropsCfgs = {
-            configurable: true,
-            enumerable: false,
-            writable: true,
-        };
-        this.Root = Object.defineProperties( new Map() as t_Root, {
-            data: {
-                ...CommonRootPropsCfgs,
-                value: undefined,
-            },
-            // Methods
-            /* An arrow f is used here since the class instance is needed to access lastId. */
-            m_push: {
-                ...CommonRootPropsCfgs,
-                value: ( newBranch: t_TidyBranch ) => {
-                    this.Root.set( this.lastId, newBranch );
-                },
-            },
-        } );
-
-        /* 10- Shouldn't be possible to move seq block atop the constructor? I get errors saying Root is not defined if I do so. */
-        this.seq = {
-            currentBranch: this.Root,
-            prevBranch: this.Root,
-        };
     };
 
-    /* * For documenting and styling reference examples check the methods init, dataChecks from RAMBox, but don't use a private init method, put that kind of code inside the constructor unless there is some kind of a special need like reset button */
-
     // Index Signature
-    // Explain
-    // comment on how this use is counter intuitive
-    // test what kind of values the Signature can have, it might need the key:any value:any typing.
-    // any[]
-    // Don't forget that proxies can be used to control the access to the props
-    [ key: t_Key ]: any;
+    // [ key: number ]: c_TidyBranch;
+    // [ key: t_Key ]: any;
+
+    // Call Signature
+    /* Call Signatures
+        ( this: c_TidyBranch, ...coords: number[] ): any {
+            return this.fSearch(...coords);
+        };
+        ( this: c_TidyBranch, id: h_MapValueType<t_Iddir> ): c_TidyBranch {
+            return this.getId( id );
+        };
+    */
+    // ( this: c_TidyTree, id: t_IddirKey ): c_TidyBranch {
+    //     return this.m_get( id );
+    // };
 
     // ? 11- Which is best # or private to hide a method?
-    m_genid() {
+    m_genId() {
         // This way it won't matter if something gets deleted
         return ++this.lastId;
     };
@@ -152,9 +120,10 @@ class c_TidyTree {
     /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
     // 12- Shouldn't it be { data, parent, id }: t_TidyBranchProp ? I get errors doing so.
     m_sprout( { data, parent = this.Root } ) {
-        const id = this.m_genid();
-        const newBranch = f_createTidyBranch( { data, id, parent } );
-        this.Mimir.set( id, newBranch );
+        const id = this.m_genId();
+        // const newBranch = f_createTidyBranch( { data, id, parent } );
+        const newBranch = new c_TidyBranch( id, parent );
+        this.Iddir.set( id, newBranch );
         parent.m_push( newBranch );
         return newBranch;
         // return this.Mimir.set( id, f_createTidyBranch( arguments[0] ) );
@@ -165,7 +134,7 @@ class c_TidyTree {
         return this.Mimir.get( id );
     };
 
-    /* * Takeaways Insights
+    /* * Insights
         - moved here from the Branch class
         - DELETE should be in the Tree, a Branch should only modify it self and not its children, furthermore it has no way of deleting the reccords in Iddir.
         - Should I delete the object it self or only clear all the references?
@@ -241,6 +210,16 @@ class c_TidyTree {
         this.positions.delete( prev );
         this.layout[position] = pointer;
         this.positions.set( pointer.id, position );
+    };
+
+    // ! push should be able to take multiple branches to add at a time
+    // !!! q pasa si se pushea un elemento q ya existe, va a existir o tener 2 posiciones o si permitirlo?
+    // ! Tambien parece q algo puede hacer a.m_push( a ), no deberia ser permitido o si?
+    // Would branchReference be better?
+    m_push( pointer: c_TidyBranch ) {
+        this.positions.set( pointer.id, this.layout.length );
+        this.layout.push( pointer );
+        pointer.parent = this;
     };
 
     m_triangulate( ...Coords: number[] ) {
@@ -343,6 +322,10 @@ class c_TidyTree {
     // m_createFromLitteral
         /* here one could feed the class with an array of arrays expression like [ [].storage = 1, [ [], [].storage = 2 ] ] that reserves words like storage to skip those props since they wont be flagged as not enumerable and creates a propper TidyTree */
         /* or it could be created from a string using a completly custom way like [ []1, [ [], []2 ] ]*/
+    /* * Insights
+    */
+    /* ? Questions
+    */
 };
 
 // export type { t_TidyBranchProps };
