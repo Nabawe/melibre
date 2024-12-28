@@ -42,6 +42,7 @@ class c_TidyBranch {
     /** @param {c_TidyBranch} [parent] - Must be specified for all branches except Root. The property was set as optional since Root would have no parent to be assigned to. */
     constructor(
         public readonly id: t_IddirKey,
+        public level?: number,
         public parent?: c_TidyBranch,
         public data?: any ) {
     };
@@ -89,7 +90,8 @@ class c_TidyTree {
     /* Should this type of comments be on a DocString? though the .lastId prop proper initialization is important, since its unrelated to its use I think it shouldn't be on the DocString, is there a better place for the comment or format? like atop the prop?. */
     public lastId: number = 0; // set to -1 if .Root is initialized differently.
     public Iddir: Map<number, c_TidyBranch> = new Map();
-    public Root: c_TidyBranch = new c_TidyBranch( 0 );
+    // Would it be better to set Root.parent = null?
+    public Root: c_TidyBranch = new c_TidyBranch( 0, 0 );
     private seq = { currentBranch: this.Root, prevBranch: this.Root };
     constructor() {
     };
@@ -117,21 +119,43 @@ class c_TidyTree {
         return ++this.lastId;
     };
 
-    /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
-    // 12- Shouldn't it be { data, parent, id }: t_TidyBranchProp ? I get errors doing so.
-    m_sprout( { data, parent = this.Root } ) {
-        const id = this.m_genId();
-        // const newBranch = f_createTidyBranch( { data, id, parent } );
-        const newBranch = new c_TidyBranch( id, parent );
-        this.Iddir.set( id, newBranch );
-        parent.m_push( newBranch );
-        return newBranch;
-        // return this.Mimir.set( id, f_createTidyBranch( arguments[0] ) );
-        /* ? 12- if the return line was defined as in the comment above, When parent or id use the default values (this.Root for example) Would they get properly passed via arguments[0]?, I believe this would not work since arguments[0] should reference to the original object but I am not sure. */
+    // ! needs something in case it is not found or is it pointless in this case? at least it should return false, well undefined is a falsy value but that could be what is stored inside the map, then what would be the correct practice? null? undefined? ask AI?
+    m_get( id: c_TidyBranch['id'] ) {
+        return this.Iddir.get( id );
     };
 
-    m_get( id: t_TidyBranchProps['id'] ) {
-        return this.Mimir.get( id );
+    // Would branchReference be better?
+
+    // ! push should be able to take multiple branches to add at a time
+    // !!! q pasa si se pushea un elemento q ya existe, va a existir o tener 2 posiciones o si permitirlo?
+    // ! Tambien parece q algo puede hacer a.m_push( a ), no deberia ser permitido o si?
+        // if ( parent === pointer ) return error;
+        // * PERO PARA METODOS INTERNOS ESO NO DEBERIA PASAR YA Q SE ENTIENDE Q TIENEN Q CUMPLIR CON
+        // EN TODO CASO CREAR UNA DOCSTRING Q ESPECIFIQUE CON Q TENER CUIDADO asi q pensar en las posibilidades d lo q NO SE DEBERIA HACER
+    private m_link( parent: c_TidyBranch, pointer: c_TidyBranch ) {
+        parent.positions.set( pointer.id, parent.layout.length );
+        parent.layout.push( pointer );
+        pointer.parent = parent;
+        /* I get the error: 'parent.level' is possibly 'undefined'.ts(18048)
+            But  m_sprout( { data, parent = this.Root } ) {
+                which calls m_link will always have a parent, furthermore:
+                    this.m_link( parent, newBranch );
+                parent is a mandatory parameter, how should I fix it?
+        */
+        pointer.level = parent.level + 1;
+    };
+
+    /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
+    // 12- Shouldn't it be { data, parent }: t_TidyBranchProp ? I get errors doing so.
+    // the Id should not be specified, it should be managed by the Class.
+    // may be m_add is a better name?
+    // should m_sprout specify the position or that would be m_insert?
+    m_sprout( parent = this.Root, data: any ) {
+        const id = this.m_genId();
+        const newBranch = new c_TidyBranch( id, undefined, undefined, data );
+        this.Iddir.set( id, newBranch );
+        this.m_link( parent, newBranch );
+        return newBranch;
     };
 
     /* * Insights
@@ -210,16 +234,6 @@ class c_TidyTree {
         this.positions.delete( prev );
         this.layout[position] = pointer;
         this.positions.set( pointer.id, position );
-    };
-
-    // ! push should be able to take multiple branches to add at a time
-    // !!! q pasa si se pushea un elemento q ya existe, va a existir o tener 2 posiciones o si permitirlo?
-    // ! Tambien parece q algo puede hacer a.m_push( a ), no deberia ser permitido o si?
-    // Would branchReference be better?
-    m_push( pointer: c_TidyBranch ) {
-        this.positions.set( pointer.id, this.layout.length );
-        this.layout.push( pointer );
-        pointer.parent = this;
     };
 
     m_triangulate( ...Coords: number[] ) {
@@ -353,5 +367,6 @@ console.log( Branch0['layout'][1] );
 // const ar2 = [ ...ar1 ];
 
 // console.info( 'ar2 : ', ar2 );
+
 
 
