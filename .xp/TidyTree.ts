@@ -43,7 +43,7 @@ class c_TidyBranch {
     constructor(
         public readonly id: t_IddirKey,
         public level?: number,
-        public parent?: c_TidyBranch,
+        public parent?: c_TidyBranch | null,
         public data?: any ) {
     };
 
@@ -90,8 +90,8 @@ class c_TidyTree {
     /* Should this type of comments be on a DocString? though the .lastId prop proper initialization is important, since its unrelated to its use I think it shouldn't be on the DocString, is there a better place for the comment or format? like atop the prop?. */
     public lastId: number = 0; // set to -1 if .Root is initialized differently.
     public Iddir: Map<number, c_TidyBranch> = new Map();
-    // Would it be better to set Root.parent = null?
-    public Root: c_TidyBranch = new c_TidyBranch( 0, 0 );
+    /* Would it be better to set Root.parent = null?, yes else the prop might not even exist and this way it is also explisitly said that Root has no parent, another posibility could be that Root is its own parent but I think that might lead to infinite loops in some cases. */
+    public Root: c_TidyBranch = new c_TidyBranch( 0, 0, null );
     private seq = { currentBranch: this.Root, prevBranch: this.Root };
     constructor() {
     };
@@ -124,7 +124,6 @@ class c_TidyTree {
         return this.Iddir.get( id );
     };
 
-    // Would branchReference be better?
 
     // ! push should be able to take multiple branches to add at a time
     // !!! q pasa si se pushea un elemento q ya existe, va a existir o tener 2 posiciones o si permitirlo?
@@ -132,7 +131,7 @@ class c_TidyTree {
         // if ( parent === pointer ) return error;
         // * PERO PARA METODOS INTERNOS ESO NO DEBERIA PASAR YA Q SE ENTIENDE Q TIENEN Q CUMPLIR CON
         // EN TODO CASO CREAR UNA DOCSTRING Q ESPECIFIQUE CON Q TENER CUIDADO asi q pensar en las posibilidades d lo q NO SE DEBERIA HACER
-    private m_link( parent: c_TidyBranch, pointer: c_TidyBranch ) {
+    m_link( parent: c_TidyBranch, pointer: c_TidyBranch ) {
         parent.positions.set( pointer.id, parent.layout.length );
         parent.layout.push( pointer );
         pointer.parent = parent;
@@ -144,6 +143,8 @@ class c_TidyTree {
         */
         pointer.level = parent.level + 1;
     };
+
+    // Would branchReference be better?
 
     /* the opposite could be cull o preguntar como se dice podar? debe haber un verbo especifico para 'cortar ramas' */
     // 12- Shouldn't it be { data, parent }: t_TidyBranchProp ? I get errors doing so.
@@ -343,7 +344,7 @@ class c_TidyTree {
 };
 
 // export type { t_TidyBranchProps };
-export { c_TidyBranch } ;
+// export { c_TidyBranch } ;    // the Branches should not be used outside of this Tree class
 export default c_TidyTree;
 
 const Branch0 = new c_TidyBranch( 0, undefined, "data of 0" );
