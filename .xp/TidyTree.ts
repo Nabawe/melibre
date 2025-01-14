@@ -37,6 +37,7 @@ type t_IddirValue = h_MapValueType< c_TidyTree['Iddir'] >;
   * @property {map<id, position>} positions - Maps child IDs to positions, used for optimizing operations and layout reconstruction.
 */
 class c_TidyBranch {
+    public static hostTree: c_TidyTree;
     public layout: t_IddirValue[] = [];
     public positions: Map< t_IddirKey, number > = new Map();
     /** @param {c_TidyBranch} [parent] - Must be specified for all branches except Root. The property was set as optional since Root would have no parent to be assigned to. */
@@ -88,12 +89,26 @@ class c_TidyTree {
     // 8 is an important old TidyTree question, remember to check all of that file's questions.
     /* 8- Did I mess up the initialization and the constructor? are seq and Root properly initializated or is there a better way?. For example on data I made the typing explisit but isn't there a better way that brings all the typings from the previously defined types like t_Root and t_RootProps. */
     /* Should this type of comments be on a DocString? though the .lastId prop proper initialization is important, since its unrelated to its use I think it shouldn't be on the DocString, is there a better place for the comment or format? like atop the prop?. */
-    public lastId: number = 0; // set to -1 if .Root is initialized differently.
+    /* I am unsure if this should be private or protected */
+    protected static treesCount = 0;
+    /* The type of a class vs the type of its instances
+        The typing here is " typeof c_TidyBranch " since this won't be an instance of the class but the class it self, what I gather is that typeof returns a type that describes the constructor function of the class with :
+        - constructor signature ( similar to how functions are typed )
+            new(id: number): MyClass
+        - static properties and methods
+        - callable properties
+    */
+    public BranchFactory = c_TidyBranch;
+    // this.id = ++c_TidyTree.treesCount;
+    public id = ++c_TidyTree.treesCount;
     public Iddir: Map<number, c_TidyBranch> = new Map();
+    public lastId = 0; // set to -1 if .Root is initialized differently.
     /* Would it be better to set Root.parent = null?, yes else the prop might not even exist and this way it is also explisitly said that Root has no parent, another posibility could be that Root is its own parent but I think that might lead to infinite loops in some cases. */
     public Root: c_TidyBranch = new c_TidyBranch( 0, 0, null );
-    private seq = { currentBranch: this.Root, prevBranch: this.Root };
+    protected seq = { currentBranch: this.Root, prevBranch: this.Root };
     constructor() {
+        c_TidyBranch.hostTree = this;
+        this.BranchFactory = c_TidyBranch;
     };
 
     // Index Signature
@@ -140,6 +155,12 @@ class c_TidyTree {
                 which calls m_link will always have a parent, furthermore:
                     this.m_link( parent, newBranch );
                 parent is a mandatory parameter, how should I fix it?
+
+            I'm looking for better sollutions than :
+                pointer.level = parent.level! + 1;
+                pointer.level = parent.level | 0 + 1;
+
+            Or is this a TypeScript limitation?.
         */
         pointer.level = parent.level + 1;
     };
