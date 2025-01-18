@@ -17,7 +17,13 @@ class c_TidyBranch {
         public parent?: c_TidyBranch | null,
         public data?: any ) {
     };
-}
+    get size() {
+        return this.positions.size;
+    };
+    get length() {
+        return this.layout.length;
+    };
+};
 
 class c_TidyTree {
     protected static treesCount = 0;
@@ -27,7 +33,7 @@ class c_TidyTree {
     public id = ++c_TidyTree.treesCount;
     public Iddir: Map<number, c_TidyBranch> = new Map();
     public lastId = 0;
-    public Root: c_TidyBranch = new c_TidyBranch( 0, 0, null );
+    public Root = new this.c_BranchFactory( 0, 0, null );
     protected seq = { currentBranch: this.Root, prevBranch: this.Root };
     constructor() {
         this.c_BranchFactory.hostTree = this;
