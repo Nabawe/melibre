@@ -6,7 +6,8 @@ type t_IddirKey = h_MapKeyType< c_TidyTree['Iddir'] >;
 type t_IddirValue = h_MapValueType< c_TidyTree['Iddir'] >;
 
 
-class c_TidyBranch {
+// What if all members are abstract could that improve performance?
+abstract class c_TidyBranch {
     public static hostTree: c_TidyTree;
     public layout: t_IddirValue[] = [];
     public positions: Map< t_IddirKey, number > = new Map();

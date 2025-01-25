@@ -18,27 +18,37 @@ class c_TidyTree {
     protected static treesCount = 0;
 
     // might change it to protected or private
-    /* ! I think t_TidyBranch might need a better definition, getters props are missing, I don't know if I need to include hostTree since it is a prop for the class and not the instance */
-    // public c_TidyBranch = class implements t_TidyBranch {
-    // public c_TidyBranch: typeof this['c_TidyBranch'] = class implements t_TidyBranch {
-    public c_TidyBranch: typeof this['c_TidyBranch'] = class {
-        public static hostTree: c_TidyTree;
-        public layout: t_IddirValue[] = [];
-        public positions: Map< t_IddirKey, number > = new Map();
-        /** @param {c_TidyBranch} [parent] - Must be specified for all branches except Root. The property was set as optional since Root would have no parent to be assigned to. */
-        constructor(
-            public readonly id: t_IddirKey,
-            public level?: number,
-            public parent?: t_TidyBranch | null,
-            public data?: any ) {
-        };
-        get size() {
-            return this.positions.size;
-        };
-        get length() {
-            return this.layout.length;
-        };
-    };
+    public c_TidyBranch: new (
+            id: t_IddirKey,
+            level?: number,
+            parent?: t_TidyBranch | null,
+            data?: any
+        ) => t_TidyBranch & {
+            layout: t_IddirValue[];
+            positions: Map< t_IddirKey, number >;
+            id: t_IddirKey;
+            level?: number;
+            parent?: t_TidyBranch | null;
+            data?: any;
+        } = class {
+            public static hostTree: c_TidyTree;
+            public layout: t_IddirValue[] = [];
+            public positions: Map< t_IddirKey, number > = new Map();
+            /** @param {c_TidyBranch} [parent] - Must be specified for all branches except Root. The property was set as optional since Root would have no parent to be assigned to. */
+            constructor(
+                public readonly id: t_IddirKey,
+                public level?: number,
+                public parent?: t_TidyBranch | null,
+                public data?: any ) {
+            };
+            get size() {
+                return this.positions.size;
+            };
+            get length() {
+                return this.layout.length;
+            };
+        }
+    ;
 
     // if this doesn't work add in the constructor this.id = ++c_TidyTree.treesCount;
     public id = ++c_TidyTree.treesCount;
@@ -56,11 +66,11 @@ class c_TidyTree {
     };
 
     // m_get( id: c_TidyTree['c_TidyBranch']['id'] ) {
-    m_get( id: this['c_TidyBranch']['id'] ) {
+    m_get( id: InstanceType< this['c_TidyBranch'] >['id']) {
         return this.Iddir.get( id );
     };
 
-    m_link( parent: this['c_TidyBranch'], pointer: this['c_TidyBranch'] ) {
+    m_link( parent: InstanceType< this['c_TidyBranch'] >, pointer: InstanceType< this['c_TidyBranch'] > ) {
         parent.positions.set( pointer.id, parent.layout.length );
         parent.layout.push( pointer );
         pointer.parent = parent;
