@@ -64,6 +64,8 @@ class c_TidyTree {
         parent.positions.set( pointer.id, parent.layout.length );
         parent.layout.push( pointer );
         pointer.parent = parent;
+        // pointer.level = ( parent.level ?? 0 ) + 1;
+        // pointer.level = parent.level + 1;
         pointer.level = parent.level! + 1;
     };
 
