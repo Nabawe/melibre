@@ -5,13 +5,27 @@ type t_Key = string | number | symbol;
 type t_IddirKey = h_MapKeyType< c_TidyTree['Iddir'] >;
 type t_IddirValue = h_MapValueType< c_TidyTree['Iddir'] >;
 
+/* I need the interfaces else, TS just breaks and can't do the typing for an annonymus class, and even with "implements", "type casting", "satisfies" I am forced to DUPLICATE ALL TYPING in the interfaces and in the classes */
 interface t_TidyBranch {
     layout: t_IddirValue[];
     positions: Map< t_IddirKey, number >;
-    id: t_IddirKey;
+    readonly id: t_IddirKey;
     level?: number;
     parent?: t_TidyBranch | null;
     data?: any;
+
+    // methods
+    readonly size: number;
+    readonly length: number;
+};
+interface t_TidyBranchConstructor {
+    new (
+        id: t_IddirKey,
+        level?: number,
+        parent?: t_TidyBranch | null,
+        data?: any,
+    ): t_TidyBranch;
+    hostTree: c_TidyTree;
 };
 
 class c_TidyTree {
@@ -21,7 +35,9 @@ class c_TidyTree {
     /* ! I think t_TidyBranch might need a better definition, getters props are missing, I don't know if I need to include hostTree since it is a prop for the class and not the instance */
     // public c_TidyBranch = class implements t_TidyBranch {
     // public c_TidyBranch: typeof this['c_TidyBranch'] = class implements t_TidyBranch {
-    public c_TidyBranch: typeof this['c_TidyBranch'] = class {
+    // public c_TidyBranch: typeof this['c_TidyBranch'] = class {
+            /* even if it looks silly it works but the IntelliSense gets cooked and shows everything in its dictionary, in essense functinally disabled but though checks for errors */
+    public c_TidyBranch: t_TidyBranchConstructor = class implements t_TidyBranch {
         public static hostTree: c_TidyTree;
         public layout: t_IddirValue[] = [];
         public positions: Map< t_IddirKey, number > = new Map();
@@ -39,10 +55,12 @@ class c_TidyTree {
             return this.layout.length;
         };
     };
+    // type assertion experiment to avoid duplicate typing
+    // } as t_TidyBranchConstructor;
 
     // if this doesn't work add in the constructor this.id = ++c_TidyTree.treesCount;
     public id = ++c_TidyTree.treesCount;
-    public Iddir: Map<number, this['c_TidyBranch']> = new Map();
+    public Iddir: Map<number, t_TidyBranch> = new Map();
     public lastId = 0;
     public Root = new this.c_TidyBranch( 0, 0, null );
     protected seq = { currentBranch: this.Root, prevBranch: this.Root };
@@ -56,11 +74,11 @@ class c_TidyTree {
     };
 
     // m_get( id: c_TidyTree['c_TidyBranch']['id'] ) {
-    m_get( id: this['c_TidyBranch']['id'] ) {
+    m_get( id: t_TidyBranch['id'] ) {
         return this.Iddir.get( id );
     };
 
-    m_link( parent: this['c_TidyBranch'], pointer: this['c_TidyBranch'] ) {
+    m_link( parent: t_TidyBranch, pointer: t_TidyBranch ) {
         parent.positions.set( pointer.id, parent.layout.length );
         parent.layout.push( pointer );
         pointer.parent = parent;

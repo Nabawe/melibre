@@ -29,6 +29,7 @@ abstract class c_TidyBranch {
 class c_TidyTree {
     protected static treesCount = 0;
 
+    // public c_BranchFactory = class c_TidyBranch extends c_UnbindedTidyBranch {};
     public c_BranchFactory = class c_BindedBranch extends c_TidyBranch {};
     // if this doesn't work add in the constructor this.id = ++c_TidyTree.treesCount;
     public id = ++c_TidyTree.treesCount;
